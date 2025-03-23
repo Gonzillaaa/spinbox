@@ -1,10 +1,7 @@
+# Create a local script to initialize Python environment
+  cat > backend/setup_local_env.sh << 'EOF'
 #!/bin/bash
-# Project structure setup script
-# This script creates the project structure and configuration files for
-# a full-stack application with optional FastAPI, Next.js, PostgreSQL, and Redis
-
-# Make script exit on error
-set -e
+# Setup script for local Python environment (outside Docker)
 
 # Set color codes for output
 GREEN='\033[0;32m'
@@ -25,7 +22,79 @@ function print_error() {
   echo -e "${RED}[-] $1${NC}"
 }
 
-# Set component flags (default to false)
+# Check Python version
+PYTHON_VERSION=$(python --version 2>&1)
+print_status "Checking Python version: $PYTHON_VERSION"
+
+# Ensure Python 3.12+
+if [[ ! "$PYTHON_VERSION" =~ "Python 3.1" ]]; then
+  print_error "Python 3.12+ is required. Please install it and try again."
+  exit 1
+fi
+
+# Create virtual environment if it doesn't exist
+if [ ! -d "venv" ]; then
+  print_status "Creating virtual environment..."
+  python -m venv venv
+else
+  print_status "Virtual environment already exists."
+fi
+
+# Activate virtual environment
+print_status "Activating virtual environment..."
+source venv/bin/activate
+
+# Install uv if not installed
+if ! command -v uv &> /dev/null; then
+  print_status "Installing uv package manager..."
+  pip install uv
+else
+  print_status "uv is already installed."
+fi
+
+# Install dependencies using uv
+print_status "Installing dependencies with uv..."
+uv pip install -r requirements.txt
+
+print_status "Environment setup complete!"
+print_status "Run 'source venv/bin/activate' to activate the virtual environment."
+print_status "Use 'uvicorn app.main:app --reload' to start the development server."
+EOF
+  
+  # Make the script executable
+  chmod +x backend/setup_local_env.sh  # Create setup.py for backend
+  cat > backend/setup.py << 'EOF'
+from setuptools import setup, find_packages
+
+setup(
+    name="backend",
+    version="0.1.0",
+    packages=find_packages(),
+    install_requires=[
+        # Requirements are read from requirements.txt
+    ],
+    python_requires=">=3.12",
+)
+EOF  # Create local virtual environment and initialize files
+  mkdir -p backend/venv
+  touch backend/venv/.keep
+  
+  # Create .gitignore specific for backend
+  cat > backend/.gitignore << 'EOF'
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+.env
+.env.local
+EOF# Set component flags (default to false)
 USE_BACKEND=false
 USE_FRONTEND=false
 USE_DATABASE=false
@@ -64,6 +133,31 @@ function select_components() {
     print_error "You must select at least one component."
     select_components
   fi
+}#!/bin/bash
+# Project structure setup script
+# This script creates the project structure and configuration files for
+# a full-stack application with optional FastAPI, Next.js, PostgreSQL, and Redis
+
+# Make script exit on error
+set -e
+
+# Set color codes for output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# Print colored status messages
+function print_status() {
+  echo -e "${GREEN}[+] $1${NC}"
+}
+
+function print_warning() {
+  echo -e "${YELLOW}[!] $1${NC}"
+}
+
+function print_error() {
+  echo -e "${RED}[-] $1${NC}"
 }
 
 # Get project name from user
@@ -1083,71 +1177,3 @@ If VS Code has issues with the DevContainer:
 1. Run the "Remote-Containers: Rebuild Container" command
 2. Check that you have the latest Remote - Containers extension
 EOF
-
-  print_status "README created."
-}
-
-# Main function to coordinate the setup process
-function main() {
-  # Display welcome message
-  clear
-  echo -e "${GREEN}=======================================${NC}"
-  echo -e "${GREEN}    Development Environment Setup     ${NC}"
-  echo -e "${GREEN}=======================================${NC}"
-  echo ""
-  
-  # Get project name
-  get_project_name
-  
-  # Select components
-  select_components
-  
-  # Create project structure
-  create_project_structure
-  
-  # Create configuration files
-  create_devcontainer_config
-  create_docker_compose
-  
-  # Create component files based on selection
-  if [ "$USE_BACKEND" = true ]; then
-    create_backend_files
-  fi
-  
-  if [ "$USE_FRONTEND" = true ]; then
-    create_frontend_files
-  fi
-  
-  if [ "$USE_DATABASE" = true ]; then
-    create_database_files
-  fi
-  
-  if [ "$USE_REDIS" = true ]; then
-    create_redis_files
-  fi
-  
-  if [ "$USE_FRONTEND" = true ] && [ "$USE_BACKEND" = true ]; then
-    create_sample_component
-  fi
-  
-  # Create git files
-  create_git_files
-  
-  # Create README
-  create_readme
-  
-  # Display success message
-  echo ""
-  echo -e "${GREEN}=======================================${NC}"
-  echo -e "${GREEN}    Setup Complete!                   ${NC}"
-  echo -e "${GREEN}=======================================${NC}"
-  echo ""
-  echo -e "Your development environment has been set up in the ${YELLOW}$PROJECT_NAME${NC} directory."
-  echo -e "Open this directory in VS Code and select 'Reopen in Container' when prompted."
-  echo ""
-  echo -e "See ${YELLOW}README.md${NC} for detailed instructions."
-  echo ""
-}
-
-# Execute main function
-main
