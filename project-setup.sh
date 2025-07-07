@@ -33,7 +33,7 @@ USE_REDIS=false
 
 # Function to select components
 function select_components() {
-  print_status "Select the components you want to include:"
+  print_status "Select the components you want to include (leave all blank to create a minimal Python project):"
   
   read -p "Include FastAPI backend? (y/N): " INCLUDE_BACKEND
   if [[ $INCLUDE_BACKEND =~ ^[Yy]$ ]]; then
@@ -58,12 +58,7 @@ function select_components() {
     USE_REDIS=true
     print_status "Redis will be included."
   fi
-  
-  # Ensure at least one component is selected
-  if [[ "$USE_BACKEND" == false && "$USE_FRONTEND" == false && "$USE_DATABASE" == false && "$USE_REDIS" == false ]]; then
-    print_error "You must select at least one component."
-    select_components
-  fi
+  # No error if all are false; allow minimal Python project
 }
 
 # Get project name from user
@@ -1087,6 +1082,16 @@ EOF
   print_status "README created."
 }
 
+# Add a function to create a minimal Python project
+function create_minimal_python_project() {
+  print_status "Creating minimal Python project..."
+  mkdir -p "$PROJECT_NAME"
+  cd "$PROJECT_NAME"
+  python3 -m venv venv
+  touch requirements.txt
+  print_status "Minimal Python project created."
+}
+
 # Main function to coordinate the setup process
 function main() {
   # Display welcome message
@@ -1101,6 +1106,21 @@ function main() {
   
   # Select components
   select_components
+  
+  # If no components selected, create minimal Python project and exit
+  if [[ "$USE_BACKEND" == false && "$USE_FRONTEND" == false && "$USE_DATABASE" == false && "$USE_REDIS" == false ]]; then
+    create_minimal_python_project
+    echo ""
+    echo -e "${GREEN}=======================================${NC}"
+    echo -e "${GREEN}    Setup Complete!                   ${NC}"
+    echo -e "${GREEN}=======================================${NC}"
+    echo ""
+    echo -e "Your minimal Python project has been set up in the ${YELLOW}$PROJECT_NAME${NC} directory."
+    echo -e "Activate your virtual environment with: source venv/bin/activate"
+    echo -e "Add dependencies to requirements.txt as needed."
+    echo ""
+    exit 0
+  fi
   
   # Create project structure
   create_project_structure
