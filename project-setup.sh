@@ -1,10 +1,15 @@
 #!/bin/bash
 # Project structure setup script
-# This script creates the project structure and configuration files for
+# This script sets up project structure and configuration files for
 # a full-stack application with optional FastAPI, Next.js, PostgreSQL, and Redis
+# Works with both new and existing codebases
 
 # Make script exit on error
 set -e
+
+# Get the parent directory (where the actual project will live)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../ && pwd)"
+SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Set color codes for output
 GREEN='\033[0;32m'
@@ -61,32 +66,30 @@ function select_components() {
   # No error if all are false; allow minimal Python project
 }
 
-# Get project name from user
-function get_project_name() {
-  read -p "Enter project name (lowercase, no spaces): " PROJECT_NAME
+# Detect if we're in an existing codebase
+function detect_existing_codebase() {
+  print_status "Detecting codebase type..."
   
-  # Validate project name
-  if [[ ! $PROJECT_NAME =~ ^[a-z0-9][a-z0-9_-]*$ ]]; then
-    print_error "Invalid project name. Use lowercase letters, numbers, hyphens and underscores only."
-    get_project_name
+  cd "$PROJECT_ROOT"
+  
+  if [ -d ".git" ]; then
+    print_status "Detected existing Git repository"
+    EXISTING_REPO=true
+  else
+    print_status "No Git repository detected - will initialize new one"
+    EXISTING_REPO=false
   fi
   
-  # Check if directory already exists
-  if [ -d "$PROJECT_NAME" ]; then
-    print_warning "Directory $PROJECT_NAME already exists."
-    read -p "Do you want to overwrite? (y/N): " OVERWRITE
-    if [[ ! $OVERWRITE =~ ^[Yy]$ ]]; then
-      get_project_name
-    fi
-  fi
+  # Get project name from directory name
+  PROJECT_NAME=$(basename "$PROJECT_ROOT")
+  print_status "Project name: $PROJECT_NAME"
 }
 
 # Create project directory structure
 function create_project_structure() {
   print_status "Creating project directory structure..."
   
-  mkdir -p "$PROJECT_NAME"
-  cd "$PROJECT_NAME"
+  cd "$PROJECT_ROOT"
   
   # Create main directories
   mkdir -p .devcontainer
@@ -259,7 +262,7 @@ EOF
     
     if [ "$USE_BACKEND" = true ]; then
       cat >> .devcontainer/devcontainer.json << 'EOF'
-    cd /workspace/backend && pip install -r requirements.txt
+    source /workspace/venv/bin/activate && pip install -r /workspace/requirements.txt
 EOF
     fi
     
@@ -465,11 +468,13 @@ EOF
 function create_backend_files() {
   print_status "Creating backend files..."
   
+  cd "$PROJECT_ROOT"
+  
   # Create Dockerfile.dev
   cat > backend/Dockerfile.dev << 'EOF'
 FROM python:3.12-slim
 
-WORKDIR /workspace/backend
+WORKDIR /workspace
 
 # Install development tools and dependencies
 RUN apt-get update && apt-get install -y \
@@ -514,13 +519,13 @@ RUN pyenv install 3.12.0 && \
 # Install UV for dependency management
 RUN pip install uv
 
-# Create virtual environment with UV
-RUN python -m venv venv
-ENV PATH="/workspace/backend/venv/bin:$PATH"
+# Create virtual environment with UV (will be mounted from host)
+# RUN python -m venv venv
+ENV PATH="/workspace/venv/bin:$PATH"
 
 # Install Python packages using UV
 COPY requirements.txt .
-RUN uv pip install -r requirements.txt
+# RUN uv pip install -r requirements.txt
 
 # Add useful aliases
 RUN echo '# Aliases' >> ~/.zshrc && \
@@ -536,7 +541,7 @@ EXPOSE 8000
 SHELL ["/bin/zsh", "-c"]
 
 # Setup virtual environment activation on container startup
-RUN echo 'source /workspace/backend/venv/bin/activate' >> ~/.zshrc
+RUN echo 'source /workspace/venv/bin/activate' >> ~/.zshrc
 
 # Keep container running during development
 CMD ["zsh", "-c", "while sleep 1000; do :; done"]
@@ -657,6 +662,8 @@ EOF
 # Create frontend files
 function create_frontend_files() {
   print_status "Creating frontend files..."
+  
+  cd "$PROJECT_ROOT"
   
   # Create Dockerfile.dev
   cat > frontend/Dockerfile.dev << 'EOF'
@@ -779,6 +786,8 @@ EOF
 function create_database_files() {
   print_status "Creating database files..."
   
+  cd "$PROJECT_ROOT"
+  
   # Create Dockerfile
   cat > database/Dockerfile << 'EOF'
 FROM postgres:15
@@ -832,6 +841,8 @@ EOF
 function create_redis_files() {
   print_status "Creating Redis configuration..."
   
+  cd "$PROJECT_ROOT"
+  
   cat > redis/redis.conf << 'EOF'
 bind 0.0.0.0
 protected-mode yes
@@ -858,12 +869,27 @@ EOF
   print_status "Redis configuration created."
 }
 
-# Create Git configuration
-function create_git_files() {
-  print_status "Creating Git configuration..."
+# Update .gitignore for existing repository
+function update_gitignore() {
+  local gitignore_file="$PROJECT_ROOT/.gitignore"
   
-  # Create .gitignore
-  cat > .gitignore << 'EOF'
+  if [ -f "$gitignore_file" ]; then
+    print_status "Updating existing .gitignore"
+    # Add our entries if they don't exist
+    grep -q "^venv/" "$gitignore_file" || echo "venv/" >> "$gitignore_file"
+    grep -q "^node_modules/" "$gitignore_file" || echo "node_modules/" >> "$gitignore_file"
+    grep -q "^__pycache__/" "$gitignore_file" || echo "__pycache__/" >> "$gitignore_file"
+    grep -q "^\.env" "$gitignore_file" || echo ".env" >> "$gitignore_file"
+    grep -q "^\.DS_Store" "$gitignore_file" || echo ".DS_Store" >> "$gitignore_file"
+  else
+    print_status "Creating .gitignore"
+    create_gitignore_file
+  fi
+}
+
+# Create complete .gitignore file
+function create_gitignore_file() {
+  cat > "$PROJECT_ROOT/.gitignore" << 'EOF'
 # Node
 node_modules/
 .next/
@@ -920,10 +946,21 @@ EOF
   print_status "Git repository initialized with .gitignore."
 }
 
+# Create Git configuration
+function create_git_files() {
+  print_status "Creating Git configuration..."
+  
+  cd "$PROJECT_ROOT"
+  
+  # Create .gitignore
+  create_gitignore_file
+}
+
 # Create a sample API status component for frontend
 function create_sample_component() {
   print_status "Creating sample API status component..."
   
+  cd "$PROJECT_ROOT"
   mkdir -p frontend/src/components
   
   cat > frontend/src/components/ApiStatus.tsx << 'EOF'
@@ -973,12 +1010,14 @@ EOF
 function create_readme() {
   print_status "Creating README.md with usage instructions..."
   
+  cd "$PROJECT_ROOT"
+  
   cat > README.md << 'EOF'
 # Development Environment Setup
 
 This project uses VS Code DevContainers for development. It includes:
 
-- Python (FastAPI) backend with pyenv
+- Python (FastAPI) backend with virtual environment
 - Next.js frontend with TypeScript
 - PostgreSQL database with PGVector extension
 - Redis for queues
@@ -991,21 +1030,33 @@ This project uses VS Code DevContainers for development. It includes:
 - Docker Desktop
 - Visual Studio Code
 - VS Code Remote - Containers extension
+- Python 3.12+
 
-### Opening the Project
+### Setup Instructions
 
-1. Clone this repository
-2. Open the project folder in VS Code
-3. When prompted, click "Reopen in Container"
-   - Alternatively, press F1 and select "Remote-Containers: Open Folder in Container..."
+**Note**: After setup is complete, you can safely delete the `project-template/` directory.
+
+1. If using an existing codebase, ensure you're in the root directory
+2. Run the setup script: `./project-template/project-setup.sh`
+3. Select the components you want to include
+4. Open the project in VS Code
+5. When prompted, click "Reopen in Container"
+6. Delete the `project-template/` directory (optional)
 
 This will start all the containers and configure the development environment.
 
 ### Development Workflow
 
+#### Python Virtual Environment
+
+- The virtual environment is located at `./venv/`
+- Activate with: `source venv/bin/activate`
+- Install dependencies: `pip install -r requirements.txt`
+
 #### Backend (FastAPI)
 
 - Open a terminal in VS Code
+- Activate venv: `source venv/bin/activate`
 - Run `rs` to start the FastAPI server (alias for `uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload`)
 - Access the API at http://localhost:8000
 - API documentation is available at http://localhost:8000/docs
@@ -1040,21 +1091,41 @@ This will start all the containers and configure the development environment.
 │   │   ├── core/        # Core functionality
 │   │   └── models/      # Database models
 │   ├── Dockerfile       # Production Dockerfile
-│   ├── Dockerfile.dev   # Development Dockerfile
-│   └── requirements.txt # Python dependencies
+│   └── Dockerfile.dev   # Development Dockerfile
 ├── frontend/            # Next.js frontend
 │   ├── src/             # Source code
 │   │   ├── app/         # Next.js App Router
 │   │   └── components/  # React components
 │   ├── Dockerfile       # Production Dockerfile
-│   └── Dockerfile.dev   # Development Dockerfile
+│   ├── Dockerfile.dev   # Development Dockerfile
+│   └── package.json     # Node.js dependencies
 ├── database/            # PostgreSQL configuration
 │   ├── init-scripts/    # Database initialization scripts
 │   └── Dockerfile       # Database Dockerfile with PGVector
 ├── redis/               # Redis configuration
 │   └── redis.conf       # Redis configuration file
+├── venv/                # Python virtual environment
+├── requirements.txt     # Python dependencies
 └── docker-compose.yml   # Docker Compose configuration
 ```
+
+## Starting Services
+
+To start the development environment:
+```bash
+./project-template/start.sh  # Can be deleted after initial setup
+# OR if project-template was deleted:
+docker-compose up -d
+```
+
+## Cleanup
+
+After setup is complete, you can safely delete the `project-template/` directory:
+```bash
+rm -rf project-template/
+```
+
+All project files are now at the root level and the development environment will continue to work normally.
 
 ## Troubleshooting
 
@@ -1085,8 +1156,7 @@ EOF
 # Add a function to create a minimal Python project
 function create_minimal_python_project() {
   print_status "Creating minimal Python project..."
-  mkdir -p "$PROJECT_NAME"
-  cd "$PROJECT_NAME"
+  cd "$PROJECT_ROOT"
   python3 -m venv venv
   touch requirements.txt
   print_status "Minimal Python project created."
@@ -1101,8 +1171,8 @@ function main() {
   echo -e "${GREEN}=======================================${NC}"
   echo ""
   
-  # Get project name
-  get_project_name
+  # Detect existing codebase
+  detect_existing_codebase
   
   # Select components
   select_components
@@ -1110,14 +1180,27 @@ function main() {
   # If no components selected, create minimal Python project and exit
   if [[ "$USE_BACKEND" == false && "$USE_FRONTEND" == false && "$USE_DATABASE" == false && "$USE_REDIS" == false ]]; then
     create_minimal_python_project
+    
+    # Initialize Git if not existing
+    if [ "$EXISTING_REPO" = false ]; then
+      cd "$PROJECT_ROOT"
+      git init
+      echo "venv/" > .gitignore
+      echo "__pycache__/" >> .gitignore
+      echo "*.pyc" >> .gitignore
+      git add .
+      git commit -m "Initial commit: minimal Python project"
+    fi
+    
     echo ""
     echo -e "${GREEN}=======================================${NC}"
     echo -e "${GREEN}    Setup Complete!                   ${NC}"
     echo -e "${GREEN}=======================================${NC}"
     echo ""
-    echo -e "Your minimal Python project has been set up in the ${YELLOW}$PROJECT_NAME${NC} directory."
+    echo -e "Your minimal Python project has been set up."
     echo -e "Activate your virtual environment with: source venv/bin/activate"
     echo -e "Add dependencies to requirements.txt as needed."
+    echo -e "You can now delete the ${YELLOW}project-template/${NC} directory."
     echo ""
     exit 0
   fi
@@ -1150,8 +1233,13 @@ function main() {
     create_sample_component
   fi
   
-  # Create git files
-  create_git_files
+  # Create git files (only if not existing repo)
+  if [ "$EXISTING_REPO" = false ]; then
+    create_git_files
+  else
+    print_status "Updating .gitignore for existing repository"
+    update_gitignore
+  fi
   
   # Create README
   create_readme
@@ -1162,8 +1250,9 @@ function main() {
   echo -e "${GREEN}    Setup Complete!                   ${NC}"
   echo -e "${GREEN}=======================================${NC}"
   echo ""
-  echo -e "Your development environment has been set up in the ${YELLOW}$PROJECT_NAME${NC} directory."
+  echo -e "Your development environment has been set up."
   echo -e "Open this directory in VS Code and select 'Reopen in Container' when prompted."
+  echo -e "You can now delete the ${YELLOW}project-template/${NC} directory."
   echo ""
   echo -e "See ${YELLOW}README.md${NC} for detailed instructions."
   echo ""

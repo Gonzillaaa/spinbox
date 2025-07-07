@@ -1,14 +1,18 @@
 # Modular Development Environment with DevContainers
 
-A comprehensive toolkit for creating customizable, isolated development environments using Docker, VS Code DevContainers, and Zsh with Powerlevel10k. Build your perfect stack by selecting any combination of:
+A comprehensive, **disposable** toolkit for setting up customizable development environments in both new and existing codebases. Uses Docker, VS Code DevContainers, and Zsh with Powerlevel10k. Build your perfect stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
 - PostgreSQL database with PGVector
 - Redis for caching and queues
 
+**Key Feature**: This setup directory is completely disposable - after setup, you can delete `project-template/` and your development environment will continue working perfectly!
+
 ## 🚀 Features
 
+- **Works with Existing Codebases**: No need to start from scratch
+- **Disposable Setup**: Delete the setup directory after use
 - **Modular Components**: Choose only what you need
 - **Modern Tech Stack**: Python 3.12+, UV package manager, Next.js
 - **Enhanced Developer Experience**:
@@ -17,7 +21,7 @@ A comprehensive toolkit for creating customizable, isolated development environm
   - Preconfigured aliases and shortcuts
 - **macOS Optimized**: Built with performance considerations for macOS
 - **Fully Automated**: Single-command setup and initialization
-- **Expandable**: Add components to existing projects anytime
+- **Root-Level Deployment**: All project files created at repository root
 
 ## 📋 Prerequisites
 
@@ -28,10 +32,10 @@ A comprehensive toolkit for creating customizable, isolated development environm
 
 ## 🏁 Quick Start
 
-### 1. Set Up Your Environment
+### 1. Set Up Your Environment (One-time)
 
 ```bash
-# Clone this repository
+# Clone this repository temporarily
 git clone https://github.com/Gonzillaaa/project-template.git
 cd project-template
 
@@ -42,36 +46,68 @@ chmod +x macos-setup.sh
 
 This installs all required tools, configures Zsh with Powerlevel10k, and prepares VS Code.
 
-### 2. Create a New Project
+### 2. Set Up Your Project
 
+#### For Existing Codebases:
 ```bash
-chmod +x project-setup.sh
-./project-setup.sh
+cd your-existing-repo/
+git clone https://github.com/Gonzillaaa/project-template.git project-template/
+./project-template/project-setup.sh
+# Select components you want to add
+# After setup completes:
+rm -rf project-template/  # Safe to delete!
 ```
 
-Follow the prompts to:
-
-- Name your project
-- Select which components to include
-- Configure project-specific settings
+#### For New Projects:
+```bash
+mkdir new-project && cd new-project/
+git clone https://github.com/Gonzillaaa/project-template.git project-template/
+./project-template/project-setup.sh
+# Select components
+rm -rf project-template/  # Safe to delete!
+```
 
 ### 3. Start Your Development Environment
 
 ```bash
-./start.sh
+# If project-template still exists:
+./project-template/start.sh
+
+# OR if you deleted project-template:
+docker-compose up -d
+code .  # Open in VS Code
 ```
 
 VS Code will open with your DevContainer environment ready to use.
 
-## 🗂️ Repository Structure
+## 🗂️ Structure
 
+### Setup Directory (Disposable)
 ```
 project-template/
 ├── macos-setup.sh         # Environment setup for macOS
 ├── project-setup.sh       # Project creation and configuration
 ├── start.sh               # Project startup script
 ├── vscode-setup.sh        # VS Code setup script
-├── README.md              # This file
+├── lib/                   # Utility libraries
+├── tests/                 # Test framework
+├── docs/                  # Documentation
+└── README.md              # This file
+```
+
+### After Setup (Permanent)
+```
+your-repo/
+├── backend/               # FastAPI backend (if selected)
+├── frontend/              # Next.js frontend (if selected)
+├── database/              # PostgreSQL config (if selected)
+├── redis/                 # Redis config (if selected)
+├── .devcontainer/         # VS Code DevContainer config
+├── docker-compose.yml     # Docker services
+├── venv/                  # Python virtual environment
+├── requirements.txt       # Python dependencies
+├── package.json          # Node.js dependencies (if frontend)
+└── README.md             # Project documentation
 ```
 
 ## 🧩 Components
@@ -108,19 +144,21 @@ project-template/
 
 ## 🔄 Adding Components Later
 
-Already created a project but need to add more components? No problem! You have two options:
+Already set up a project but need to add more components? No problem!
 
-### Option 1: Using the Scripts
-
-Create a temporary project with only the component you want to add, then copy the relevant files.
+### Re-run Setup
 
 ```bash
-./project-setup.sh
-# Select only the component you want to add
-# Then copy the files to your existing project
+# In your existing project:
+git clone https://github.com/Gonzillaaa/project-template.git project-template/
+./project-template/project-setup.sh
+# Select additional components you want to add
+rm -rf project-template/
 ```
 
-### Option 2: Manual Addition
+The setup script will detect existing components and only add new ones.
+
+### Manual Addition
 
 Follow our detailed guides in the [docs/adding-components.md](./docs/adding-components.md) file.
 
@@ -161,12 +199,24 @@ Add your own components by creating templates in the `templates/` directory and 
 
 ### Local Development
 
-For backend development outside containers, use the provided `setup_local_env.sh` script in your project:
+For backend development outside containers, activate the virtual environment:
 
 ```bash
-cd your-project/backend
-./setup_local_env.sh
+source venv/bin/activate
+pip install -r requirements.txt
+cd backend
+uvicorn app.main:app --reload
 ```
+
+### Cleanup After Setup
+
+Once your project is set up, the `project-template/` directory serves no purpose:
+
+```bash
+rm -rf project-template/
+```
+
+All your development environment files are now at the root level and will continue working normally.
 
 ## 🔍 Troubleshooting
 
@@ -175,6 +225,7 @@ See [docs/troubleshooting.md](./docs/troubleshooting.md) for solutions to common
 ## 📚 Documentation
 
 - [Adding Components](./docs/adding-components.md)
+- [Testing Documentation](./docs/testing.md)
 - [Troubleshooting](./docs/troubleshooting.md)
 - [Performance Optimization](./docs/performance.md)
 

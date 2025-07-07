@@ -4,6 +4,7 @@
 
 # Source the utilities library
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../" && pwd)"
 source "$SCRIPT_DIR/lib/utils.sh"
 
 # Initialize error handling and logging
@@ -45,6 +46,8 @@ function check_docker_compose() {
 function detect_components() {
   print_status "Detecting components..."
   
+  cd "$PROJECT_ROOT"
+  
   if [[ -d "backend" ]]; then
     USE_BACKEND=true
     print_status "Detected: FastAPI backend"
@@ -76,6 +79,8 @@ function detect_components() {
 function start_services() {
   print_status "Starting services..."
   
+  cd "$PROJECT_ROOT"
+  
   if [[ "$DRY_RUN" == true ]]; then
     print_info "DRY RUN: Would start Docker Compose services"
     return 0
@@ -92,6 +97,8 @@ function start_services() {
 # Check service health
 function check_services() {
   print_status "Checking service health..."
+  
+  cd "$PROJECT_ROOT"
   
   if [[ "$DRY_RUN" == true ]]; then
     print_info "DRY RUN: Would check service health"
@@ -239,9 +246,9 @@ function validate_environment() {
   print_status "Validating environment..."
   
   # Check for docker-compose.yml
-  if [[ ! -f "docker-compose.yml" ]]; then
-    print_error "docker-compose.yml not found in current directory"
-    print_info "Please run this script from a project directory created with ./project-setup.sh"
+  if [[ ! -f "$PROJECT_ROOT/docker-compose.yml" ]]; then
+    print_error "docker-compose.yml not found in project root"
+    print_info "Please run ./project-template/project-setup.sh first to set up the project"
     return 1
   fi
   
@@ -287,6 +294,7 @@ function main() {
       print_error "Step '$step' failed"
       if [[ "$DRY_RUN" != true ]]; then
         print_warning "Attempting to stop any started services..."
+        cd "$PROJECT_ROOT"
         docker-compose down 2>/dev/null || true
       fi
       exit 1
