@@ -11,7 +11,7 @@ A comprehensive toolkit for creating customizable, isolated development environm
 
 - **Modular Components**: Choose only what you need
 - **Modern Tech Stack**: Python 3.12+, UV package manager, Next.js
-- **Enhanced Developer Experience**: 
+- **Enhanced Developer Experience**:
   - VS Code DevContainers for consistency
   - Zsh with Powerlevel10k for a beautiful, functional terminal
   - Preconfigured aliases and shortcuts
@@ -32,12 +32,12 @@ A comprehensive toolkit for creating customizable, isolated development environm
 
 ```bash
 # Clone this repository
-git clone https://github.com/yourusername/devcontainer-setup.git
-cd devcontainer-setup
+git clone https://github.com/Gonzillaaa/project-template.git
+cd project-template
 
 # Run the macOS setup script
-chmod +x scripts/macos-setup.sh
-./scripts/macos-setup.sh
+chmod +x macos-setup.sh
+./macos-setup.sh
 ```
 
 This installs all required tools, configures Zsh with Powerlevel10k, and prepares VS Code.
@@ -45,11 +45,12 @@ This installs all required tools, configures Zsh with Powerlevel10k, and prepare
 ### 2. Create a New Project
 
 ```bash
-chmod +x scripts/project-setup.sh
-./scripts/project-setup.sh
+chmod +x project-setup.sh
+./project-setup.sh
 ```
 
 Follow the prompts to:
+
 - Name your project
 - Select which components to include
 - Configure project-specific settings
@@ -57,7 +58,6 @@ Follow the prompts to:
 ### 3. Start Your Development Environment
 
 ```bash
-cd your-project-name
 ./start.sh
 ```
 
@@ -66,23 +66,12 @@ VS Code will open with your DevContainer environment ready to use.
 ## 🗂️ Repository Structure
 
 ```
-devcontainer-setup/
-├── scripts/                   # Automation scripts
-│   ├── macos-setup.sh         # Environment setup for macOS
-│   ├── project-setup.sh       # Project creation and configuration
-│   └── start-template.sh      # Project startup template
-├── templates/                 # Component templates
-│   ├── backend/               # FastAPI backend templates
-│   ├── frontend/              # Next.js frontend templates
-│   ├── database/              # PostgreSQL templates
-│   ├── redis/                 # Redis templates
-│   ├── devcontainer/          # VS Code DevContainer config
-│   └── docker-compose.yml     # Base Docker Compose template
-├── examples/                  # Example projects
-│   ├── minimal/               # Minimal example (backend only)
-│   └── full-stack/            # Complete example (all components)
-├── docs/                      # Documentation
-└── README.md                  # This file
+project-template/
+├── macos-setup.sh         # Environment setup for macOS
+├── project-setup.sh       # Project creation and configuration
+├── start.sh               # Project startup script
+├── project-setup-old.sh   # Legacy project setup script
+├── README.md              # This file
 ```
 
 ## 🧩 Components
@@ -126,7 +115,7 @@ Already created a project but need to add more components? No problem! You have 
 Create a temporary project with only the component you want to add, then copy the relevant files.
 
 ```bash
-./scripts/project-setup.sh
+./project-setup.sh
 # Select only the component you want to add
 # Then copy the files to your existing project
 ```
@@ -158,6 +147,7 @@ The Docker Compose file is custom-built for your selected components with:
 ### Zsh with Powerlevel10k
 
 Every container comes with:
+
 - Beautiful Powerlevel10k theme
 - Helpful aliases for common commands
 - Syntax highlighting
