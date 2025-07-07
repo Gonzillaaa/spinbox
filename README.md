@@ -5,6 +5,7 @@ A comprehensive **scaffolding** toolkit for setting up customizable development 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
 - PostgreSQL database with PGVector
+- MongoDB document database
 - Redis for caching and queues
 
 **Key Feature**: This scaffolding directory is temporary - after setup, you can delete `project-template/` and your development environment will continue working perfectly!
@@ -104,6 +105,7 @@ your-repo/
 ├── backend/               # FastAPI backend (if selected)
 ├── frontend/              # Next.js frontend (if selected)
 ├── database/              # PostgreSQL config (if selected)
+├── mongodb/               # MongoDB config (if selected)
 ├── redis/                 # Redis config (if selected)
 ├── .devcontainer/         # VS Code DevContainer config
 ├── docker-compose.yml     # Docker services
@@ -138,6 +140,13 @@ your-repo/
 - Initialization scripts for schema setup
 - Proper volume configuration
 - PGVector extension pre-installed
+
+### MongoDB
+
+- Document database for flexible data storage
+- Initialization scripts for collections and indexes
+- Authentication enabled
+- Volume persistence configured
 
 ### Redis
 

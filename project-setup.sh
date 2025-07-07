@@ -35,6 +35,7 @@ USE_BACKEND=false
 USE_FRONTEND=false
 USE_DATABASE=false
 USE_REDIS=false
+USE_MONGODB=false
 
 # Function to select components
 function select_components() {
@@ -62,6 +63,12 @@ function select_components() {
   if [[ $INCLUDE_REDIS =~ ^[Yy]$ ]]; then
     USE_REDIS=true
     print_status "Redis will be included."
+  fi
+  
+  read -p "Include MongoDB? (y/N): " INCLUDE_MONGODB
+  if [[ $INCLUDE_MONGODB =~ ^[Yy]$ ]]; then
+    USE_MONGODB=true
+    print_status "MongoDB will be included."
   fi
   # No error if all are false; allow minimal Python project
 }
@@ -108,6 +115,10 @@ function create_project_structure() {
   
   if [ "$USE_REDIS" = true ]; then
     mkdir -p redis
+  fi
+  
+  if [ "$USE_MONGODB" = true ]; then
+    mkdir -p mongodb/init-scripts
   fi
   
   print_status "Project structure created."
@@ -176,6 +187,13 @@ EOF
 EOF
   fi
   
+  # Add MongoDB extensions if MongoDB is selected
+  if [ "$USE_MONGODB" = true ]; then
+    cat >> .devcontainer/devcontainer.json << 'EOF'
+        "mongodb.mongodb-vscode",
+EOF
+  fi
+  
   # Add Docker extension for all configs
   cat >> .devcontainer/devcontainer.json << 'EOF'
         "ms-azuretools.vscode-docker"
@@ -235,6 +253,12 @@ EOF
   if [ "$USE_REDIS" = true ]; then
     cat >> .devcontainer/devcontainer.json << 'EOF'
     6379,
+EOF
+  fi
+  
+  if [ "$USE_MONGODB" = true ]; then
+    cat >> .devcontainer/devcontainer.json << 'EOF'
+    27017,
 EOF
   fi
   
@@ -323,13 +347,20 @@ EOF
 EOF
     fi
     
+    # Add MongoDB environment variables if MongoDB is selected
+    if [ "$USE_MONGODB" = true ]; then
+      cat >> docker-compose.yml << 'EOF'
+      - MONGODB_URL=mongodb://mongodb:mongodb@mongodb:27017/app_db
+EOF
+    fi
+    
     cat >> docker-compose.yml << 'EOF'
     ports:
       - "8000:8000"
 EOF
     
     # Add dependencies if selected
-    if [ "$USE_DATABASE" = true ] || [ "$USE_REDIS" = true ]; then
+    if [ "$USE_DATABASE" = true ] || [ "$USE_REDIS" = true ] || [ "$USE_MONGODB" = true ]; then
       cat >> docker-compose.yml << 'EOF'
     depends_on:
 EOF
@@ -343,6 +374,12 @@ EOF
       if [ "$USE_REDIS" = true ]; then
         cat >> docker-compose.yml << 'EOF'
       - redis
+EOF
+      fi
+      
+      if [ "$USE_MONGODB" = true ]; then
+        cat >> docker-compose.yml << 'EOF'
+      - mongodb
 EOF
       fi
     fi
@@ -426,6 +463,28 @@ EOF
 EOF
   fi
   
+  # Add MongoDB service if selected
+  if [ "$USE_MONGODB" = true ]; then
+    cat >> docker-compose.yml << 'EOF'
+  # MongoDB database
+  mongodb:
+    image: mongo:7
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongodb
+      - MONGO_INITDB_ROOT_PASSWORD=mongodb
+      - MONGO_INITDB_DATABASE=app_db
+    volumes:
+      - mongodb-data:/data/db
+      - ./mongodb/init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+EOF
+  fi
+  
   # Add networks and volumes
   cat >> docker-compose.yml << 'EOF'
 networks:
@@ -445,6 +504,12 @@ EOF
   if [ "$USE_REDIS" = true ]; then
     cat >> docker-compose.yml << 'EOF'
   redis-data:
+EOF
+  fi
+  
+  if [ "$USE_MONGODB" = true ]; then
+    cat >> docker-compose.yml << 'EOF'
+  mongodb-data:
 EOF
   fi
   
@@ -576,6 +641,15 @@ httpx>=0.24.1
 asyncio>=3.4.3
 typing-extensions>=4.7.0
 EOF
+
+  # Add MongoDB dependencies if MongoDB is selected
+  if [ "$USE_MONGODB" = true ]; then
+    cat >> backend/requirements.txt << 'EOF'
+# MongoDB dependencies
+motor>=3.3.0
+beanie>=1.23.0
+EOF
+  fi
 
   # Create .dockerignore
   cat > backend/.dockerignore << 'EOF'
@@ -862,6 +936,105 @@ EOF
   print_status "Redis configuration created."
 }
 
+# Create MongoDB configuration
+function create_mongodb_files() {
+  print_status "Creating MongoDB configuration..."
+  
+  cd "$PROJECT_ROOT"
+  
+  # Create MongoDB initialization script
+  cat > mongodb/init-scripts/01-init.js << 'EOF'
+// MongoDB initialization script
+// This script runs when the MongoDB container starts for the first time
+
+// Switch to the app database
+db = db.getSiblingDB('app_db');
+
+// Create a sample users collection with some initial data
+db.users.insertMany([
+  {
+    email: "admin@example.com",
+    name: "Admin User",
+    role: "admin",
+    createdAt: new Date()
+  },
+  {
+    email: "user@example.com",
+    name: "Regular User",
+    role: "user",
+    createdAt: new Date()
+  }
+]);
+
+// Create indexes
+db.users.createIndex({ email: 1 }, { unique: true });
+db.users.createIndex({ createdAt: 1 });
+
+// Create a sample items collection for demonstrations
+db.items.insertMany([
+  {
+    name: "Sample Item 1",
+    description: "This is a sample item for testing",
+    price: 29.99,
+    category: "electronics",
+    createdAt: new Date()
+  },
+  {
+    name: "Sample Item 2",
+    description: "Another sample item",
+    price: 49.99,
+    category: "books",
+    createdAt: new Date()
+  }
+]);
+
+// Create indexes for items
+db.items.createIndex({ name: "text", description: "text" });
+db.items.createIndex({ category: 1 });
+db.items.createIndex({ price: 1 });
+
+print("MongoDB initialization completed successfully!");
+EOF
+
+  # Create MongoDB configuration file
+  cat > mongodb/mongod.conf << 'EOF'
+# MongoDB configuration file
+
+# Storage settings
+storage:
+  dbPath: /data/db
+  journal:
+    enabled: true
+
+# Network settings
+net:
+  port: 27017
+  bindIp: 0.0.0.0
+
+# Security settings
+security:
+  authorization: enabled
+
+# Logging settings
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+  logRotate: rename
+
+# Process management
+processManagement:
+  fork: false
+  pidFilePath: /var/run/mongodb/mongod.pid
+
+# Replica set settings (for development)
+# replication:
+#   replSetName: "rs0"
+EOF
+
+  print_status "MongoDB configuration created."
+}
+
 # Update .gitignore for existing repository
 function update_gitignore() {
   local gitignore_file="$PROJECT_ROOT/.gitignore"
@@ -1013,6 +1186,7 @@ This project uses DevContainers for development. It includes:
 - Python (FastAPI) backend with virtual environment
 - Next.js frontend with TypeScript
 - PostgreSQL database with PGVector extension
+- MongoDB document database
 - Redis for queues
 - Zsh with Powerlevel10k theme
 
@@ -1068,6 +1242,15 @@ This will start all the containers and configure the development environment.
   - Password: postgres
   - Database: app_db
 
+#### MongoDB
+
+- Connect to MongoDB using:
+  - Host: localhost
+  - Port: 27017
+  - Username: mongodb
+  - Password: mongodb
+  - Database: app_db
+
 #### Redis
 
 - Connect to Redis on localhost:6379
@@ -1094,6 +1277,9 @@ This will start all the containers and configure the development environment.
 ├── database/            # PostgreSQL configuration
 │   ├── init-scripts/    # Database initialization scripts
 │   └── Dockerfile       # Database Dockerfile with PGVector
+├── mongodb/             # MongoDB configuration
+│   ├── init-scripts/    # MongoDB initialization scripts
+│   └── mongod.conf      # MongoDB configuration file
 ├── redis/               # Redis configuration
 │   └── redis.conf       # Redis configuration file
 ├── venv/                # Python virtual environment
@@ -1172,7 +1358,7 @@ function main() {
   select_components
   
   # If no components selected, create minimal Python project and exit
-  if [[ "$USE_BACKEND" == false && "$USE_FRONTEND" == false && "$USE_DATABASE" == false && "$USE_REDIS" == false ]]; then
+  if [[ "$USE_BACKEND" == false && "$USE_FRONTEND" == false && "$USE_DATABASE" == false && "$USE_REDIS" == false && "$USE_MONGODB" == false ]]; then
     create_minimal_python_project
     
     # Initialize Git if not existing
@@ -1221,6 +1407,10 @@ function main() {
   
   if [ "$USE_REDIS" = true ]; then
     create_redis_files
+  fi
+  
+  if [ "$USE_MONGODB" = true ]; then
+    create_mongodb_files
   fi
   
   if [ "$USE_FRONTEND" = true ] && [ "$USE_BACKEND" = true ]; then

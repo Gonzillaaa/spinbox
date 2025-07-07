@@ -17,6 +17,7 @@ USE_BACKEND=false
 USE_FRONTEND=false
 USE_DATABASE=false
 USE_REDIS=false
+USE_MONGODB=false
 
 # Check if Docker is running
 function check_docker() {
@@ -68,8 +69,13 @@ function detect_components() {
     print_status "Detected: Redis"
   fi
   
+  if [[ -d "mongodb" ]]; then
+    USE_MONGODB=true
+    print_status "Detected: MongoDB"
+  fi
+  
   # Check if at least one component is detected
-  if [[ "$USE_BACKEND" == false && "$USE_FRONTEND" == false && "$USE_DATABASE" == false && "$USE_REDIS" == false ]]; then
+  if [[ "$USE_BACKEND" == false && "$USE_FRONTEND" == false && "$USE_DATABASE" == false && "$USE_REDIS" == false && "$USE_MONGODB" == false ]]; then
     print_error "No components detected in project. Please make sure you're in the right directory."
     return 1
   fi
@@ -178,6 +184,13 @@ function display_info() {
   
   if [[ "$USE_REDIS" == true ]]; then
     echo "- Redis: localhost:6379"
+  fi
+  
+  if [[ "$USE_MONGODB" == true ]]; then
+    echo "- MongoDB: localhost:27017"
+    echo "  Username: mongodb"
+    echo "  Password: mongodb"
+    echo "  Database: app_db"
   fi
   
   echo "======================================================"
