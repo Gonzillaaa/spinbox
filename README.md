@@ -70,7 +70,7 @@ project-template/
 ├── macos-setup.sh         # Environment setup for macOS
 ├── project-setup.sh       # Project creation and configuration
 ├── start.sh               # Project startup script
-├── project-setup-old.sh   # Legacy project setup script
+├── vscode-setup.sh        # VS Code setup script
 ├── README.md              # This file
 ```
 
