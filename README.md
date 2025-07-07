@@ -1,18 +1,18 @@
 # Modular Development Environment with DevContainers
 
-A comprehensive, **disposable** toolkit for setting up customizable development environments in both new and existing codebases. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your perfect stack by selecting any combination of:
+A comprehensive **scaffolding** toolkit for setting up customizable development environments in both new and existing codebases. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your perfect stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
 - PostgreSQL database with PGVector
 - Redis for caching and queues
 
-**Key Feature**: This setup directory is completely disposable - after setup, you can delete `project-template/` and your development environment will continue working perfectly!
+**Key Feature**: This scaffolding directory is temporary - after setup, you can delete `project-template/` and your development environment will continue working perfectly!
 
 ## 🚀 Features
 
 - **Works with Existing Codebases**: No need to start from scratch
-- **Disposable Setup**: Delete the setup directory after use
+- **Temporary Scaffolding**: Delete the setup directory after use
 - **Modular Components**: Choose only what you need
 - **Modern Tech Stack**: Python 3.12+, UV package manager, Next.js
 - **Enhanced Developer Experience**:
@@ -85,7 +85,7 @@ Your editor should detect the DevContainer configuration and prompt to "Reopen i
 
 ## 🗂️ Structure
 
-### Setup Directory (Disposable)
+### Scaffolding Directory (Temporary)
 ```
 project-template/
 ├── macos-setup.sh         # Environment setup for macOS
