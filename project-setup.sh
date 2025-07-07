@@ -145,7 +145,7 @@ EOF
 EOF
   fi
   
-  # Add VS Code customizations
+  # Add editor customizations (VS Code/Cursor compatible)
   cat >> .devcontainer/devcontainer.json << 'EOF'
   "customizations": {
     "vscode": {
@@ -156,7 +156,7 @@ EOF
   if [ "$USE_BACKEND" = true ]; then
     cat >> .devcontainer/devcontainer.json << 'EOF'
         "ms-python.python",
-        "ms-python.vscode-pylance",
+        "ms-python.pylint",
 EOF
   fi
   
@@ -186,9 +186,8 @@ EOF
   # Add Python settings if backend is selected
   if [ "$USE_BACKEND" = true ]; then
     cat >> .devcontainer/devcontainer.json << 'EOF'
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.linting.enabled": true,
-        "python.linting.pylintEnabled": true,
+        "python.defaultInterpreterPath": "/workspace/venv/bin/python",
+        "python.terminal.activateEnvironment": false,
 EOF
   fi
   
@@ -204,13 +203,7 @@ EOF
   
   # Add terminal settings for all configs
   cat >> .devcontainer/devcontainer.json << 'EOF'
-        "terminal.integrated.defaultProfile.linux": "zsh",
-        "terminal.integrated.fontFamily": "MesloLGS NF",
-        "terminal.integrated.profiles.linux": {
-          "zsh": {
-            "path": "zsh"
-          }
-        }
+        "terminal.integrated.defaultProfile.linux": "zsh"
       }
     }
   },
@@ -1015,7 +1008,7 @@ function create_readme() {
   cat > README.md << 'EOF'
 # Development Environment Setup
 
-This project uses VS Code DevContainers for development. It includes:
+This project uses DevContainers for development. It includes:
 
 - Python (FastAPI) backend with virtual environment
 - Next.js frontend with TypeScript
@@ -1028,8 +1021,7 @@ This project uses VS Code DevContainers for development. It includes:
 ### Prerequisites
 
 - Docker Desktop
-- Visual Studio Code
-- VS Code Remote - Containers extension
+- DevContainer-compatible editor (VS Code, Cursor, etc.)
 - Python 3.12+
 
 ### Setup Instructions
@@ -1039,7 +1031,7 @@ This project uses VS Code DevContainers for development. It includes:
 1. If using an existing codebase, ensure you're in the root directory
 2. Run the setup script: `./project-template/project-setup.sh`
 3. Select the components you want to include
-4. Open the project in VS Code
+4. Open the project in your preferred editor (VS Code, Cursor, etc.)
 5. When prompted, click "Reopen in Container"
 6. Delete the `project-template/` directory (optional)
 
@@ -1143,11 +1135,13 @@ If containers fail to start:
 2. Try rebuilding with `docker-compose build --no-cache`
 3. Restart with `docker-compose down && docker-compose up -d`
 
-### VS Code Issues
+### Editor Issues
 
-If VS Code has issues with the DevContainer:
-1. Run the "Remote-Containers: Rebuild Container" command
-2. Check that you have the latest Remote - Containers extension
+If your editor has issues with the DevContainer:
+1. Try the "Rebuild Container" command in your editor
+2. Ensure you have the latest DevContainer extension installed
+3. VS Code: Install "Dev Containers" extension
+4. Cursor: DevContainer support is built-in
 EOF
 
   print_status "README created."

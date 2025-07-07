@@ -151,9 +151,9 @@ function setup_zsh() {
   
   # Update plugins
   if grep -q '^plugins=' "$HOME/.zshrc"; then
-    sed -i '' 's/^plugins=.*/plugins=(git docker docker-compose npm node python pip vscode zsh-autosuggestions zsh-syntax-highlighting)/' "$HOME/.zshrc"
+    sed -i '' 's/^plugins=.*/plugins=(git docker docker-compose npm node python pip zsh-autosuggestions zsh-syntax-highlighting)/' "$HOME/.zshrc"
   else
-    echo 'plugins=(git docker docker-compose npm node python pip vscode zsh-autosuggestions zsh-syntax-highlighting)' >> "$HOME/.zshrc"
+    echo 'plugins=(git docker docker-compose npm node python pip zsh-autosuggestions zsh-syntax-highlighting)' >> "$HOME/.zshrc"
   fi
   
   # Add Powerlevel10k config reference

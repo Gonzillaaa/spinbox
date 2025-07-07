@@ -141,24 +141,17 @@ function check_services() {
   print_status "All services are healthy."
 }
 
-# Open VS Code in current directory
-function open_vscode() {
-  print_status "Opening VS Code..."
-  
-  if [[ "$DRY_RUN" == true ]]; then
-    print_info "DRY RUN: Would open VS Code"
-    return 0
-  fi
-  
-  if check_command "code" "Visual Studio Code"; then
-    code .
-    print_status "VS Code opened."
-  else
-    print_warning "VS Code command not found. Please open VS Code manually."
-    if confirm "Would you like to install VS Code?"; then
-      print_info "Run ./vscode-setup.sh to install VS Code"
-    fi
-  fi
+# Display editor instructions
+function show_editor_info() {
+  print_status "Development environment is ready!"
+  echo ""
+  print_info "Open your preferred editor with DevContainer support:"
+  echo "  - VS Code: code ."
+  echo "  - Cursor: cursor ."
+  echo "  - Or manually open the project in your editor"
+  echo ""
+  print_info "Your editor should detect the .devcontainer configuration"
+  print_info "and prompt to 'Reopen in Container'"
 }
 
 # Display information about the running services
@@ -191,11 +184,11 @@ function display_info() {
   echo "To start developing:"
   
   if [[ "$USE_BACKEND" == true ]]; then
-    echo "- In VS Code Terminal, use 'rs' to start the FastAPI server"
+    echo "- In your editor's terminal, use 'rs' to start the FastAPI server"
   fi
   
   if [[ "$USE_FRONTEND" == true ]]; then
-    echo "- In a Terminal tab, use 'dev' to start the Next.js dev server"
+    echo "- In a terminal tab, use 'dev' to start the Next.js dev server"
   fi
   
   echo "======================================================"
@@ -280,7 +273,7 @@ function main() {
     "detect_components"
     "start_services"
     "check_services"
-    "open_vscode"
+    "show_editor_info"
   )
   
   local current=0

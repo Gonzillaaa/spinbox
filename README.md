@@ -1,6 +1,6 @@
 # Modular Development Environment with DevContainers
 
-A comprehensive, **disposable** toolkit for setting up customizable development environments in both new and existing codebases. Uses Docker, VS Code DevContainers, and Zsh with Powerlevel10k. Build your perfect stack by selecting any combination of:
+A comprehensive, **disposable** toolkit for setting up customizable development environments in both new and existing codebases. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your perfect stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
@@ -16,7 +16,7 @@ A comprehensive, **disposable** toolkit for setting up customizable development 
 - **Modular Components**: Choose only what you need
 - **Modern Tech Stack**: Python 3.12+, UV package manager, Next.js
 - **Enhanced Developer Experience**:
-  - VS Code DevContainers for consistency
+  - DevContainers for consistency across VS Code, Cursor, and other editors
   - Zsh with Powerlevel10k for a beautiful, functional terminal
   - Preconfigured aliases and shortcuts
 - **macOS Optimized**: Built with performance considerations for macOS
@@ -27,7 +27,7 @@ A comprehensive, **disposable** toolkit for setting up customizable development 
 
 - macOS (recommended, though scripts can be adapted for Linux/Windows)
 - Docker Desktop
-- Visual Studio Code
+- DevContainer-compatible editor (VS Code, Cursor, etc.)
 - Git
 
 ## 🏁 Quick Start
@@ -44,7 +44,7 @@ chmod +x macos-setup.sh
 ./macos-setup.sh
 ```
 
-This installs all required tools, configures Zsh with Powerlevel10k, and prepares VS Code.
+This installs all required tools and configures Zsh with Powerlevel10k.
 
 ### 2. Set Up Your Project
 
@@ -75,10 +75,13 @@ rm -rf project-template/  # Safe to delete!
 
 # OR if you deleted project-template:
 docker-compose up -d
-code .  # Open in VS Code
+# Then open in your preferred editor:
+code .     # VS Code
+cursor .   # Cursor
+# Or manually open the project folder
 ```
 
-VS Code will open with your DevContainer environment ready to use.
+Your editor should detect the DevContainer configuration and prompt to "Reopen in Container".
 
 ## 🗂️ Structure
 
