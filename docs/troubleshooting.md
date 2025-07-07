@@ -64,7 +64,7 @@ This guide helps you resolve common issues when using the project template.
    newgrp docker
    ```
 
-2. **Restart Docker Desktop (macOS/Windows)**
+2. **Restart Docker Desktop**
 
 3. **Check Docker socket permissions:**
    ```bash
@@ -385,7 +385,7 @@ This guide helps you resolve common issues when using the project template.
 
 3. **Enable Docker Desktop performance features:**
    - Use VirtioFS (macOS)
-   - Use WSL2 backend (Windows)
+   - Ensure proper resource allocation
 
 ### High Memory Usage
 

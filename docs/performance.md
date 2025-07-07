@@ -184,11 +184,11 @@ volumes:
   - .:/workspace:cached     # Container reads are prioritized
 ```
 
-#### Windows with WSL2
+#### File System Optimization
 
 ```yaml
-# Store project files in WSL2 filesystem for better performance
-# Clone project to: /home/username/projects/
+# Store project files on fastest available storage
+# Use SSD for optimal performance
 ```
 
 ## Build Performance
@@ -515,13 +515,13 @@ docker-compose logs backend | grep "ERROR\|WARN"
        platform: linux/amd64
    ```
 
-### Windows
+### Additional Optimizations
 
-1. **Use WSL2 Backend:**
+1. **Docker Settings:**
    - Docker Desktop → Settings → General
-   - Use WSL2 based engine
+   - Optimize resource allocation
 
-2. **Store Projects in WSL2:**
+2. **Storage Optimization:**
    ```bash
    # Clone projects to WSL2 filesystem
    cd /home/username/

@@ -1,6 +1,6 @@
 # Modular Development Environment with DevContainers
 
-A comprehensive **scaffolding** toolkit for setting up customizable development environments in both new and existing codebases. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your perfect stack by selecting any combination of:
+A comprehensive **scaffolding** toolkit for setting up customizable development environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your perfect stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
@@ -20,13 +20,13 @@ A comprehensive **scaffolding** toolkit for setting up customizable development 
   - DevContainers for consistency across VS Code, Cursor, and other editors
   - Zsh with Powerlevel10k for a beautiful, functional terminal
   - Preconfigured aliases and shortcuts
-- **macOS Optimized**: Built with performance considerations for macOS
+- **macOS Native**: Built specifically for macOS with Homebrew integration
 - **Fully Automated**: Single-command setup and initialization
 - **Root-Level Deployment**: All project files created at repository root
 
 ## 📋 Prerequisites
 
-- macOS (recommended, though scripts can be adapted for Linux/Windows)
+- macOS (required)
 - Docker Desktop
 - DevContainer-compatible editor (VS Code, Cursor, etc.)
 - Git
@@ -45,7 +45,7 @@ chmod +x macos-setup.sh
 ./macos-setup.sh
 ```
 
-This installs all required tools and configures Zsh with Powerlevel10k.
+This installs all required tools via Homebrew and configures Zsh with Powerlevel10k on macOS.
 
 ### 2. Set Up Your Project
 
