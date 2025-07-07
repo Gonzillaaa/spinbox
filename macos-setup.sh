@@ -2,57 +2,73 @@
 # macOS development environment setup script
 # This script sets up the necessary tools and configurations on macOS
 
-# Set color codes for output
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+# Source the utilities library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/utils.sh"
 
-# Print colored status messages
-function print_status() {
-  echo -e "${GREEN}[+] $1${NC}"
-}
+# Initialize error handling and logging
+setup_error_handling
+init_logging "macos_setup"
+parse_common_args "$@"
 
-function print_warning() {
-  echo -e "${YELLOW}[!] $1${NC}"
-}
-
-function print_error() {
-  echo -e "${RED}[-] $1${NC}"
-}
+# Required dependencies for this script
+REQUIRED_DEPS=("curl" "git")
 
 # Check if Homebrew is installed, install if not
 function install_homebrew() {
   print_status "Checking for Homebrew..."
-  if ! command -v brew &> /dev/null; then
+  
+  if ! check_command "brew" "Homebrew"; then
     print_status "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-    if [ $? -ne 0 ]; then
-      print_error "Failed to install Homebrew. Please install manually and run this script again."
-      exit 1
+    
+    if [[ "$DRY_RUN" == true ]]; then
+      print_info "DRY RUN: Would install Homebrew"
+      return 0
     fi
+    
+    if ! retry 3 5 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
+      print_error "Failed to install Homebrew after 3 attempts"
+      return 1
+    fi
+    
+    # Add rollback action
+    ROLLBACK_ACTIONS+=("echo 'Please manually uninstall Homebrew if needed'")
   else
     print_status "Homebrew is already installed."
   fi
   
   # Make sure Homebrew is up to date
   print_status "Updating Homebrew..."
-  brew update
+  if [[ "$DRY_RUN" != true ]]; then
+    brew update || print_warning "Failed to update Homebrew"
+  fi
 }
 
 # Install Docker Desktop
 function install_docker() {
   print_status "Checking for Docker Desktop..."
-  if ! command -v docker &> /dev/null; then
+  
+  if ! check_command "docker" "Docker Desktop"; then
     print_status "Installing Docker Desktop..."
     print_warning "Docker Desktop requires manual installation. Opening download page..."
+    
+    if [[ "$DRY_RUN" == true ]]; then
+      print_info "DRY RUN: Would open Docker Desktop download page"
+      return 0
+    fi
+    
     open "https://www.docker.com/products/docker-desktop"
     
-    read -p "Press Enter once you've installed Docker Desktop..." 
+    if [[ "$SKIP_CONFIRMATIONS" != true ]]; then
+      read -p "Press Enter once you've installed Docker Desktop..." 
+    else
+      print_info "Skipping confirmation - assuming Docker will be installed"
+    fi
     
-    if ! command -v docker &> /dev/null; then
+    # Verify installation
+    if ! check_command "docker" "Docker Desktop"; then
       print_error "Docker doesn't seem to be installed. Please install Docker Desktop and run this script again."
-      exit 1
+      return 1
     fi
   else
     print_status "Docker is already installed."
@@ -62,14 +78,21 @@ function install_docker() {
 # Install Git
 function install_git() {
   print_status "Checking for Git..."
-  if ! command -v git &> /dev/null; then
+  
+  if ! check_command "git" "Git"; then
     print_status "Installing Git..."
-    brew install git
     
-    if [ $? -ne 0 ]; then
-      print_error "Failed to install Git. Please install manually and run this script again."
-      exit 1
+    if [[ "$DRY_RUN" == true ]]; then
+      print_info "DRY RUN: Would install Git via Homebrew"
+      return 0
     fi
+    
+    if ! retry 3 2 brew install git; then
+      print_error "Failed to install Git after 3 attempts"
+      return 1
+    fi
+    
+    ROLLBACK_ACTIONS+=("brew uninstall git")
   else
     print_status "Git is already installed."
   fi
@@ -169,24 +192,112 @@ function install_pyenv() {
   fi
 }
 
+# Show help for this script
+function show_help() {
+  cat << EOF
+macOS Development Environment Setup
+
+This script installs and configures development tools on macOS.
+
+Usage: $0 [options]
+
+Options:
+  -v, --verbose    Enable verbose output
+  -d, --dry-run    Show what would be done without making changes
+  -h, --help       Show this help message
+
+Components installed:
+  - Homebrew package manager
+  - Docker Desktop
+  - Git version control
+  - Zsh with Powerlevel10k theme
+  - pyenv Python version manager
+
+Examples:
+  $0                # Run full setup
+  $0 --dry-run      # Preview what would be installed
+  $0 --verbose      # Show detailed output
+EOF
+}
+
+# Validate system requirements
+function validate_system() {
+  print_status "Validating system requirements..."
+  
+  # Check macOS version
+  if [[ "$(uname)" != "Darwin" ]]; then
+    print_error "This script is designed for macOS only"
+    return 1
+  fi
+  
+  # Check for required commands
+  if ! check_dependencies "${REQUIRED_DEPS[@]}"; then
+    print_error "Missing required dependencies"
+    return 1
+  fi
+  
+  # Check for admin privileges
+  if [[ $EUID -eq 0 ]]; then
+    print_warning "Running as root is not recommended"
+    if ! confirm "Continue anyway?"; then
+      return 1
+    fi
+  fi
+  
+  print_status "System validation passed"
+}
+
 # Main function
 function main() {
   print_status "Starting macOS development environment setup..."
   
-  install_homebrew
-  install_docker
-  install_git
-  setup_zsh
-  install_pyenv
+  # Validate system before proceeding
+  if ! validate_system; then
+    print_error "System validation failed"
+    exit 1
+  fi
   
+  # Run installation steps
+  local steps=(
+    "install_homebrew"
+    "install_docker" 
+    "install_git"
+    "setup_zsh"
+    "install_pyenv"
+  )
+  
+  local current=0
+  local total=${#steps[@]}
+  
+  for step in "${steps[@]}"; do
+    ((current++))
+    show_progress "$current" "$total" "$step"
+    
+    if ! "$step"; then
+      print_error "Step '$step' failed"
+      if [[ "$DRY_RUN" != true ]]; then
+        print_warning "Rolling back changes..."
+        rollback
+      fi
+      exit 1
+    fi
+  done
+  
+  echo ""
   print_status "Setup completed successfully!"
   print_warning "Some changes may require you to restart your terminal or applications."
   print_warning "Don't forget to allocate enough resources to Docker Desktop in its preferences."
   
   print_status "Next steps:"
-  echo "1. Run the project setup script to create your development project"
+  echo "1. Run ./project-setup.sh to create your development project"
   echo "2. Open the project in VS Code and start developing!"
+  
+  if [[ "$VERBOSE" == true ]]; then
+    print_debug "Log file available at: $LOG_FILE"
+  fi
 }
 
-# Run the main function
-main
+# Execute main function with error handling
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi

@@ -1,0 +1,13 @@
+[2025-07-07 19:37:01] [INFO] Test environment initialized
+[2025-07-07 19:37:01] [INFO] Running test suite: 0
+[2025-07-07 19:37:01] [ERROR] Test file not found: /Users/gonzalo/code/project-template/lib/test_config.sh
+[2025-07-07 19:37:01] [INFO] Cleaning up test environment...
+[2025-07-07 19:37:01] [INFO] Test environment cleaned up
+[2025-07-07 19:37:01] [INFO] ==============================================
+[2025-07-07 19:37:01] [INFO]               TEST SUMMARY
+[2025-07-07 19:37:01] [INFO] ==============================================
+[2025-07-07 19:37:01] [INFO] ALL TESTS PASSED! ✓
+[2025-07-07 19:37:01] [INFO] Test results saved to: /Users/gonzalo/code/project-template/.test-results
+[2025-07-07 19:37:01] [INFO] ==============================================
+[2025-07-07 19:37:01] [INFO] Generating HTML test report...
+[2025-07-07 19:37:01] [INFO] HTML report generated: /Users/gonzalo/code/project-template/.test-results/test-report.html

@@ -1,33 +1,33 @@
 #!/bin/bash
 # VS Code setup script for macOS
 
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+# Source the utilities library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/utils.sh"
 
-function print_status() {
-  echo -e "${GREEN}[+] $1${NC}"
-}
-
-function print_warning() {
-  echo -e "${YELLOW}[!] $1${NC}"
-}
-
-function print_error() {
-  echo -e "${RED}[-] $1${NC}"
-}
+# Initialize error handling and logging
+setup_error_handling
+init_logging "vscode_setup"
+parse_common_args "$@"
 
 # Install VS Code
 function install_vscode() {
   print_status "Checking for Visual Studio Code..."
-  if ! command -v code &> /dev/null; then
+  
+  if ! check_command "code" "Visual Studio Code"; then
     print_status "Installing VS Code..."
-    brew install --cask visual-studio-code
-    if [ $? -ne 0 ]; then
-      print_error "Failed to install VS Code. Please install manually and run this script again."
-      exit 1
+    
+    if [[ "$DRY_RUN" == true ]]; then
+      print_info "DRY RUN: Would install VS Code via Homebrew"
+      return 0
     fi
+    
+    if ! retry 3 5 brew install --cask visual-studio-code; then
+      print_error "Failed to install VS Code after 3 attempts"
+      return 1
+    fi
+    
+    ROLLBACK_ACTIONS+=("brew uninstall --cask visual-studio-code")
   else
     print_status "VS Code is already installed."
   fi
@@ -36,7 +36,8 @@ function install_vscode() {
 # Install VS Code extensions
 function install_vscode_extensions() {
   print_status "Installing VS Code extensions..."
-  extensions=(
+  
+  local extensions=(
     "ms-vscode-remote.remote-containers"
     "ms-azuretools.vscode-docker"
     "ms-python.python"
@@ -46,11 +47,26 @@ function install_vscode_extensions() {
     "mtxr.sqltools"
     "mtxr.sqltools-driver-pg"
   )
+  
+  if [[ "$DRY_RUN" == true ]]; then
+    print_info "DRY RUN: Would install ${#extensions[@]} VS Code extensions"
+    return 0
+  fi
+  
+  local current=0
+  local total=${#extensions[@]}
+  
   for extension in "${extensions[@]}"; do
-    print_status "Installing $extension..."
-    code --install-extension "$extension" || print_warning "Failed to install $extension"
+    ((current++))
+    show_progress "$current" "$total" "Installing $extension"
+    
+    if ! retry 2 1 code --install-extension "$extension"; then
+      print_warning "Failed to install $extension"
+    fi
   done
-  print_status "VS Code extensions installed."
+  
+  echo ""
+  print_status "VS Code extensions installation completed."
 }
 
 # Configure VS Code settings for terminal
@@ -87,12 +103,88 @@ with open(file_path, 'w') as f:
   print_status "VS Code settings configured."
 }
 
-function main() {
-  print_status "Starting VS Code setup..."
-  install_vscode
-  install_vscode_extensions
-  configure_vscode_settings
-  print_status "VS Code setup completed!"
+# Show help for this script
+function show_help() {
+  cat << EOF
+VS Code Setup Script
+
+This script installs VS Code and essential extensions for development.
+
+Usage: $0 [options]
+
+Options:
+  -v, --verbose    Enable verbose output
+  -d, --dry-run    Show what would be done without making changes
+  -h, --help       Show this help message
+
+Components installed:
+  - Visual Studio Code
+  - Development extensions (Python, Docker, ESLint, etc.)
+  - Terminal and font configurations
+
+Examples:
+  $0                # Run full VS Code setup
+  $0 --dry-run      # Preview what would be installed
+  $0 --verbose      # Show detailed output
+EOF
 }
 
-main 
+# Validate prerequisites
+function validate_prerequisites() {
+  print_status "Validating prerequisites..."
+  
+  # Check for Homebrew
+  if ! check_command "brew" "Homebrew"; then
+    print_error "Homebrew is required for VS Code installation"
+    print_info "Please run ./macos-setup.sh first"
+    return 1
+  fi
+  
+  print_status "Prerequisites validation passed"
+}
+
+function main() {
+  print_status "Starting VS Code setup..."
+  
+  # Validate prerequisites
+  if ! validate_prerequisites; then
+    print_error "Prerequisites validation failed"
+    exit 1
+  fi
+  
+  # Run setup steps
+  local steps=(
+    "install_vscode"
+    "install_vscode_extensions"
+    "configure_vscode_settings"
+  )
+  
+  local current=0
+  local total=${#steps[@]}
+  
+  for step in "${steps[@]}"; do
+    ((current++))
+    show_progress "$current" "$total" "$step"
+    
+    if ! "$step"; then
+      print_error "Step '$step' failed"
+      if [[ "$DRY_RUN" != true ]]; then
+        print_warning "Rolling back changes..."
+        rollback
+      fi
+      exit 1
+    fi
+  done
+  
+  echo ""
+  print_status "VS Code setup completed!"
+  
+  if [[ "$VERBOSE" == true ]]; then
+    print_debug "Log file available at: $LOG_FILE"
+  fi
+}
+
+# Execute main function with error handling
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi 
