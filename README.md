@@ -1,6 +1,6 @@
 # Spinbox: Rapid Development Environment Scaffolding
 
-[logo]: https://github.com/Gonzillaaa/spinbox/docs/spinbox.png "Spinbox"
+[logo]: https://github.com/Gonzillaaa/spinbox/blob/main/docs/spinbox_logo_coal.png "Spinbox"
 
 ![alt text][logo]
 
