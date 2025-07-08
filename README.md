@@ -1,6 +1,7 @@
 # Spinbox: Rapid Development Environment Scaffolding
 
-[logo]: https://github.com/Gonzillaaa/spinbox/blob/main/docs/spinbox.png "Spinbox"
+[logo]: https://github.com/Gonzillaaa/spinbox/docs/spinbox.png "Spinbox"
+
 ![alt text][logo]
 
 A comprehensive **scaffolding** toolkit for spinning up customizable development environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your stack by selecting any combination of:
