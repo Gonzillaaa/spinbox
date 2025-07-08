@@ -93,7 +93,6 @@ project-template/
 ├── macos-setup.sh         # Environment setup for macOS
 ├── project-setup.sh       # Project creation and configuration
 ├── start.sh               # Project startup script
-├── vscode-setup.sh        # VS Code setup script
 ├── lib/                   # Utility libraries
 ├── tests/                 # Test framework
 ├── docs/                  # Documentation
@@ -109,7 +108,7 @@ your-repo/
 ├── mongodb/               # MongoDB config (if selected)
 ├── redis/                 # Redis config (if selected)
 ├── chroma_data/           # Chroma vector database data (if selected)
-├── .devcontainer/         # VS Code DevContainer config
+├── .devcontainer/         # DevContainer config
 ├── docker-compose.yml     # Docker services
 ├── venv/                  # Python virtual environment
 ├── requirements.txt       # Python dependencies
@@ -187,7 +186,7 @@ Follow our detailed guides in the [docs/adding-components.md](./docs/adding-comp
 
 ### DevContainers
 
-Your VS Code DevContainer configuration is automatically generated based on selected components. It includes:
+Your DevContainer configuration is automatically generated based on selected components and works with VS Code, Cursor, and other compatible editors. It includes:
 
 - Appropriate extensions
 - Container connections
@@ -216,7 +215,7 @@ Every container comes with:
 
 ### Custom Components
 
-Add your own components by creating templates in the `templates/` directory and updating the project setup script.
+The project setup script can be extended to support additional components. Modify `project-setup.sh` to add your own component templates and configuration logic.
 
 ### Local Development
 

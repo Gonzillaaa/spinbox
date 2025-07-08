@@ -1,7 +1,7 @@
 #!/bin/bash
 # Project structure setup script
 # This script sets up project structure and configuration files for
-# a full-stack application with optional FastAPI, Next.js, PostgreSQL, and Redis
+# a full-stack application with optional FastAPI, Next.js, PostgreSQL, MongoDB, Redis, and Chroma
 # Works with both new and existing codebases
 
 # Make script exit on error

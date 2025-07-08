@@ -9,7 +9,9 @@ The project template supports modular architecture, allowing you to add componen
 - FastAPI Backend
 - Next.js Frontend  
 - PostgreSQL Database with PGVector
+- MongoDB document database
 - Redis for caching and queues
+- Chroma vector database for embeddings
 
 ## Methods for Adding Components
 
@@ -39,6 +41,9 @@ The recommended approach is to use the project setup script to create a temporar
    
    # For Redis
    cp -r /tmp/temp-project/redis /path/to/your-project/
+   
+   # For MongoDB
+   cp -r /tmp/temp-project/mongodb /path/to/your-project/
    ```
 
 3. **Update your Docker Compose configuration:**
@@ -278,13 +283,139 @@ For advanced users who want more control over the process.
      redis-data:
    ```
 
+### Adding MongoDB
+
+1. **Create MongoDB directory:**
+   ```bash
+   mkdir -p mongodb/init-scripts
+   ```
+
+2. **Create initialization script:**
+   ```javascript
+   // mongodb/init-scripts/init.js
+   db = db.getSiblingDB('app_db');
+   
+   // Create a user with read/write access
+   db.createUser({
+     user: 'mongodb',
+     pwd: 'mongodb',
+     roles: [
+       {
+         role: 'readWrite',
+         db: 'app_db'
+       }
+     ]
+   });
+   
+   // Create sample collections
+   db.createCollection('users');
+   db.createCollection('documents');
+   
+   // Create indexes
+   db.users.createIndex({ "email": 1 }, { unique: true });
+   db.documents.createIndex({ "title": "text", "content": "text" });
+   ```
+
+3. **Update Docker Compose:**
+   ```yaml
+   services:
+     mongodb:
+       image: mongo:7
+       volumes:
+         - ./mongodb/init-scripts:/docker-entrypoint-initdb.d
+         - mongodb-data:/data/db
+       environment:
+         - MONGO_INITDB_ROOT_USERNAME=root
+         - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+         - MONGO_INITDB_DATABASE=app_db
+       ports:
+         - "27017:27017"
+       networks:
+         - app-network
+   
+   volumes:
+     mongodb-data:
+   ```
+
+4. **Add MongoDB dependencies to backend requirements.txt:**
+   ```
+   motor>=3.3.0
+   beanie>=1.23.0
+   ```
+
+### Adding Chroma Vector Database
+
+1. **Add Chroma dependencies to backend requirements.txt:**
+   ```
+   chromadb>=0.4.0
+   openai>=1.0.0
+   sentence-transformers>=2.2.0
+   ```
+
+2. **Update FastAPI main.py with Chroma integration:**
+   ```python
+   import chromadb
+   from chromadb.config import Settings
+   from pydantic import BaseModel
+   from typing import Dict, Any, List
+   
+   # Initialize Chroma client
+   chroma_client = chromadb.Client(Settings(
+       persist_directory="./chroma_data",
+       anonymized_telemetry=False
+   ))
+   
+   # Create default collection
+   collection = chroma_client.get_or_create_collection(name="default")
+   
+   # Pydantic models
+   class Document(BaseModel):
+       id: str
+       content: str
+       metadata: Dict[str, Any] = {}
+   
+   class SearchQuery(BaseModel):
+       query: str
+       n_results: int = 10
+   
+   @app.post("/api/vector/add")
+   async def add_document(document: Document):
+       collection.add(
+           documents=[document.content],
+           metadatas=[document.metadata],
+           ids=[document.id]
+       )
+       return {"message": "Document added successfully", "id": document.id}
+   
+   @app.post("/api/vector/search")
+   async def search_documents(query: SearchQuery):
+       results = collection.query(
+           query_texts=[query.query],
+           n_results=query.n_results
+       )
+       return {"query": query.query, "results": results}
+   ```
+
+3. **Update .gitignore:**
+   ```
+   # Vector Database
+   chroma_data/
+   ```
+
+4. **Create chroma_data directory:**
+   ```bash
+   mkdir -p chroma_data
+   ```
+
+Note: Chroma runs embedded within the FastAPI backend, so no separate Docker service is needed.
+
 ## Updating Configurations
 
 ### DevContainer Configuration
 
 After adding components, update `.devcontainer/devcontainer.json`:
 
-1. **Add relevant VS Code extensions:**
+1. **Add relevant editor extensions:**
    ```json
    "extensions": [
      "ms-python.python",           // For backend
@@ -343,7 +474,7 @@ After adding components:
    - Verify port accessibility
 
 4. **Test in DevContainer:**
-   - Open project in VS Code
+   - Open project in your preferred editor (VS Code, Cursor, etc.)
    - Ensure DevContainer builds successfully
    - Test development workflow
 
