@@ -19,8 +19,8 @@ A comprehensive **scaffolding** toolkit for setting up customizable development 
 - **Modern Tech Stack**: Python 3.12+, UV package manager, Next.js
 - **Enhanced Developer Experience**:
   - DevContainers for consistency across VS Code, Cursor, and other editors
-  - Zsh with Powerlevel10k for a beautiful, functional terminal
-  - Preconfigured aliases and shortcuts
+  - Zsh with Powerlevel10k for a beautiful, functional terminal in all containers
+  - UV package manager and preconfigured aliases and shortcuts
 - **macOS Native**: Built specifically for macOS with Homebrew integration
 - **Fully Automated**: Single-command setup and initialization
 - **Root-Level Deployment**: All project files created at repository root
@@ -109,7 +109,7 @@ your-repo/
 ├── mongodb/               # MongoDB config (if selected)
 ├── redis/                 # Redis config (if selected)
 ├── chroma_data/           # Chroma vector database data (if selected)
-├── .devcontainer/         # DevContainer config (always created)
+├── .devcontainer/         # DevContainer config with Dockerfile (always created)
 ├── docker-compose.yml     # Docker services (if components selected)
 ├── venv/                  # Python virtual environment (created in DevContainer)
 ├── requirements.txt       # Python dependencies

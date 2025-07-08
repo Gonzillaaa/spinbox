@@ -1541,12 +1541,69 @@ function create_minimal_devcontainer() {
   
   mkdir -p .devcontainer
   
+  # Create Dockerfile for minimal Python environment
+  cat > .devcontainer/Dockerfile << 'EOF'
+FROM python:3.12-slim
+
+WORKDIR /workspace
+
+# Install development tools and dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    build-essential \
+    zsh \
+    fonts-powerline \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Oh My Zsh
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+# Install Powerlevel10k
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
+# Install Zsh plugins
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+# Set Zsh theme and plugins
+RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' ~/.zshrc && \
+    sed -i 's/plugins=(git)/plugins=(git docker python pip)/g' ~/.zshrc
+
+# Add Powerlevel10k configuration
+RUN echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc
+RUN echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> ~/.zshrc
+
+# Install UV for dependency management
+RUN pip install uv
+
+# Add useful aliases
+RUN echo '# Aliases' >> ~/.zshrc && \
+    echo 'alias ll="ls -la"' >> ~/.zshrc && \
+    echo 'alias py="python"' >> ~/.zshrc && \
+    echo 'alias pyvenv="source venv/bin/activate"' >> ~/.zshrc && \
+    echo 'alias uvinstall="uv pip install -r requirements.txt"' >> ~/.zshrc && \
+    echo 'alias uvfreeze="uv pip freeze > requirements.txt"' >> ~/.zshrc
+
+# Set Zsh as default shell
+SHELL ["/bin/zsh", "-c"]
+
+# Setup virtual environment activation on container startup
+RUN echo 'source /workspace/venv/bin/activate 2>/dev/null || true' >> ~/.zshrc
+
+# Keep container running during development
+CMD ["zsh", "-c", "while sleep 1000; do :; done"]
+EOF
+
+  # Create devcontainer.json
   cat > .devcontainer/devcontainer.json << 'EOF'
 {
   "name": "Python Development Environment",
-  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "workspaceFolder": "/workspace",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   
   "customizations": {
     "vscode": {
@@ -1567,23 +1624,16 @@ function create_minimal_devcontainer() {
     }
   },
   
-  "postCreateCommand": "bash -c 'python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt 2>/dev/null || true'",
+  "postCreateCommand": "bash -c 'python3 -m venv venv && source venv/bin/activate && uv pip install -r requirements.txt 2>/dev/null || true'",
   
-  "remoteUser": "vscode",
-  
-  "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {
-      "installZsh": true,
-      "installOhMyZsh": true,
-      "upgradePackages": true
-    },
-    "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
-  }
+  "remoteUser": "root"
 }
 EOF
 
-  print_status "DevContainer configuration created."
+  # Download p10k.zsh configuration
+  curl -s -o .devcontainer/.p10k.zsh https://raw.githubusercontent.com/romkatv/powerlevel10k/master/config/p10k-lean.zsh
+
+  print_status "DevContainer configuration created with custom Dockerfile."
 }
 
 # Main function to coordinate the setup process
