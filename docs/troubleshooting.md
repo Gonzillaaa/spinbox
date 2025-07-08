@@ -2,11 +2,15 @@
 
 This guide helps you resolve common issues when using the project template.
 
+## Important Note
+
+This project uses a **DevContainer-first approach**. All development is designed to happen inside DevContainers, where Python virtual environments and dependencies are automatically managed. If you're having issues, ensure you're working inside the DevContainer rather than on the host system.
+
 ## Table of Contents
 
 - [Docker Issues](#docker-issues)
 - [Container Issues](#container-issues)
-- [VS Code DevContainer Issues](#vs-code-devcontainer-issues)
+- [DevContainer Issues](#devcontainer-issues)
 - [Network Issues](#network-issues)
 - [Performance Issues](#performance-issues)
 - [Script Issues](#script-issues)
@@ -205,23 +209,27 @@ This guide helps you resolve common issues when using the project template.
 
 4. **Check Dockerfile syntax and commands**
 
-## VS Code DevContainer Issues
+## DevContainer Issues
+
+DevContainers are the primary development environment for this project. All Python virtual environments and dependencies are managed inside containers.
 
 ### DevContainer Won't Open
 
 **Symptoms:**
 - "Failed to start DevContainer" error
-- VS Code hangs when opening container
+- Editor hangs when opening container
+- Container fails to build
 
 **Solutions:**
 
-1. **Update VS Code and extensions:**
-   - Update VS Code to latest version
-   - Update "Remote - Containers" extension
+1. **Update editor and extensions:**
+   - Update VS Code/Cursor to latest version
+   - Update "Dev Containers" extension (VS Code) or ensure Cursor has latest DevContainer support
 
 2. **Rebuild container:**
    ```
-   Ctrl+Shift+P → Remote-Containers: Rebuild Container
+   VS Code: Ctrl+Shift+P → Dev Containers: Rebuild Container
+   Cursor: Ctrl+Shift+P → Dev Containers: Rebuild Container
    ```
 
 3. **Check devcontainer.json syntax:**
@@ -229,16 +237,19 @@ This guide helps you resolve common issues when using the project template.
    - Check file paths are correct
    - Verify dockerComposeFile path
 
-4. **Clear VS Code cache:**
+4. **Clear editor cache:**
    ```bash
-   # Close VS Code and remove cache
+   # For VS Code - close editor and remove cache
    rm -rf ~/.vscode/extensions/ms-vscode-remote.remote-containers-*
+   
+   # For Cursor - clear DevContainer cache
+   # Cursor: Help → Reset Extension Host
    ```
 
 ### Extensions Not Installing
 
 **Symptoms:**
-- VS Code extensions missing in container
+- Editor extensions missing in container
 - Extension installation fails
 
 **Solutions:**
@@ -258,7 +269,8 @@ This guide helps you resolve common issues when using the project template.
 
 3. **Rebuild container with clean cache:**
    ```
-   Ctrl+Shift+P → Remote-Containers: Rebuild Without Cache
+   VS Code: Ctrl+Shift+P → Dev Containers: Rebuild Without Cache
+   Cursor: Ctrl+Shift+P → Dev Containers: Rebuild Without Cache
    ```
 
 ### Terminal Issues
@@ -508,18 +520,22 @@ This guide helps you resolve common issues when using the project template.
    python --version  # Should be 3.12+
    ```
 
-2. **Reinstall dependencies:**
+2. **Reinstall dependencies (in DevContainer):**
    ```bash
-   cd backend
+   # Rebuild DevContainer to reset environment
+   # In VS Code: Ctrl+Shift+P → "Dev Containers: Rebuild Container"
+   # Or manually inside container:
+   cd /workspace
    rm -rf venv
-   python -m venv venv
+   python3 -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
    ```
 
-3. **Check FastAPI application:**
+3. **Check FastAPI application (in DevContainer):**
    ```bash
-   # Test locally
+   # Inside DevContainer terminal
+   cd backend
    uvicorn app.main:app --reload
    ```
 

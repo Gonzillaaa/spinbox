@@ -8,7 +8,7 @@ This guide provides strategies to optimize the performance of your development e
 - [Container Optimization](#container-optimization)
 - [Volume Mount Performance](#volume-mount-performance)
 - [Build Performance](#build-performance)
-- [VS Code DevContainer Performance](#vs-code-devcontainer-performance)
+- [DevContainer Performance](#devcontainer-performance)
 - [Component-Specific Optimizations](#component-specific-optimizations)
 - [Monitoring and Profiling](#monitoring-and-profiling)
 - [Platform-Specific Optimizations](#platform-specific-optimizations)
@@ -237,7 +237,7 @@ RUN --mount=type=cache,target=/root/.npm \
 }
 ```
 
-## VS Code DevContainer Performance
+## DevContainer Performance
 
 ### Extension Optimization
 
