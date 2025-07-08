@@ -1,6 +1,6 @@
-# Modular Development Environment with DevContainers
+# Spinbox: Rapid Development Environment Scaffolding
 
-A comprehensive **scaffolding** toolkit for setting up customizable development environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your stack by selecting any combination of:
+A comprehensive **scaffolding** toolkit for spinning up customizable development environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
@@ -38,8 +38,8 @@ A comprehensive **scaffolding** toolkit for setting up customizable development 
 
 ```bash
 # Clone this repository temporarily
-git clone https://github.com/Gonzillaaa/project-template.git
-cd project-template
+git clone https://github.com/Gonzillaaa/spinbox.git
+cd spinbox
 
 # Run the macOS setup script
 chmod +x macos-setup.sh
@@ -53,29 +53,29 @@ This installs all required tools via Homebrew and configures Zsh with Powerlevel
 #### For Existing Codebases:
 ```bash
 cd your-existing-repo/
-git clone https://github.com/Gonzillaaa/project-template.git project-template/
-./project-template/project-setup.sh
+git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
+./spinbox/project-setup.sh
 # Always creates DevContainer + select additional components you want
 # After setup completes:
-rm -rf project-template/  # Safe to delete!
+rm -rf spinbox/  # Safe to delete!
 ```
 
 #### For New Projects:
 ```bash
 mkdir new-project && cd new-project/
-git clone https://github.com/Gonzillaaa/project-template.git project-template/
-./project-template/project-setup.sh
+git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
+./spinbox/project-setup.sh
 # Select components
-rm -rf project-template/  # Safe to delete!
+rm -rf spinbox/  # Safe to delete!
 ```
 
 ### 3. Start Your Development Environment
 
 ```bash
-# If project-template still exists:
-./project-template/start.sh
+# If spinbox still exists:
+./spinbox/start.sh
 
-# OR if you deleted project-template:
+# OR if you deleted spinbox:
 docker-compose up -d
 # Then open in your preferred editor:
 code .     # VS Code
@@ -89,7 +89,7 @@ Your editor should detect the DevContainer configuration and prompt to "Reopen i
 
 ### Scaffolding Directory (Temporary)
 ```
-project-template/
+spinbox/
 ├── macos-setup.sh         # Environment setup for macOS
 ├── project-setup.sh       # Project creation and configuration
 ├── start.sh               # Project startup script
@@ -183,10 +183,10 @@ Already set up a project but need to add more components? No problem!
 
 ```bash
 # In your existing project:
-git clone https://github.com/Gonzillaaa/project-template.git project-template/
-./project-template/project-setup.sh
+git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
+./spinbox/project-setup.sh
 # Select additional components you want to add
-rm -rf project-template/
+rm -rf spinbox/
 ```
 
 The setup script will detect existing components and only add new ones.
@@ -245,10 +245,10 @@ Development is designed to happen inside DevContainers for consistency. The virt
 
 ### Cleanup After Setup
 
-Once your project is set up, the `project-template/` directory serves no purpose:
+Once your project is set up, the `spinbox/` directory serves no purpose:
 
 ```bash
-rm -rf project-template/
+rm -rf spinbox/
 ```
 
 All your development environment files are now at the root level and will continue working normally.

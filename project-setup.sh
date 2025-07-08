@@ -1315,14 +1315,14 @@ This project uses DevContainers for development. It includes:
 
 ### Setup Instructions
 
-**Note**: After setup is complete, you can safely delete the `project-template/` directory.
+**Note**: After setup is complete, you can safely delete the `spinbox/` directory.
 
 1. If using an existing codebase, ensure you're in the root directory
-2. Run the setup script: `./project-template/project-setup.sh`
+2. Run the setup script: `./spinbox/project-setup.sh`
 3. Select the components you want to include
 4. Open the project in your preferred editor (VS Code, Cursor, etc.)
 5. When prompted, click "Reopen in Container"
-6. Delete the `project-template/` directory (optional)
+6. Delete the `spinbox/` directory (optional)
 
 This will start all the containers and configure the development environment.
 
@@ -1406,16 +1406,16 @@ This will start all the containers and configure the development environment.
 
 To start the development environment:
 ```bash
-./project-template/start.sh  # Can be deleted after initial setup
-# OR if project-template was deleted:
+./spinbox/start.sh  # Can be deleted after initial setup
+# OR if spinbox was deleted:
 docker-compose up -d
 ```
 
 ## Cleanup
 
-After setup is complete, you can safely delete the `project-template/` directory:
+After setup is complete, you can safely delete the `spinbox/` directory:
 ```bash
-rm -rf project-template/
+rm -rf spinbox/
 ```
 
 All project files are now at the root level and the development environment will continue to work normally.
@@ -1691,7 +1691,7 @@ function main() {
     echo -e "2. When prompted, reopen in DevContainer"
     echo -e "3. Virtual environment will be auto-created and activated inside container"
     echo ""
-    echo -e "You can now delete the ${YELLOW}project-template/${NC} directory."
+    echo -e "You can now delete the ${YELLOW}spinbox/${NC} directory."
     echo ""
     exit 0
   fi
@@ -1747,7 +1747,7 @@ function main() {
   echo ""
   echo -e "Your development environment has been set up."
   echo -e "Open this directory in VS Code and select 'Reopen in Container' when prompted."
-  echo -e "You can now delete the ${YELLOW}project-template/${NC} directory."
+  echo -e "You can now delete the ${YELLOW}spinbox/${NC} directory."
   echo ""
   echo -e "See ${YELLOW}README.md${NC} for detailed instructions."
   echo ""

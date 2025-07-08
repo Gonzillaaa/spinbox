@@ -269,7 +269,7 @@ function validate_environment() {
   # Check for docker-compose.yml
   if [[ ! -f "$PROJECT_ROOT/docker-compose.yml" ]]; then
     print_error "docker-compose.yml not found in project root"
-    print_info "Please run ./project-template/project-setup.sh first to set up the project"
+    print_info "Please run ./spinbox/project-setup.sh first to set up the project"
     return 1
   fi
   
