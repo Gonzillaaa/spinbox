@@ -18,6 +18,7 @@ USE_FRONTEND=false
 USE_DATABASE=false
 USE_REDIS=false
 USE_MONGODB=false
+USE_CHROMA=false
 
 # Check if Docker is running
 function check_docker() {
@@ -72,6 +73,12 @@ function detect_components() {
   if [[ -d "mongodb" ]]; then
     USE_MONGODB=true
     print_status "Detected: MongoDB"
+  fi
+  
+  # Check for Chroma by looking for chromadb dependency in requirements.txt
+  if [[ -f "backend/requirements.txt" && -n "$(grep -i chromadb backend/requirements.txt)" ]]; then
+    USE_CHROMA=true
+    print_status "Detected: Chroma vector database"
   fi
   
   # Check if at least one component is detected
@@ -191,6 +198,14 @@ function display_info() {
     echo "  Username: mongodb"
     echo "  Password: mongodb"
     echo "  Database: app_db"
+  fi
+  
+  if [[ "$USE_CHROMA" == true ]]; then
+    echo "- Chroma Vector Database: Available in backend"
+    echo "  API Endpoints:"
+    echo "    POST /api/vector/add - Add documents"
+    echo "    POST /api/vector/search - Search documents"
+    echo "    GET /api/vector/collections - List collections"
   fi
   
   echo "======================================================"

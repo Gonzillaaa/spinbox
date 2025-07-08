@@ -7,6 +7,7 @@ A comprehensive **scaffolding** toolkit for setting up customizable development 
 - PostgreSQL database with PGVector
 - MongoDB document database
 - Redis for caching and queues
+- Chroma vector database for embeddings
 
 **Key Feature**: This scaffolding directory is temporary - after setup, you can delete `project-template/` and your development environment will continue working perfectly!
 
@@ -107,6 +108,7 @@ your-repo/
 ├── database/              # PostgreSQL config (if selected)
 ├── mongodb/               # MongoDB config (if selected)
 ├── redis/                 # Redis config (if selected)
+├── chroma_data/           # Chroma vector database data (if selected)
 ├── .devcontainer/         # VS Code DevContainer config
 ├── docker-compose.yml     # Docker services
 ├── venv/                  # Python virtual environment
@@ -153,6 +155,13 @@ your-repo/
 - Configured for caching and queues
 - Persistence enabled
 - Optimized configuration
+
+### Chroma Vector Database
+
+- Lightweight vector database for embeddings
+- Persistent storage for vectors
+- Simple REST API for adding and searching documents
+- Built-in similarity search
 
 ## 🔄 Adding Components Later
 
@@ -238,6 +247,7 @@ See [docs/troubleshooting.md](./docs/troubleshooting.md) for solutions to common
 
 - [Adding Components](./docs/adding-components.md)
 - [Testing Documentation](./docs/testing.md)
+- [Chroma Vector Database Usage](./docs/chroma-usage.md)
 - [Troubleshooting](./docs/troubleshooting.md)
 - [Performance Optimization](./docs/performance.md)
 

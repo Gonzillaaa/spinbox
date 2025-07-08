@@ -36,6 +36,7 @@ USE_FRONTEND=false
 USE_DATABASE=false
 USE_REDIS=false
 USE_MONGODB=false
+USE_CHROMA=false
 
 # Function to select components
 function select_components() {
@@ -69,6 +70,12 @@ function select_components() {
   if [[ $INCLUDE_MONGODB =~ ^[Yy]$ ]]; then
     USE_MONGODB=true
     print_status "MongoDB will be included."
+  fi
+  
+  read -p "Include Chroma vector database? (y/N): " INCLUDE_CHROMA
+  if [[ $INCLUDE_CHROMA =~ ^[Yy]$ ]]; then
+    USE_CHROMA=true
+    print_status "Chroma vector database will be included."
   fi
   # No error if all are false; allow minimal Python project
 }
@@ -650,6 +657,17 @@ motor>=3.3.0
 beanie>=1.23.0
 EOF
   fi
+  
+  # Add Chroma dependencies if Chroma is selected
+  if [ "$USE_CHROMA" = true ]; then
+    cat >> backend/requirements.txt << 'EOF'
+# Vector database dependencies
+chromadb>=0.4.0
+# Optional: for embeddings
+openai>=1.0.0
+sentence-transformers>=2.2.0
+EOF
+  fi
 
   # Create .dockerignore
   cat > backend/.dockerignore << 'EOF'
@@ -670,12 +688,24 @@ EOF
 
   # Create basic FastAPI app
   cat > backend/app/main.py << 'EOF'
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import sys
 import os
-from typing import Dict, Any
+from typing import Dict, Any, List
+from pydantic import BaseModel
+EOF
+
+  # Add Chroma imports if selected
+  if [ "$USE_CHROMA" = true ]; then
+    cat >> backend/app/main.py << 'EOF'
+import chromadb
+from chromadb.config import Settings
+EOF
+  fi
+
+  cat >> backend/app/main.py << 'EOF'
 
 # Ensure Python version is 3.12+
 assert sys.version_info >= (3, 12), "This app requires Python 3.12 or higher"
@@ -690,6 +720,34 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+EOF
+
+  # Add Chroma initialization if selected
+  if [ "$USE_CHROMA" = true ]; then
+    cat >> backend/app/main.py << 'EOF'
+
+# Initialize Chroma client
+chroma_client = chromadb.Client(Settings(
+    persist_directory="./chroma_data",
+    anonymized_telemetry=False
+))
+
+# Create default collection
+collection = chroma_client.get_or_create_collection(name="default")
+
+# Pydantic models for Chroma endpoints
+class Document(BaseModel):
+    id: str
+    content: str
+    metadata: Dict[str, Any] = {}
+
+class SearchQuery(BaseModel):
+    query: str
+    n_results: int = 10
+EOF
+  fi
+
+  cat >> backend/app/main.py << 'EOF'
 
 @app.get("/")
 async def root() -> Dict[str, str]:
@@ -709,6 +767,61 @@ async def info() -> Dict[str, Any]:
         "environment": os.environ.get("ENVIRONMENT", "development"),
         "api_version": "1.0.0"
     }
+EOF
+
+  # Add Chroma endpoints if selected
+  if [ "$USE_CHROMA" = true ]; then
+    cat >> backend/app/main.py << 'EOF'
+
+@app.post("/api/vector/add")
+async def add_document(document: Document) -> Dict[str, str]:
+    """Add a document to the vector database."""
+    try:
+        collection.add(
+            documents=[document.content],
+            metadatas=[document.metadata],
+            ids=[document.id]
+        )
+        return {"message": "Document added successfully", "id": document.id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error adding document: {str(e)}")
+
+@app.post("/api/vector/search")
+async def search_documents(query: SearchQuery) -> Dict[str, Any]:
+    """Search documents in the vector database."""
+    try:
+        results = collection.query(
+            query_texts=[query.query],
+            n_results=query.n_results
+        )
+        return {
+            "query": query.query,
+            "results": results
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error searching documents: {str(e)}")
+
+@app.get("/api/vector/collections")
+async def list_collections() -> Dict[str, List[str]]:
+    """List all collections in the vector database."""
+    try:
+        collections = chroma_client.list_collections()
+        return {"collections": [col.name for col in collections]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error listing collections: {str(e)}")
+
+@app.delete("/api/vector/collection/{collection_name}")
+async def delete_collection(collection_name: str) -> Dict[str, str]:
+    """Delete a collection from the vector database."""
+    try:
+        chroma_client.delete_collection(name=collection_name)
+        return {"message": f"Collection '{collection_name}' deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error deleting collection: {str(e)}")
+EOF
+  fi
+
+  cat >> backend/app/main.py << 'EOF'
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
@@ -1096,6 +1209,9 @@ var/
 # Database
 *.sqlite3
 
+# Vector Database
+chroma_data/
+
 # VS Code
 .vscode/*
 !.vscode/settings.json
@@ -1358,7 +1474,7 @@ function main() {
   select_components
   
   # If no components selected, create minimal Python project and exit
-  if [[ "$USE_BACKEND" == false && "$USE_FRONTEND" == false && "$USE_DATABASE" == false && "$USE_REDIS" == false && "$USE_MONGODB" == false ]]; then
+  if [[ "$USE_BACKEND" == false && "$USE_FRONTEND" == false && "$USE_DATABASE" == false && "$USE_REDIS" == false && "$USE_MONGODB" == false && "$USE_CHROMA" == false ]]; then
     create_minimal_python_project
     
     # Initialize Git if not existing
