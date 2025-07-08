@@ -1,77 +1,119 @@
-# Modular Development Environment with DevContainers
+# Spinbox: Rapid Development Environment Scaffolding
 
-A comprehensive toolkit for creating customizable, isolated development environments using Docker, VS Code DevContainers, and Zsh with Powerlevel10k. Build your perfect stack by selecting any combination of:
+A comprehensive **scaffolding** toolkit for spinning up customizable development environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
 - PostgreSQL database with PGVector
+- MongoDB document database
 - Redis for caching and queues
+- Chroma vector database for embeddings
 
 ## 🚀 Features
 
-- **Modular Components**: Choose only what you need
+- **DevContainer-First**: Every setup includes a DevContainer as the baseline
+- **Requirements.txt Templates**: Quick-start templates for common prototyping scenarios
+- **Works with Existing Codebases**: No need to start from scratch
+- **Temporary Scaffolding**: Delete the setup directory after use
+- **Modular Components**: Start with DevContainer, add what you need
 - **Modern Tech Stack**: Python 3.12+, UV package manager, Next.js
 - **Enhanced Developer Experience**:
-  - VS Code DevContainers for consistency
-  - Zsh with Powerlevel10k for a beautiful, functional terminal
-  - Preconfigured aliases and shortcuts
-- **macOS Optimized**: Built with performance considerations for macOS
+  - DevContainers for consistency across VS Code, Cursor, and other editors
+  - Zsh with Powerlevel10k for a beautiful, functional terminal in all containers
+  - UV package manager and preconfigured aliases and shortcuts
+- **macOS Native**: Built specifically for macOS with Homebrew integration
 - **Fully Automated**: Single-command setup and initialization
-- **Expandable**: Add components to existing projects anytime
+- **Root-Level Deployment**: All project files created at repository root
 
 ## 📋 Prerequisites
 
-- macOS (recommended, though scripts can be adapted for Linux/Windows)
+- macOS (required)
 - Docker Desktop
-- Visual Studio Code
+- DevContainer-compatible editor (VS Code, Cursor, etc.)
 - Git
 
 ## 🏁 Quick Start
 
-### 1. Set Up Your Environment
+### 1. Set Up Your Environment (One-time)
 
 ```bash
-# Clone this repository
-git clone https://github.com/Gonzillaaa/project-template.git
-cd project-template
+# Clone this repository temporarily
+git clone https://github.com/Gonzillaaa/spinbox.git
+cd spinbox
 
 # Run the macOS setup script
 chmod +x macos-setup.sh
 ./macos-setup.sh
 ```
 
-This installs all required tools, configures Zsh with Powerlevel10k, and prepares VS Code.
+This installs all required tools via Homebrew and configures Zsh with Powerlevel10k on macOS.
 
-### 2. Create a New Project
+### 2. Set Up Your Project
 
+#### For Existing Codebases:
 ```bash
-chmod +x project-setup.sh
-./project-setup.sh
+cd your-existing-repo/
+git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
+./spinbox/project-setup.sh
+# Always creates DevContainer + select additional components you want
+# After setup completes:
+rm -rf spinbox/  # Safe to delete!
 ```
 
-Follow the prompts to:
-
-- Name your project
-- Select which components to include
-- Configure project-specific settings
+#### For New Projects:
+```bash
+mkdir new-project && cd new-project/
+git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
+./spinbox/project-setup.sh
+# Select components
+rm -rf spinbox/  # Safe to delete!
+```
 
 ### 3. Start Your Development Environment
 
 ```bash
-./start.sh
+# If spinbox still exists:
+./spinbox/start.sh
+
+# OR if you deleted spinbox:
+docker-compose up -d
+# Then open in your preferred editor:
+code .     # VS Code
+cursor .   # Cursor
+# Or manually open the project folder
 ```
 
-VS Code will open with your DevContainer environment ready to use.
+Your editor should detect the DevContainer configuration and prompt to "Reopen in Container".
 
-## 🗂️ Repository Structure
+## 🗂️ Structure
 
+### Scaffolding Directory (Temporary)
 ```
-project-template/
+spinbox/
 ├── macos-setup.sh         # Environment setup for macOS
 ├── project-setup.sh       # Project creation and configuration
 ├── start.sh               # Project startup script
-├── vscode-setup.sh        # VS Code setup script
-├── README.md              # This file
+├── lib/                   # Utility libraries
+├── docs/                  # Documentation
+├── templates/             # Requirements.txt templates
+└── README.md              # This file
+```
+
+### After Setup (Permanent)
+```
+your-repo/
+├── backend/               # FastAPI backend (if selected)
+├── frontend/              # Next.js frontend (if selected)
+├── database/              # PostgreSQL config (if selected)
+├── mongodb/               # MongoDB config (if selected)
+├── redis/                 # Redis config (if selected)
+├── chroma_data/           # Chroma vector database data (if selected)
+├── .devcontainer/         # DevContainer config with Dockerfile (always created)
+├── docker-compose.yml     # Docker services (if components selected)
+├── venv/                  # Python virtual environment (created in DevContainer)
+├── requirements.txt       # Python dependencies
+├── package.json          # Node.js dependencies (if frontend)
+└── README.md             # Project documentation
 ```
 
 ## 🧩 Components
@@ -100,27 +142,56 @@ project-template/
 - Proper volume configuration
 - PGVector extension pre-installed
 
+### MongoDB
+
+- Document database for flexible data storage
+- Initialization scripts for collections and indexes
+- Authentication enabled
+- Volume persistence configured
+
 ### Redis
 
 - Configured for caching and queues
 - Persistence enabled
 - Optimized configuration
 
+### Chroma Vector Database
+
+- Lightweight vector database for embeddings
+- Persistent storage for vectors
+- Simple REST API for adding and searching documents
+- Built-in similarity search
+
+## 📦 Requirements.txt Templates
+
+When setting up a minimal Python project, choose from curated requirements.txt templates:
+
+- **Minimal**: Basic development tools (uv, pytest, black, python-dotenv, requests)
+- **Data Science**: pandas, numpy, matplotlib, jupyter, plotly, scikit-learn
+- **AI/LLM**: openai, anthropic, langchain, llama-index, tiktoken
+- **Web Scraping**: beautifulsoup4, selenium, scrapy, lxml
+- **API Development**: fastapi, uvicorn, pydantic, httpx
+- **Custom**: Minimal template you can customize
+
+Perfect for rapid prototyping - get started immediately with the right dependencies!
+
 ## 🔄 Adding Components Later
 
-Already created a project but need to add more components? No problem! You have two options:
+Already set up a project but need to add more components? No problem!
 
-### Option 1: Using the Scripts
-
-Create a temporary project with only the component you want to add, then copy the relevant files.
+### Re-run Setup
 
 ```bash
-./project-setup.sh
-# Select only the component you want to add
-# Then copy the files to your existing project
+# In your existing project:
+git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
+./spinbox/project-setup.sh
+# Select additional components you want to add
+rm -rf spinbox/
 ```
 
-### Option 2: Manual Addition
+The setup script will detect existing components and only add new ones.
+
+### Manual Addition
 
 Follow our detailed guides in the [docs/adding-components.md](./docs/adding-components.md) file.
 
@@ -128,7 +199,7 @@ Follow our detailed guides in the [docs/adding-components.md](./docs/adding-comp
 
 ### DevContainers
 
-Your VS Code DevContainer configuration is automatically generated based on selected components. It includes:
+Your DevContainer configuration is automatically generated based on selected components and works with VS Code, Cursor, and other compatible editors. It includes:
 
 - Appropriate extensions
 - Container connections
@@ -157,16 +228,30 @@ Every container comes with:
 
 ### Custom Components
 
-Add your own components by creating templates in the `templates/` directory and updating the project setup script.
+The project setup script can be extended to support additional components. Modify `project-setup.sh` to add your own component templates and configuration logic.
 
 ### Local Development
 
-For backend development outside containers, use the provided `setup_local_env.sh` script in your project:
+Development is designed to happen inside DevContainers for consistency. The virtual environment is automatically created and activated inside the container. However, if you need to work outside containers:
+
+1. **Open in DevContainer** (Recommended):
+   - Your editor will prompt to reopen in container
+   - Virtual environment is auto-activated
+   - All dependencies are pre-installed
+
+2. **Local development** (if needed):
+   - Virtual environment must be created manually: `python3 -m venv venv`
+   - Activate with: `source venv/bin/activate`
+
+### Cleanup After Setup
+
+Once your project is set up, the `spinbox/` directory serves no purpose:
 
 ```bash
-cd your-project/backend
-./setup_local_env.sh
+rm -rf spinbox/
 ```
+
+All your development environment files are now at the root level and will continue working normally.
 
 ## 🔍 Troubleshooting
 
@@ -175,6 +260,7 @@ See [docs/troubleshooting.md](./docs/troubleshooting.md) for solutions to common
 ## 📚 Documentation
 
 - [Adding Components](./docs/adding-components.md)
+- [Chroma Vector Database Usage](./docs/chroma-usage.md)
 - [Troubleshooting](./docs/troubleshooting.md)
 - [Performance Optimization](./docs/performance.md)
 
