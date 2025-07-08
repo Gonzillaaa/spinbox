@@ -1,6 +1,6 @@
 # Modular Development Environment with DevContainers
 
-A comprehensive **scaffolding** toolkit for setting up customizable development environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your perfect stack by selecting any combination of:
+A comprehensive **scaffolding** toolkit for setting up customizable development environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
@@ -9,13 +9,12 @@ A comprehensive **scaffolding** toolkit for setting up customizable development 
 - Redis for caching and queues
 - Chroma vector database for embeddings
 
-**Key Feature**: This scaffolding directory is temporary - after setup, you can delete `project-template/` and your development environment will continue working perfectly!
-
 ## 🚀 Features
 
+- **DevContainer-First**: Every setup includes a DevContainer as the baseline
 - **Works with Existing Codebases**: No need to start from scratch
 - **Temporary Scaffolding**: Delete the setup directory after use
-- **Modular Components**: Choose only what you need
+- **Modular Components**: Start with DevContainer, add what you need
 - **Modern Tech Stack**: Python 3.12+, UV package manager, Next.js
 - **Enhanced Developer Experience**:
   - DevContainers for consistency across VS Code, Cursor, and other editors
@@ -55,7 +54,7 @@ This installs all required tools via Homebrew and configures Zsh with Powerlevel
 cd your-existing-repo/
 git clone https://github.com/Gonzillaaa/project-template.git project-template/
 ./project-template/project-setup.sh
-# Select components you want to add
+# Always creates DevContainer + select additional components you want
 # After setup completes:
 rm -rf project-template/  # Safe to delete!
 ```
@@ -108,9 +107,9 @@ your-repo/
 ├── mongodb/               # MongoDB config (if selected)
 ├── redis/                 # Redis config (if selected)
 ├── chroma_data/           # Chroma vector database data (if selected)
-├── .devcontainer/         # DevContainer config
-├── docker-compose.yml     # Docker services
-├── venv/                  # Python virtual environment
+├── .devcontainer/         # DevContainer config (always created)
+├── docker-compose.yml     # Docker services (if components selected)
+├── venv/                  # Python virtual environment (created in DevContainer)
 ├── requirements.txt       # Python dependencies
 ├── package.json          # Node.js dependencies (if frontend)
 └── README.md             # Project documentation
@@ -219,14 +218,16 @@ The project setup script can be extended to support additional components. Modif
 
 ### Local Development
 
-For backend development outside containers, activate the virtual environment:
+Development is designed to happen inside DevContainers for consistency. The virtual environment is automatically created and activated inside the container. However, if you need to work outside containers:
 
-```bash
-source venv/bin/activate
-pip install -r requirements.txt
-cd backend
-uvicorn app.main:app --reload
-```
+1. **Open in DevContainer** (Recommended):
+   - Your editor will prompt to reopen in container
+   - Virtual environment is auto-activated
+   - All dependencies are pre-installed
+
+2. **Local development** (if needed):
+   - Virtual environment must be created manually: `python3 -m venv venv`
+   - Activate with: `source venv/bin/activate`
 
 ### Cleanup After Setup
 

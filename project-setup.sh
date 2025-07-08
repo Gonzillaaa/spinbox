@@ -1453,9 +1453,65 @@ EOF
 function create_minimal_python_project() {
   print_status "Creating minimal Python project..."
   cd "$PROJECT_ROOT"
-  python3 -m venv venv
+  
+  # Only create requirements.txt - venv will be created inside DevContainer
   touch requirements.txt
+  
+  # Create DevContainer for minimal Python project
+  create_minimal_devcontainer
+  
   print_status "Minimal Python project created."
+}
+
+# Create a standalone DevContainer configuration for minimal Python projects
+function create_minimal_devcontainer() {
+  print_status "Creating DevContainer configuration..."
+  
+  mkdir -p .devcontainer
+  
+  cat > .devcontainer/devcontainer.json << 'EOF'
+{
+  "name": "Python Development Environment",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.pylint",
+        "ms-python.flake8",
+        "ms-python.black-formatter",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/workspace/venv/bin/python",
+        "python.terminal.activateEnvironment": true,
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.fontFamily": "MesloLGS NF"
+      }
+    }
+  },
+  
+  "postCreateCommand": "bash -c 'python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt 2>/dev/null || true'",
+  
+  "remoteUser": "vscode",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  }
+}
+EOF
+
+  print_status "DevContainer configuration created."
 }
 
 # Main function to coordinate the setup process
@@ -1484,8 +1540,19 @@ function main() {
       echo "venv/" > .gitignore
       echo "__pycache__/" >> .gitignore
       echo "*.pyc" >> .gitignore
+      echo "*.pyo" >> .gitignore
+      echo ".Python" >> .gitignore
       git add .
-      git commit -m "Initial commit: minimal Python project"
+      git commit -m "Initial commit: minimal Python project with DevContainer"
+    else
+      # For existing repos, ensure venv is in .gitignore
+      if [ -f .gitignore ] && ! grep -q "venv/" .gitignore; then
+        echo "venv/" >> .gitignore
+      elif [ ! -f .gitignore ]; then
+        echo "venv/" > .gitignore
+        echo "__pycache__/" >> .gitignore
+        echo "*.pyc" >> .gitignore
+      fi
     fi
     
     echo ""
@@ -1493,9 +1560,16 @@ function main() {
     echo -e "${GREEN}    Setup Complete!                   ${NC}"
     echo -e "${GREEN}=======================================${NC}"
     echo ""
-    echo -e "Your minimal Python project has been set up."
-    echo -e "Activate your virtual environment with: source venv/bin/activate"
-    echo -e "Add dependencies to requirements.txt as needed."
+    echo -e "Your minimal Python project has been set up with:"
+    echo -e "- DevContainer configuration for VS Code, Cursor, and other editors"
+    echo -e "- Python virtual environment (created inside DevContainer)"
+    echo -e "- Basic requirements.txt file"
+    echo ""
+    echo -e "To get started:"
+    echo -e "1. Open in your preferred editor: ${YELLOW}code .${NC} or ${YELLOW}cursor .${NC}"
+    echo -e "2. When prompted, reopen in DevContainer"
+    echo -e "3. Virtual environment will be auto-created and activated inside container"
+    echo ""
     echo -e "You can now delete the ${YELLOW}project-template/${NC} directory."
     echo ""
     exit 0
