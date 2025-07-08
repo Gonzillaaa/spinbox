@@ -1449,13 +1449,85 @@ EOF
   print_status "README created."
 }
 
+# Function to select requirements.txt template
+function select_requirements_template() {
+  echo ""
+  print_status "Select requirements.txt template for quick prototyping:"
+  echo "1) Minimal (basic dev tools only)"
+  echo "2) Data Science (pandas, jupyter, scikit-learn, etc.)"
+  echo "3) AI/LLM (openai, langchain, llama-index, etc.)"
+  echo "4) Web Scraping (beautifulsoup, selenium, scrapy, etc.)"
+  echo "5) API Development (fastapi, uvicorn, pydantic, etc.)"
+  echo "6) Custom (minimal template you can customize)"
+  echo ""
+  
+  local template_choice
+  while true; do
+    read -p "Enter your choice (1-6) [1]: " template_choice
+    template_choice=${template_choice:-1}
+    
+    case $template_choice in
+      1)
+        REQUIREMENTS_TEMPLATE="minimal.txt"
+        print_status "Selected: Minimal template"
+        break
+        ;;
+      2)
+        REQUIREMENTS_TEMPLATE="data-science.txt"
+        print_status "Selected: Data Science template"
+        break
+        ;;
+      3)
+        REQUIREMENTS_TEMPLATE="ai-llm.txt"
+        print_status "Selected: AI/LLM template"
+        break
+        ;;
+      4)
+        REQUIREMENTS_TEMPLATE="web-scraping.txt"
+        print_status "Selected: Web Scraping template"
+        break
+        ;;
+      5)
+        REQUIREMENTS_TEMPLATE="api-development.txt"
+        print_status "Selected: API Development template"
+        break
+        ;;
+      6)
+        REQUIREMENTS_TEMPLATE="custom.txt"
+        print_status "Selected: Custom template"
+        break
+        ;;
+      *)
+        echo "Invalid choice. Please enter 1-6."
+        ;;
+    esac
+  done
+}
+
 # Add a function to create a minimal Python project
 function create_minimal_python_project() {
   print_status "Creating minimal Python project..."
   cd "$PROJECT_ROOT"
   
-  # Only create requirements.txt - venv will be created inside DevContainer
-  touch requirements.txt
+  # Select requirements.txt template
+  select_requirements_template
+  
+  # Copy selected requirements template
+  if [ -f "$SETUP_DIR/templates/requirements/$REQUIREMENTS_TEMPLATE" ]; then
+    cp "$SETUP_DIR/templates/requirements/$REQUIREMENTS_TEMPLATE" requirements.txt
+    print_status "Requirements template applied: $REQUIREMENTS_TEMPLATE"
+  else
+    # Fallback to minimal template
+    cat > requirements.txt << 'EOF'
+# Development tools
+uv>=0.1.0
+pytest>=7.4.0
+black>=23.0.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+EOF
+    print_status "Applied fallback minimal requirements"
+  fi
   
   # Create DevContainer for minimal Python project
   create_minimal_devcontainer
@@ -1563,7 +1635,7 @@ function main() {
     echo -e "Your minimal Python project has been set up with:"
     echo -e "- DevContainer configuration for VS Code, Cursor, and other editors"
     echo -e "- Python virtual environment (created inside DevContainer)"
-    echo -e "- Basic requirements.txt file"
+    echo -e "- Requirements.txt template: $REQUIREMENTS_TEMPLATE"
     echo ""
     echo -e "To get started:"
     echo -e "1. Open in your preferred editor: ${YELLOW}code .${NC} or ${YELLOW}cursor .${NC}"

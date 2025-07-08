@@ -12,6 +12,7 @@ A comprehensive **scaffolding** toolkit for setting up customizable development 
 ## 🚀 Features
 
 - **DevContainer-First**: Every setup includes a DevContainer as the baseline
+- **Requirements.txt Templates**: Quick-start templates for common prototyping scenarios
 - **Works with Existing Codebases**: No need to start from scratch
 - **Temporary Scaffolding**: Delete the setup directory after use
 - **Modular Components**: Start with DevContainer, add what you need
@@ -95,6 +96,7 @@ project-template/
 ├── lib/                   # Utility libraries
 ├── tests/                 # Test framework
 ├── docs/                  # Documentation
+├── templates/             # Requirements.txt templates
 └── README.md              # This file
 ```
 
@@ -160,6 +162,19 @@ your-repo/
 - Persistent storage for vectors
 - Simple REST API for adding and searching documents
 - Built-in similarity search
+
+## 📦 Requirements.txt Templates
+
+When setting up a minimal Python project, choose from curated requirements.txt templates:
+
+- **Minimal**: Basic development tools (uv, pytest, black, python-dotenv, requests)
+- **Data Science**: pandas, numpy, matplotlib, jupyter, plotly, scikit-learn
+- **AI/LLM**: openai, anthropic, langchain, llama-index, tiktoken
+- **Web Scraping**: beautifulsoup4, selenium, scrapy, lxml
+- **API Development**: fastapi, uvicorn, pydantic, httpx
+- **Custom**: Minimal template you can customize
+
+Perfect for rapid prototyping - get started immediately with the right dependencies!
 
 ## 🔄 Adding Components Later
 
