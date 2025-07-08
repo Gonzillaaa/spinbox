@@ -94,7 +94,6 @@ project-template/
 ├── project-setup.sh       # Project creation and configuration
 ├── start.sh               # Project startup script
 ├── lib/                   # Utility libraries
-├── tests/                 # Test framework
 ├── docs/                  # Documentation
 ├── templates/             # Requirements.txt templates
 └── README.md              # This file
@@ -261,7 +260,6 @@ See [docs/troubleshooting.md](./docs/troubleshooting.md) for solutions to common
 ## 📚 Documentation
 
 - [Adding Components](./docs/adding-components.md)
-- [Testing Documentation](./docs/testing.md)
 - [Chroma Vector Database Usage](./docs/chroma-usage.md)
 - [Troubleshooting](./docs/troubleshooting.md)
 - [Performance Optimization](./docs/performance.md)

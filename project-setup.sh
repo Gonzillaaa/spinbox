@@ -595,7 +595,6 @@ COPY requirements.txt .
 # Add useful aliases
 RUN echo '# Aliases' >> ~/.zshrc && \
     echo 'alias rs="uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"' >> ~/.zshrc && \
-    echo 'alias test="pytest"' >> ~/.zshrc && \
     echo 'alias py="python"' >> ~/.zshrc && \
     echo 'alias pyvenv="source venv/bin/activate"' >> ~/.zshrc && \
     echo 'alias uvinstall="uv pip install -r requirements.txt"' >> ~/.zshrc
