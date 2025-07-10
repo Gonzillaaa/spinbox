@@ -4,7 +4,7 @@
 
 # Spin up containerized prototyping environments in seconds! 
 
-A **scaffolding** toolkit for spinning up customizable prototyping environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your stack by selecting any combination of:
+A **global CLI tool** for spinning up customizable development environments with predefined profiles or custom component selection. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and comes with a modern development setup. Build your stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
@@ -15,19 +15,26 @@ A **scaffolding** toolkit for spinning up customizable prototyping environments 
 
 ## 🚀 Features
 
-- **DevContainer-First**: Every setup includes a DevContainer as the baseline
-- **Requirements.txt Templates**: Quick-start templates for common prototyping scenarios
-- **Works with Existing Codebases**: No need to start from scratch
-- **Temporary Scaffolding**: Delete the setup directory after use
-- **Modular Components**: Start with DevContainer, add what you need
-- **Configurable Versions**: Customize Python, Node.js, PostgreSQL, and Redis versions
-- **Modern Tech Stack**: Python 3.12+, UV package manager, Next.js
+### **Global CLI Tool**
+- **Simple Commands**: `spinbox create myproject --profile web-app`
+- **Predefined Profiles**: 5 curated profiles for common development scenarios
+- **Custom Components**: Mix and match components as needed
+- **Project Management**: Add components, start services, check status
+
+### **Development Environment**
+- **DevContainer-First**: Every project includes a DevContainer as the baseline
+- **Requirements.txt Templates**: Quick-start templates for different development needs
+- **Modern Tech Stack**: Python 3.12+, UV package manager, Node.js 20+, TypeScript
 - **Enhanced Developer Experience**:
   - DevContainers for consistency across VS Code, Cursor, and other editors
-  - Zsh with Powerlevel10k for a beautiful, functional terminal in all containers
-  - UV package manager and preconfigured aliases and shortcuts
-- **macOS Native**: Built specifically for macOS with Homebrew integration
-- **Fully Automated**: Single-command setup and initialization
+  - Zsh with Powerlevel10k for a beautiful, functional terminal
+  - Pre-configured development tools and shortcuts
+
+### **Component System**
+- **Modular Design**: Start minimal, add what you need
+- **Service Management**: Built-in Docker Compose orchestration
+- **Version Control**: Customize software versions globally or per-project
+- **Easy Installation**: Homebrew integration for macOS
 - **Root-Level Deployment**: All project files created at repository root
 
 ## 📋 Prerequisites
@@ -58,25 +65,57 @@ chmod +x install.sh
 ./install.sh
 ```
 
-### 2. Create Projects with the Global CLI
+### 2. Create Projects with Predefined Profiles
 
 ```bash
-# Create a simple Python project
-spinbox create myproject --python
+# Use predefined profiles for common scenarios
+spinbox create myapp --profile web-app        # Full-stack web application
+spinbox create api-server --profile api-only  # Backend API with database
+spinbox create ml-project --profile data-science  # Data science environment
+spinbox create ai-project --profile ai-llm    # AI/LLM development
 
-# Create a full-stack web application
-spinbox create webapp --python --node --database
+# List available profiles
+spinbox profiles
 
-# Create an AI/ML project with vector database
-spinbox create ai-project --python --template ai-llm --chroma
+# Show profile details
+spinbox profiles web-app
+```
 
-# Create with custom versions
+### 3. Custom Component Selection
+
+```bash
+# Build custom projects by selecting components
+spinbox create myproject --python             # Simple Python project
+spinbox create webapp --python --node --database  # Custom full-stack
+spinbox create api --backend --redis          # API with caching
+
+# Customize versions
 spinbox create api --backend --redis --python-version 3.11
 ```
 
-#### Available Components
+### 4. Project Management
+
+```bash
+# Add components to existing projects
+cd myproject
+spinbox add --database --redis
+
+# Start project services
+spinbox start                    # Start all services in background
+spinbox start --logs             # Start and show logs
+
+# Check project status
+spinbox status                   # Show project and configuration info
+
+# Manage global configuration
+spinbox config --list           # Show current configuration
+spinbox config --set PYTHON_VERSION=3.11
+```
+
+## 📦 Available Components
+
 - `--python` - Python DevContainer with virtual environment
-- `--node` - Node.js DevContainer with TypeScript
+- `--node` - Node.js DevContainer with TypeScript  
 - `--backend` - FastAPI backend (includes Python)
 - `--frontend` - Next.js frontend (includes Node.js)
 - `--database` - PostgreSQL with PGVector extension
@@ -84,32 +123,30 @@ spinbox create api --backend --redis --python-version 3.11
 - `--redis` - Redis for caching and queues
 - `--chroma` - Chroma vector database for embeddings
 
-#### Configuration Management
+## 🎯 Predefined Profiles
 
+- **`web-app`** - Full-stack web application with backend, frontend, and database
+- **`api-only`** - Backend API with database and Redis caching
+- **`data-science`** - Python environment with ML/data science libraries
+- **`ai-llm`** - AI development environment with vector database
+- **`minimal`** - Basic development environment with essential tools
+
+## 🛠️ Development Workflow
+
+### 1. Open in Editor
 ```bash
-# View current configuration
-spinbox config --list
-
-# Set default versions
-spinbox config --set PYTHON_VERSION=3.11
-spinbox config --set NODE_VERSION=18
-
-# Interactive setup
-spinbox config --setup
-
-# Check project status
-spinbox status
-```
-
-### 3. Start Your Development Environment
-
-```bash
-cd your-project
+cd myproject
 code .     # VS Code
 cursor .   # Cursor
 # When prompted, click "Reopen in Container"
+```
 
-# If you have services (database, redis, etc.):
+### 2. Start Services (if needed)
+```bash
+# Start all services in background
+spinbox start
+
+# Or use docker-compose directly
 docker-compose up -d
 ```
 
