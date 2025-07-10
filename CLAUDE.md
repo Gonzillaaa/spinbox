@@ -30,6 +30,8 @@ This file contains development philosophy and preferences for working on the Spi
 - Make things work reliably first, optimize later if needed
 - Choose readability over cleverness
 - Eliminate infinite loops, timeouts, and hanging processes
+- **Use simple, flat directory structures** - avoid unnecessary nesting or complexity
+- Keep file organization clear and straightforward
 
 ## Decision Making Guidelines
 
