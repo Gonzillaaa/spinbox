@@ -154,29 +154,6 @@ Your editor will detect the DevContainer configuration and prompt to "Reopen in 
 
 ---
 
-## 🔄 Alternative: Legacy Script Method
-
-For users who prefer the original workflow or need to use specific versions, the legacy script method is still available:
-
-#### For Existing Codebases:
-```bash
-cd your-existing-repo/
-git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
-./spinbox/project-setup.sh
-# After setup completes:
-rm -rf spinbox/  # Safe to delete!
-```
-
-#### For New Projects:
-```bash
-mkdir new-project && cd new-project/
-git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
-./spinbox/project-setup.sh
-rm -rf spinbox/  # Safe to delete!
-```
-
-**Note**: The global CLI method is recommended for most users as it provides better command-line experience and doesn't require temporary directory cloning.
-
 ## 🗂️ Structure
 
 ### Global Installation Structure
@@ -187,7 +164,7 @@ rm -rf spinbox/  # Safe to delete!
 └── cache/                 # Cache directory
 ```
 
-### Scaffolding Directory (Legacy Method)
+### Source Repository Structure
 ```
 spinbox/
 ├── bin/spinbox            # CLI entry point
@@ -287,19 +264,7 @@ spinbox add --backend --redis
 spinbox add --database --mongodb
 ```
 
-**Note**: The `spinbox add` command is planned for Phase 4 implementation.
-
-### Legacy Method
-
-```bash
-# In your existing project:
-git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
-./spinbox/project-setup.sh
-# Select additional components you want to add
-rm -rf spinbox/
-```
-
-The setup script will detect existing components and only add new ones.
+**Note**: The `spinbox add` command is fully implemented and ready to use.
 
 ### Manual Addition
 
