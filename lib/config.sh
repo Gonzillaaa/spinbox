@@ -27,17 +27,17 @@ PROJECT_EMAIL=""
 PROJECT_LICENSE="MIT"
 DEFAULT_COMPONENTS=""
 
-# Project-specific configuration variables
-PROJECT_NAME=""
-PROJECT_DESCRIPTION=""
-USE_BACKEND=""
-USE_FRONTEND=""
-USE_DATABASE=""
-USE_REDIS=""
-BACKEND_PORT="8000"
-FRONTEND_PORT="3000"
-DATABASE_PORT="5432"
-REDIS_PORT="6379"
+# Project-specific configuration variables (preserve existing values)
+: "${PROJECT_NAME:=""}"
+: "${PROJECT_DESCRIPTION:=""}"
+: "${USE_BACKEND:=""}"
+: "${USE_FRONTEND:=""}"
+: "${USE_DATABASE:=""}"
+: "${USE_REDIS:=""}"
+: "${BACKEND_PORT:="8000"}"
+: "${FRONTEND_PORT:="3000"}"
+: "${DATABASE_PORT:="5432"}"
+: "${REDIS_PORT:="6379"}"
 
 # User preferences
 PREFERRED_EDITOR="code"

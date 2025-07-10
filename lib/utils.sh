@@ -47,7 +47,11 @@ function log_message() {
   local level="$1"
   local message="$2"
   local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-  echo "[$timestamp] [$level] $message" >> "$LOG_FILE"
+  
+  # Only log to file if LOG_FILE is set and exists
+  if [[ -n "${LOG_FILE:-}" && -f "$LOG_FILE" ]]; then
+    echo "[$timestamp] [$level] $message" >> "$LOG_FILE"
+  fi
   
   if [[ "$VERBOSE" == true ]]; then
     echo "[$level] $message" >&2

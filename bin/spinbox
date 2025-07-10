@@ -24,6 +24,9 @@ COMMAND=""
 SUBCOMMAND=""
 PROJECT_NAME=""
 PROJECT_DIR=""
+COMPONENTS=""
+TEMPLATE=""
+FORCE=false
 VERBOSE=false
 DRY_RUN=false
 
@@ -552,10 +555,17 @@ function parse_status_args() {
 function execute_command() {
     case "$COMMAND" in
         create)
+            # Debug output
+            print_debug "CLI PROJECT_NAME: '$PROJECT_NAME'"
+            print_debug "CLI COMPONENTS: '$COMPONENTS'"
+            # Export variables needed by project generator
+            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE FORCE DRY_RUN VERBOSE
             source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             create_project
             ;;
         add)
+            # Export variables needed by project generator
+            export COMPONENTS DRY_RUN VERBOSE
             source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             add_components
             ;;

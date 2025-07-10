@@ -254,9 +254,13 @@ function generate_port_list() {
         ports+=("$REDIS_PORT")
     fi
     
-    # Join ports with commas
-    local IFS=','
-    echo "${ports[*]}"
+    # Join ports with commas, handle empty array
+    if [[ ${#ports[@]} -gt 0 ]]; then
+        local IFS=','
+        echo "${ports[*]}"
+    else
+        echo ""
+    fi
 }
 
 # Generate VS Code extensions list
@@ -282,9 +286,13 @@ function generate_vscode_extensions() {
         extensions+=("\"ms-ossdata.vscode-postgresql\"")
     fi
     
-    # Join extensions with commas
-    local IFS=','
-    echo "${extensions[*]}"
+    # Join extensions with commas, handle empty array
+    if [[ ${#extensions[@]} -gt 0 ]]; then
+        local IFS=','
+        echo "${extensions[*]}"
+    else
+        echo ""
+    fi
 }
 
 # Generate Dockerfile content based on components
