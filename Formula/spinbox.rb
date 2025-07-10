@@ -1,5 +1,5 @@
 class Spinbox < Formula
-  desc "Global CLI for rapid prototyping environments"
+  desc "Global CLI for spinning up containerized development environments"
   homepage "https://github.com/Gonzillaaa/spinbox"
   url "https://github.com/Gonzillaaa/spinbox/archive/v1.0.0.tar.gz"
   sha256 "PLACEHOLDER_SHA256_HASH"
@@ -13,7 +13,7 @@ class Spinbox < Formula
     bin.install "bin/spinbox"
     
     # Install support files
-    prefix.install "lib", "generators"
+    prefix.install "lib", "generators", "templates"
     
     # Create configuration directory template
     (prefix/"config").mkpath
@@ -30,22 +30,25 @@ class Spinbox < Formula
       
       To get started:
         spinbox --help
+        spinbox profiles
         
       For Docker support (recommended):
         brew install --cask docker
         
       Configuration directory: ~/.spinbox
       
-      Available project types:
-        - minimal-python: Basic Python project with DevContainer
-        - minimal-node: Basic Node.js/TypeScript project
-        - backend: Full backend with database support
-        - frontend: Modern frontend with build tools
+      Available profiles:
+        - web-app: Full-stack web application
+        - api-only: Backend API with database
+        - data-science: Python ML/data science environment
+        - ai-llm: AI development with vector database
+        - minimal: Basic development environment
         
       Examples:
-        spinbox myproject --type minimal-python
-        spinbox webapp --type frontend --port 3000
-        spinbox api --type backend --database postgresql
+        spinbox create myapp --profile web-app
+        spinbox create api-server --profile api-only
+        spinbox create ml-project --profile data-science
+        spinbox create myproject --python --backend --database
     EOS
   end
 
