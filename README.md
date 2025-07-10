@@ -52,16 +52,76 @@ chmod +x macos-setup.sh
 
 This installs all required tools via Homebrew and configures Zsh with Powerlevel10k on macOS.
 
-**Optional**: Customize software versions by creating `spinbox/.config/global.conf` before running project setup. See [Configuration](#%EF%B8%8F-configuration) section for details.
+### 2. Create Projects with the CLI
 
-### 2. Set Up Your Project
+#### Using the Global CLI (Recommended)
+
+```bash
+# Create a simple Python project
+./bin/spinbox create myproject --python
+
+# Create a full-stack web application
+./bin/spinbox create webapp --python --node --database
+
+# Create an AI/ML project with vector database
+./bin/spinbox create ai-project --python --template ai-llm --chroma
+
+# Create with custom versions
+./bin/spinbox create api --backend --redis --python-version 3.11
+```
+
+#### Available Components
+- `--python` - Python DevContainer with virtual environment
+- `--node` - Node.js DevContainer with TypeScript
+- `--backend` - FastAPI backend (includes Python)
+- `--frontend` - Next.js frontend (includes Node.js)
+- `--database` - PostgreSQL with PGVector extension
+- `--mongodb` - MongoDB document database
+- `--redis` - Redis for caching and queues
+- `--chroma` - Chroma vector database for embeddings
+
+#### Configuration Management
+
+```bash
+# View current configuration
+./bin/spinbox config --list
+
+# Set default versions
+./bin/spinbox config --set PYTHON_VERSION=3.11
+./bin/spinbox config --set NODE_VERSION=18
+
+# Interactive setup
+./bin/spinbox config --setup
+
+# Check project status
+./bin/spinbox status
+```
+
+### 3. Start Your Development Environment
+
+```bash
+cd your-project
+code .     # VS Code
+cursor .   # Cursor
+# When prompted, click "Reopen in Container"
+
+# If you have services (database, redis, etc.):
+docker-compose up -d
+```
+
+Your editor will detect the DevContainer configuration and prompt to "Reopen in Container".
+
+---
+
+## 🔄 Alternative: Legacy Script Method
+
+For existing workflows, the original script method is still available:
 
 #### For Existing Codebases:
 ```bash
 cd your-existing-repo/
 git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
 ./spinbox/project-setup.sh
-# Always creates DevContainer + select additional components you want
 # After setup completes:
 rm -rf spinbox/  # Safe to delete!
 ```
@@ -71,25 +131,8 @@ rm -rf spinbox/  # Safe to delete!
 mkdir new-project && cd new-project/
 git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
 ./spinbox/project-setup.sh
-# Select components
 rm -rf spinbox/  # Safe to delete!
 ```
-
-### 3. Start Your Development Environment
-
-```bash
-# If spinbox still exists:
-./spinbox/start.sh
-
-# OR if you deleted spinbox:
-docker-compose up -d
-# Then open in your preferred editor:
-code .     # VS Code
-cursor .   # Cursor
-# Or manually open the project folder
-```
-
-Your editor should detect the DevContainer configuration and prompt to "Reopen in Container".
 
 ## 🗂️ Structure
 
