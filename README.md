@@ -87,7 +87,7 @@ spinbox profiles web-app
 # Build custom projects by selecting components
 spinbox create myproject --python             # Simple Python project
 spinbox create webapp --python --node --database  # Custom full-stack
-spinbox create api --backend --redis          # API with caching
+spinbox create api --backend --redis          # API layer with caching
 
 # Customize versions
 spinbox create api --backend --redis --python-version 3.11
@@ -114,14 +114,37 @@ spinbox config --set PYTHON_VERSION=3.11
 
 ## 📦 Available Components
 
+### Development Environment
 - `--python` - Python DevContainer with virtual environment
 - `--node` - Node.js DevContainer with TypeScript  
+
+### Application Layer
 - `--backend` - FastAPI backend (includes Python)
 - `--frontend` - Next.js frontend (includes Node.js)
-- `--database` - PostgreSQL with PGVector extension
-- `--mongodb` - MongoDB document database
-- `--redis` - Redis for caching and queues
-- `--chroma` - Chroma vector database for embeddings
+
+### Storage Layer
+- `--database` - PostgreSQL with PGVector (primary relational storage)
+- `--mongodb` - MongoDB (alternative document storage)
+
+### Performance & Specialized Layer
+- `--redis` - Redis (caching and queues)
+- `--chroma` - Chroma (vector search for AI/ML)
+
+### Component Categorization
+
+Components are organized by their **architectural role** rather than technical type:
+
+| Component | Flag | Architectural Role | Use With |
+|-----------|------|-------------------|----------|
+| PostgreSQL | `--database` | Primary storage | Most projects |
+| MongoDB | `--mongodb` | Alternative primary storage | Document-heavy projects |
+| Redis | `--redis` | Caching/queue layer | Performance optimization |
+| Chroma | `--chroma` | Vector search layer | AI/ML applications |
+
+**Examples of combining storage components:**
+- `--database --redis` - Primary storage + caching
+- `--mongodb --chroma` - Document storage + vector search
+- `--database --mongodb --redis` - Multiple storage strategies
 
 ## 🎯 Predefined Profiles
 
@@ -260,8 +283,9 @@ Already set up a project but need to add more components? No problem!
 
 ```bash
 # In your existing project directory:
-spinbox add --backend --redis
-spinbox add --database --mongodb
+spinbox add --database --redis        # Add primary storage + caching layer
+spinbox add --mongodb --chroma        # Add alternative storage + vector search
+spinbox add --backend --frontend      # Add API layer + web interface
 ```
 
 **Note**: The `spinbox add` command is fully implemented and ready to use.

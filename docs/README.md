@@ -52,10 +52,10 @@
 | Node.js | Node.js DevContainer | `--node` | Frontend projects |
 | Backend | FastAPI backend | `--backend` | API development |
 | Frontend | Next.js frontend | `--frontend` | Web applications |
-| Database | PostgreSQL + PGVector | `--database` | Data storage |
-| MongoDB | Document database | `--mongodb` | NoSQL projects |
-| Redis | Caching and queues | `--redis` | Performance |
-| Chroma | Vector database | `--chroma` | AI/ML projects |
+| Database | PostgreSQL + PGVector (primary storage) | `--database` | Relational data |
+| MongoDB | MongoDB (alternative primary storage) | `--mongodb` | Document/NoSQL data |
+| Redis | Redis (caching/queue layer) | `--redis` | Performance/caching |
+| Chroma | Chroma (vector search layer) | `--chroma` | AI/ML embeddings |
 
 ---
 

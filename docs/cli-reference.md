@@ -90,7 +90,7 @@ spinbox create myproject --python
 # Custom full-stack setup
 spinbox create webapp --python --node --database --redis
 
-# Backend API with caching
+# API layer with caching
 spinbox create api --backend --redis
 
 # Frontend with MongoDB
@@ -161,8 +161,9 @@ spinbox add [OPTIONS]
 cd myproject
 spinbox add --database
 
-# Add multiple components
-spinbox add --backend --redis
+# Add multiple components with clear architectural roles
+spinbox add --database --redis        # Primary storage + caching layer
+spinbox add --mongodb --chroma        # Alternative storage + vector search
 
 # Add with version specification
 spinbox add --database --postgres-version 14
