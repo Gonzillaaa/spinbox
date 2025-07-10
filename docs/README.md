@@ -4,13 +4,11 @@
 - [`global-cli-strategy.md`](./global-cli-strategy.md) - High-level vision and approach
 - [`global-cli-implementation.md`](./global-cli-implementation.md) - Detailed technical implementation
 - [`bare-bones-projects.md`](./bare-bones-projects.md) - Minimal project specifications
-- [`migration-path.md`](./migration-path.md) - Migration from template system
 
 ## 📋 Implementation Tracking
-- [ ] Always read these docs before starting implementation tasks
-- [ ] Update progress in implementation.md as tasks are completed
-- [ ] Document any deviations or new ideas in strategy.md
-- [ ] Keep migration-path.md updated with actual migration experience
+- [x] Always read these docs before starting implementation tasks
+- [x] Update progress in implementation.md as tasks are completed
+- [x] Document any deviations or new ideas in strategy.md
 
 ## 🎯 Quick Task Navigation
 
