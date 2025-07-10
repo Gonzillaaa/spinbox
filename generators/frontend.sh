@@ -394,6 +394,7 @@ EOF
 
     # API route example
     safe_create_dir "$app_dir/api"
+    safe_create_dir "$app_dir/api/health"
     cat > "$app_dir/api/health/route.ts" << 'EOF'
 import { NextResponse } from 'next/server'
 

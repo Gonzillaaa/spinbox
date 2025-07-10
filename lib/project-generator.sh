@@ -540,17 +540,32 @@ function generate_component_files() {
         generate_node_package_json "$project_dir"
     fi
     
-    # Generate component-specific configurations
+    # Generate component-specific configurations using modular generators
     if [[ "$USE_BACKEND" == true ]]; then
-        source "$PROJECT_ROOT/generators/backend.sh" 2>/dev/null || generate_basic_backend "$project_dir"
+        if source "$PROJECT_ROOT/generators/backend.sh" 2>/dev/null; then
+            generate_backend_component "$project_dir"
+        else
+            print_warning "Backend generator not found, using fallback"
+            generate_basic_backend "$project_dir"
+        fi
     fi
     
     if [[ "$USE_FRONTEND" == true ]]; then
-        source "$PROJECT_ROOT/generators/frontend.sh" 2>/dev/null || generate_basic_frontend "$project_dir"
+        if source "$PROJECT_ROOT/generators/frontend.sh" 2>/dev/null; then
+            generate_frontend_component "$project_dir"
+        else
+            print_warning "Frontend generator not found, using fallback"
+            generate_basic_frontend "$project_dir"
+        fi
     fi
     
     if [[ "$USE_DATABASE" == true ]]; then
-        generate_database_init "$project_dir"
+        if source "$PROJECT_ROOT/generators/database.sh" 2>/dev/null; then
+            generate_database_component "$project_dir"
+        else
+            print_warning "Database generator not found, using fallback"
+            generate_database_init "$project_dir"
+        fi
     fi
     
     print_status "Generated component files"
