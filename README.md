@@ -1,10 +1,10 @@
-# Spinbox: Rapid Development Environment Scaffolding
+[logo]: https://github.com/Gonzillaaa/spinbox/blob/main/docs/spinbox-logo-cropped.png "Spinbox"
 
-[logo]: https://github.com/Gonzillaaa/spinbox/blob/main/docs/spinbox_logo_coal.png "Spinbox"
+![Spinbox][logo]
 
-![alt text][logo]
+# Spin up quick prototyping environments! 
 
-A comprehensive **scaffolding** toolkit for spinning up customizable development environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your stack by selecting any combination of:
+A comprehensive **scaffolding** toolkit for spinning up customizable prototyping environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
@@ -20,6 +20,7 @@ A comprehensive **scaffolding** toolkit for spinning up customizable development
 - **Works with Existing Codebases**: No need to start from scratch
 - **Temporary Scaffolding**: Delete the setup directory after use
 - **Modular Components**: Start with DevContainer, add what you need
+- **Configurable Versions**: Customize Python, Node.js, PostgreSQL, and Redis versions
 - **Modern Tech Stack**: Python 3.12+, UV package manager, Next.js
 - **Enhanced Developer Experience**:
   - DevContainers for consistency across VS Code, Cursor, and other editors
@@ -31,7 +32,6 @@ A comprehensive **scaffolding** toolkit for spinning up customizable development
 
 ## 📋 Prerequisites
 
-- macOS (required)
 - Docker Desktop
 - DevContainer-compatible editor (VS Code, Cursor, etc.)
 - Git
@@ -51,6 +51,8 @@ chmod +x macos-setup.sh
 ```
 
 This installs all required tools via Homebrew and configures Zsh with Powerlevel10k on macOS.
+
+**Optional**: Customize software versions by creating `spinbox/.config/global.conf` before running project setup. See [Configuration](#%EF%B8%8F-configuration) section for details.
 
 ### 2. Set Up Your Project
 
@@ -172,7 +174,7 @@ When setting up a minimal Python project, choose from curated requirements.txt t
 
 - **Minimal**: Basic development tools (uv, pytest, black, python-dotenv, requests)
 - **Data Science**: pandas, numpy, matplotlib, jupyter, plotly, scikit-learn
-- **AI/LLM**: openai, anthropic, langchain, llama-index, tiktoken
+- **AI/LLM**: openai, anthropic, langchain, llama-index, tiktoken, transformers
 - **Web Scraping**: beautifulsoup4, selenium, scrapy, lxml
 - **API Development**: fastapi, uvicorn, pydantic, httpx
 - **Custom**: Minimal template you can customize
@@ -200,6 +202,30 @@ The setup script will detect existing components and only add new ones.
 Follow our detailed guides in the [docs/adding-components.md](./docs/adding-components.md) file.
 
 ## ⚙️ Configuration
+
+### Software Version Configuration
+
+Spinbox supports configurable software versions for consistent development environments. Create a `.config/global.conf` file in your Spinbox directory to customize versions:
+
+```bash
+# Example .config/global.conf
+PYTHON_VERSION="3.11"
+NODE_VERSION="18"
+POSTGRES_VERSION="14"
+REDIS_VERSION="6"
+```
+
+**Default versions** (used when no configuration exists):
+- Python: `3.12`
+- Node.js: `20`
+- PostgreSQL: `15`
+- Redis: `7`
+
+All Docker images, requirements templates, and generated configurations will use your specified versions. The setup script shows which versions are being used:
+
+```
+[+] Using configuration: Python 3.11, Node 18, PostgreSQL 14, Redis 6
+```
 
 ### DevContainers
 
