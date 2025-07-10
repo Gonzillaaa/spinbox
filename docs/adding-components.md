@@ -350,6 +350,7 @@ For advanced users who want more control over the process.
    chromadb>=0.4.0
    openai>=1.0.0
    sentence-transformers>=2.2.0
+   transformers>=4.35.0
    ```
 
 2. **Update FastAPI main.py with Chroma integration:**
