@@ -14,23 +14,18 @@ This testing framework follows the principle of **minimal complexity**:
 ## Quick Start
 
 ```bash
-# Run the main test suite (recommended)
+# Run the complete test suite (recommended)
 ./quick-test.sh
-
-# Run through the test runner
-./run-tests.sh --unit
-
-# Run in fast mode
-./run-tests.sh --unit --fast
 ```
+
+That's it! One command, everything tested.
 
 ## Test Files
 
-### Core Test Framework
+### Ultra-Simple Test Framework
 
 - **`simple-test.sh`** - Core test framework with 22 focused tests
 - **`quick-test.sh`** - Main test runner with additional smoke tests
-- **`run-tests.sh`** - Legacy test runner integration
 
 ### What's Tested
 
@@ -67,10 +62,10 @@ test_file_exists "path/to/file" "File was created"
 
 ## Integration
 
-The minimal framework integrates with the existing test infrastructure while eliminating complexity:
+The minimal framework is completely self-contained:
 
-- ✅ Works with `run-tests.sh`
-- ✅ Supports `--fast` and `--verbose` modes
+- ✅ Single command execution
+- ✅ No external dependencies or wrappers
 - ✅ No hanging or timeout issues
 - ✅ Clear, colored output
 
