@@ -11,6 +11,9 @@ setup_error_handling
 init_logging "macos_setup"
 parse_common_args "$@"
 
+# Initialize configuration system
+init_config
+
 # Required dependencies for this script
 REQUIRED_DEPS=("curl" "git")
 

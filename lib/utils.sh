@@ -5,7 +5,8 @@
 # Constants
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-readonly CONFIG_DIR="$PROJECT_ROOT/.config"
+# Allow CONFIG_DIR to be overridden for testing
+: "${CONFIG_DIR:=$PROJECT_ROOT/.config}"
 readonly LOG_DIR="$PROJECT_ROOT/.logs"
 readonly BACKUP_DIR="$PROJECT_ROOT/.backups"
 

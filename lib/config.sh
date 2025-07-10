@@ -5,10 +5,10 @@
 # Source the utilities library
 source "$(dirname "${BASH_SOURCE[0]}")/utils.sh"
 
-# Configuration file paths
-readonly GLOBAL_CONFIG="$CONFIG_DIR/global.conf"
-readonly PROJECT_CONFIG="$CONFIG_DIR/project.conf"
-readonly USER_CONFIG="$CONFIG_DIR/user.conf"
+# Configuration file paths (dynamic to support test environments)
+function get_global_config_path() { echo "$CONFIG_DIR/global.conf"; }
+function get_project_config_path() { echo "$CONFIG_DIR/project.conf"; }
+function get_user_config_path() { echo "$CONFIG_DIR/user.conf"; }
 
 # Default configuration values
 DEFAULT_PYTHON_VERSION="3.12"
@@ -50,7 +50,7 @@ function init_config() {
   safe_create_dir "$CONFIG_DIR"
   
   # Create default global config if it doesn't exist
-  if [[ ! -f "$GLOBAL_CONFIG" ]]; then
+  if [[ ! -f "$(get_global_config_path)" ]]; then
     create_default_global_config
   fi
   
@@ -61,7 +61,7 @@ function init_config() {
 
 # Create default global configuration
 function create_default_global_config() {
-  cat > "$GLOBAL_CONFIG" << EOF
+  cat > "$(get_global_config_path)" << EOF
 # Global configuration for project template
 # This file contains default values used across all projects
 
@@ -88,7 +88,7 @@ EOF
 
 # Load global configuration
 function load_global_config() {
-  if load_config "$GLOBAL_CONFIG"; then
+  if load_config "$(get_global_config_path)"; then
     print_debug "Loaded global configuration"
   else
     print_warning "Could not load global configuration, using defaults"
@@ -109,13 +109,13 @@ function save_global_config() {
     "DEFAULT_COMPONENTS"
   )
   
-  save_config "$GLOBAL_CONFIG" "${vars[@]}"
+  save_config "$(get_global_config_path)" "${vars[@]}"
   print_status "Saved global configuration"
 }
 
 # Load user configuration
 function load_user_config() {
-  if load_config "$USER_CONFIG"; then
+  if load_config "$(get_user_config_path)"; then
     print_debug "Loaded user configuration"
   else
     print_debug "No user configuration found"
@@ -131,7 +131,7 @@ function save_user_config() {
     "SKIP_CONFIRMATIONS"
   )
   
-  save_config "$USER_CONFIG" "${vars[@]}"
+  save_config "$(get_user_config_path)" "${vars[@]}"
   print_status "Saved user configuration"
 }
 
@@ -350,7 +350,7 @@ function reset_config() {
   case "$scope" in
     global)
       if confirm "Reset global configuration to defaults?" "n"; then
-        rm -f "$GLOBAL_CONFIG"
+        rm -f "$(get_global_config_path)"
         create_default_global_config
         load_global_config
         print_status "Global configuration reset to defaults"
@@ -358,7 +358,7 @@ function reset_config() {
       ;;
     user)
       if confirm "Reset user configuration to defaults?" "n"; then
-        rm -f "$USER_CONFIG"
+        rm -f "$(get_user_config_path)"
         # Reset variables to defaults
         PREFERRED_EDITOR="code"
         TERMINAL_THEME="powerlevel10k"
@@ -394,12 +394,12 @@ function import_config() {
   
   case "$scope" in
     global)
-      cp "$file_path" "$GLOBAL_CONFIG"
+      cp "$file_path" "$(get_global_config_path)"
       load_global_config
       print_status "Imported global configuration from $file_path"
       ;;
     user)
-      cp "$file_path" "$USER_CONFIG"
+      cp "$file_path" "$(get_user_config_path)"
       load_user_config
       print_status "Imported user configuration from $file_path"
       ;;
@@ -417,11 +417,11 @@ function export_config() {
   
   case "$scope" in
     global)
-      cp "$GLOBAL_CONFIG" "$file_path"
+      cp "$(get_global_config_path)" "$file_path"
       print_status "Exported global configuration to $file_path"
       ;;
     user)
-      cp "$USER_CONFIG" "$file_path"
+      cp "$(get_user_config_path)" "$file_path"
       print_status "Exported user configuration to $file_path"
       ;;
     *)
@@ -469,5 +469,4 @@ function validate_config() {
   fi
 }
 
-# Initialize configuration on script load
-init_config
+# Note: Configuration must be explicitly initialized with init_config
