@@ -50,6 +50,10 @@ When choosing between multiple approaches:
 - Eliminate unnecessary complexity
 - Make failures obvious and fast
 
+## File Deletion Policy
+
+**ALWAYS ASK BEFORE DELETING FILES**: Even with preferences set for automatic edits, ALWAYS check with the user before deleting any files or directories, regardless of how unnecessary they may seem. This overrides all other automation settings for deletion operations specifically.
+
 ## Memory Note
 
 **This is a critical preference**: The user strongly values simplicity above all else. When in doubt, always err on the side of the simpler solution, especially for testing infrastructure.
