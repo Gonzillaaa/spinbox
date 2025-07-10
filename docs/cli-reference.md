@@ -224,6 +224,65 @@ spinbox start --no-detach
 - Provides status feedback and error handling
 - Can show logs if requested
 
+### `spinbox uninstall`
+
+Remove Spinbox from the system with optional configuration cleanup.
+
+#### Syntax
+```bash
+spinbox uninstall [OPTIONS]
+```
+
+#### Options
+
+| Option | Description |
+|--------|-------------|
+| `--config` | Also remove configuration files (~/.spinbox) |
+| `--all` | Remove everything including config (same as --config) |
+| `--script` | Download and run standalone uninstall script |
+| `--force` | `-f` | Skip confirmation prompts |
+| `--dry-run` | `-d` | Show what would be removed without making changes |
+
+#### Examples
+
+**Basic uninstall:**
+```bash
+# Remove Spinbox binary only (preserves configuration)
+spinbox uninstall
+
+# Remove binary and configuration files  
+spinbox uninstall --config
+
+# Remove everything
+spinbox uninstall --all
+```
+
+**Advanced options:**
+```bash
+# Dry-run to see what would be removed
+spinbox uninstall --dry-run --config
+
+# Force removal without confirmation
+spinbox uninstall --force --config
+
+# Use standalone script (for corrupted installations)
+spinbox uninstall --script
+```
+
+#### Behavior
+- By default, only removes the Spinbox binary
+- Configuration files preserved unless `--config` or `--all` specified
+- Supports dry-run mode to preview changes
+- Provides confirmation prompts unless `--force` used
+- Detects Homebrew installations and suggests appropriate method
+- Standalone script option for recovery scenarios
+
+#### Notes
+- Homebrew installations should use `brew uninstall spinbox`
+- Projects created with Spinbox are not affected
+- Docker images and containers remain untouched
+- Use `--script` if the main binary is corrupted
+
 ### `spinbox config`
 
 Manage global Spinbox configuration.

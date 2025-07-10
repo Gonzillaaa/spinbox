@@ -400,22 +400,102 @@ spinbox config --help
 
 ## Uninstallation
 
-### Homebrew Method
+Spinbox provides multiple uninstallation methods depending on how it was installed.
+
+### Method 1: Using Spinbox CLI (Recommended)
+
+If Spinbox is working correctly, use the built-in uninstall command:
+
+```bash
+# Remove Spinbox binary only (preserves configuration)
+spinbox uninstall
+
+# Remove Spinbox and configuration files
+spinbox uninstall --config
+
+# Remove everything (same as --config)
+spinbox uninstall --all
+
+# Dry-run to see what would be removed
+spinbox uninstall --dry-run --config
+
+# Force removal without confirmation
+spinbox uninstall --force --config
+```
+
+### Method 2: Standalone Uninstall Script
+
+If the CLI is corrupted or unavailable, use the standalone script:
+
+```bash
+# Basic uninstall (binary only)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/uninstall.sh | bash
+
+# Remove everything including configuration
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/uninstall.sh | bash -s -- --config
+
+# Force removal without prompts
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/uninstall.sh | bash -s -- --config --force
+
+# Dry-run to see what would be removed
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/uninstall.sh | bash -s -- --dry-run --config
+```
+
+### Method 3: Homebrew Method
+
+For Homebrew installations:
+
 ```bash
 brew uninstall spinbox
 ```
 
-### Manual Removal
+**Note**: This only removes the binary. To remove configuration files:
 ```bash
-# Remove binary
+rm -rf ~/.spinbox
+```
+
+### Method 4: Manual Removal
+
+Complete manual cleanup if other methods fail:
+
+```bash
+# Remove binary (try common locations)
 sudo rm -f /usr/local/bin/spinbox
+sudo rm -f /opt/homebrew/bin/spinbox
+rm -f ~/.local/bin/spinbox
 
 # Remove configuration (optional)
 rm -rf ~/.spinbox
 
 # Remove from PATH if manually added
-# Edit ~/.bashrc or ~/.zshrc and remove spinbox PATH entries
+# Edit ~/.bashrc, ~/.zshrc, or ~/.profile and remove spinbox PATH entries
 ```
+
+### Uninstall Options
+
+| Option | Binary | Configuration | Use Case |
+|--------|--------|---------------|----------|
+| `spinbox uninstall` | ✅ Removed | ❌ Preserved | Keep settings for reinstall |
+| `spinbox uninstall --config` | ✅ Removed | ✅ Removed | Complete removal |
+| Homebrew method | ✅ Removed | ❌ Preserved | Homebrew installations |
+| Manual removal | ✅ Removed | ⚠️ Optional | Last resort |
+
+### What Gets Removed
+
+**Spinbox Binary:**
+- `/usr/local/bin/spinbox` (most installations)
+- `/opt/homebrew/bin/spinbox` (Homebrew on Apple Silicon)
+- `~/.local/bin/spinbox` (user installations)
+
+**Configuration Files (if --config used):**
+- `~/.spinbox/config/` - All configuration files
+- `~/.spinbox/cache/` - Cache directory
+- `~/.spinbox/` - Entire configuration directory
+
+**Preserved by Default:**
+- Project files created with Spinbox
+- Docker images and containers
+- DevContainer configurations in projects
 
 ## Next Steps
 

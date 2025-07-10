@@ -108,6 +108,11 @@ main() {
     echo
     echo "Installation complete!"
     echo "Try: spinbox --help"
+    echo ""
+    echo "To uninstall Spinbox:"
+    echo "  spinbox uninstall                # Remove binary only"
+    echo "  spinbox uninstall --config       # Remove binary and config"
+    echo "  Or use: curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/uninstall.sh | bash"
 }
 
 # Run main function

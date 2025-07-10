@@ -362,6 +362,10 @@ test_cli_commands() {
     # Test config command (should show current config)
     test_assert '"$cli_path" config --list >/dev/null 2>&1' "Config list command works"
     
+    # Test uninstall command (dry-run only)
+    test_assert '"$cli_path" uninstall --help >/dev/null 2>&1' "Uninstall help command works"
+    test_assert '"$cli_path" uninstall --dry-run >/dev/null 2>&1' "Uninstall dry-run command works"
+    
     echo ""
 }
 
@@ -427,6 +431,10 @@ test_project_creation_smoke() {
     test_assert '[[ -d "$generators_dir" ]]' "Generators directory exists"
     test_file_exists "$generators_dir/minimal-python.sh" "Python generator exists"
     test_file_exists "$generators_dir/minimal-node.sh" "Node generator exists"
+    
+    # Test uninstall script exists and is executable
+    test_file_exists "$PROJECT_ROOT/uninstall.sh" "Uninstall script exists"
+    test_assert '[[ -x "$PROJECT_ROOT/uninstall.sh" ]]' "Uninstall script is executable"
     
     echo ""
 }
