@@ -2,9 +2,9 @@
 
 ![Spinbox][logo]
 
-# Spin up quick prototyping environments! 
+# Spin up containerized prototyping environments in seconds! 
 
-A comprehensive **scaffolding** toolkit for spinning up customizable prototyping environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your stack by selecting any combination of:
+A **scaffolding** toolkit for spinning up customizable prototyping environments in both new and existing codebases on **macOS**. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and Zsh with Powerlevel10k. Build your stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
@@ -38,36 +38,40 @@ A comprehensive **scaffolding** toolkit for spinning up customizable prototyping
 
 ## 🏁 Quick Start
 
-### 1. Set Up Your Environment (One-time)
+### 1. Install Spinbox (One-time)
 
+#### Option A: Quick Install (Recommended)
 ```bash
-# Clone this repository temporarily
-git clone https://github.com/Gonzillaaa/spinbox.git
-cd spinbox
+# Install Spinbox globally
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
 
-# Run the macOS setup script
-chmod +x macos-setup.sh
-./macos-setup.sh
+# Or with Homebrew
+brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
 ```
 
-This installs all required tools via Homebrew and configures Zsh with Powerlevel10k on macOS.
+#### Option B: Manual Install
+```bash
+# Clone and install
+git clone https://github.com/Gonzillaaa/spinbox.git
+cd spinbox
+chmod +x install.sh
+./install.sh
+```
 
-### 2. Create Projects with the CLI
-
-#### Using the Global CLI (Recommended)
+### 2. Create Projects with the Global CLI
 
 ```bash
 # Create a simple Python project
-./bin/spinbox create myproject --python
+spinbox create myproject --python
 
 # Create a full-stack web application
-./bin/spinbox create webapp --python --node --database
+spinbox create webapp --python --node --database
 
 # Create an AI/ML project with vector database
-./bin/spinbox create ai-project --python --template ai-llm --chroma
+spinbox create ai-project --python --template ai-llm --chroma
 
 # Create with custom versions
-./bin/spinbox create api --backend --redis --python-version 3.11
+spinbox create api --backend --redis --python-version 3.11
 ```
 
 #### Available Components
@@ -84,17 +88,17 @@ This installs all required tools via Homebrew and configures Zsh with Powerlevel
 
 ```bash
 # View current configuration
-./bin/spinbox config --list
+spinbox config --list
 
 # Set default versions
-./bin/spinbox config --set PYTHON_VERSION=3.11
-./bin/spinbox config --set NODE_VERSION=18
+spinbox config --set PYTHON_VERSION=3.11
+spinbox config --set NODE_VERSION=18
 
 # Interactive setup
-./bin/spinbox config --setup
+spinbox config --setup
 
 # Check project status
-./bin/spinbox status
+spinbox status
 ```
 
 ### 3. Start Your Development Environment
@@ -115,7 +119,7 @@ Your editor will detect the DevContainer configuration and prompt to "Reopen in 
 
 ## 🔄 Alternative: Legacy Script Method
 
-For existing workflows, the original script method is still available:
+For users who prefer the original workflow or need to use specific versions, the legacy script method is still available:
 
 #### For Existing Codebases:
 ```bash
@@ -134,15 +138,25 @@ git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
 rm -rf spinbox/  # Safe to delete!
 ```
 
+**Note**: The global CLI method is recommended for most users as it provides better command-line experience and doesn't require temporary directory cloning.
+
 ## 🗂️ Structure
 
-### Scaffolding Directory (Temporary)
+### Global Installation Structure
+```
+/usr/local/bin/spinbox     # Global CLI command
+~/.spinbox/                # User configuration directory
+├── config/                # Configuration files
+└── cache/                 # Cache directory
+```
+
+### Scaffolding Directory (Legacy Method)
 ```
 spinbox/
-├── macos-setup.sh         # Environment setup for macOS
-├── project-setup.sh       # Project creation and configuration
-├── start.sh               # Project startup script
+├── bin/spinbox            # CLI entry point
+├── install.sh             # Installation script
 ├── lib/                   # Utility libraries
+├── generators/            # Component generators
 ├── docs/                  # Documentation
 ├── templates/             # Requirements.txt templates
 └── README.md              # This file
@@ -228,7 +242,17 @@ Perfect for rapid prototyping - get started immediately with the right dependenc
 
 Already set up a project but need to add more components? No problem!
 
-### Re-run Setup
+### Using Global CLI (Recommended)
+
+```bash
+# In your existing project directory:
+spinbox add --backend --redis
+spinbox add --database --mongodb
+```
+
+**Note**: The `spinbox add` command is planned for Phase 4 implementation.
+
+### Legacy Method
 
 ```bash
 # In your existing project:
@@ -248,14 +272,17 @@ Follow our detailed guides in the [docs/adding-components.md](./docs/adding-comp
 
 ### Software Version Configuration
 
-Spinbox supports configurable software versions for consistent development environments. Create a `.config/global.conf` file in your Spinbox directory to customize versions:
+Spinbox supports configurable software versions for consistent development environments. Use the global CLI to manage configuration:
 
 ```bash
-# Example .config/global.conf
-PYTHON_VERSION="3.11"
-NODE_VERSION="18"
-POSTGRES_VERSION="14"
-REDIS_VERSION="6"
+# Set default versions globally
+spinbox config --set PYTHON_VERSION=3.11
+spinbox config --set NODE_VERSION=18
+spinbox config --set POSTGRES_VERSION=14
+spinbox config --set REDIS_VERSION=6
+
+# Or edit the configuration file directly
+# Located at ~/.spinbox/config/global.conf
 ```
 
 **Default versions** (used when no configuration exists):

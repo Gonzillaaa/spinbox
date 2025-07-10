@@ -10,7 +10,7 @@ if [[ -z "${PROJECT_ROOT:-}" ]]; then
     readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 fi
 # Allow CONFIG_DIR to be overridden for testing
-: "${CONFIG_DIR:=$PROJECT_ROOT/.config}"
+: "${CONFIG_DIR:=$HOME/.spinbox}"
 if [[ -z "${LOG_DIR:-}" ]]; then
     readonly LOG_DIR="$PROJECT_ROOT/.logs"
 fi

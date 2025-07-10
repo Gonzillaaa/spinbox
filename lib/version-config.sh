@@ -207,7 +207,7 @@ function show_version_configuration() {
     echo "  Redis: $redis_ver$redis_source"
 }
 
-# Apply CLI version overrides to global variables (for backward compatibility)
+# Apply CLI version overrides to global configuration variables
 function apply_version_overrides() {
     local python_ver=$(get_effective_python_version)
     local node_ver=$(get_effective_node_version)
