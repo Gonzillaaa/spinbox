@@ -24,7 +24,7 @@ echo "🔍 Additional quick checks..."
 # Test that key files exist
 echo -n "📁 Checking key files exist... "
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-if [[ -f "$PROJECT_ROOT/lib/config.sh" && -f "$PROJECT_ROOT/lib/utils.sh" && -f "$PROJECT_ROOT/project-setup.sh" && -f "$PROJECT_ROOT/macos-setup.sh" ]]; then
+if [[ -f "$PROJECT_ROOT/lib/config.sh" && -f "$PROJECT_ROOT/lib/utils.sh" && -f "$PROJECT_ROOT/bin/spinbox" && -f "$PROJECT_ROOT/install.sh" ]]; then
     echo "✅"
 else
     echo "❌ Missing key files!"
@@ -33,7 +33,7 @@ fi
 
 # Test that scripts are executable
 echo -n "🔧 Checking scripts are executable... "
-if [[ -x "$PROJECT_ROOT/project-setup.sh" && -x "$PROJECT_ROOT/macos-setup.sh" && -x "$SCRIPT_DIR/simple-test.sh" ]]; then
+if [[ -x "$PROJECT_ROOT/bin/spinbox" && -x "$PROJECT_ROOT/install.sh" && -x "$SCRIPT_DIR/simple-test.sh" ]]; then
     echo "✅"
 else
     echo "❌ Scripts not executable!"
