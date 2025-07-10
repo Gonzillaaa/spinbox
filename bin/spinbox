@@ -11,6 +11,7 @@ SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"
 # Source required libraries
 source "$SPINBOX_PROJECT_ROOT/lib/utils.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/config.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/profiles.sh"
 
 # Script information
 readonly SCRIPT_NAME="spinbox"
@@ -26,6 +27,7 @@ PROJECT_NAME=""
 PROJECT_DIR=""
 COMPONENTS=""
 TEMPLATE=""
+PROFILE=""
 FORCE=false
 VERBOSE=false
 DRY_RUN=false
@@ -53,6 +55,7 @@ COMMANDS:
     start       Start project services (Docker containers)
     config      Manage global configuration
     status      Show project and configuration status
+    profiles    List and show available project profiles
     version     Show version information
     help        Show help for commands
 
@@ -68,6 +71,7 @@ EXAMPLES:
     spinbox start                              Start project services
     spinbox config --list                     Show current configuration
     spinbox status                             Show project status
+    spinbox profiles                           List available profiles
 
 For detailed help on a specific command:
     spinbox <command> --help
@@ -84,6 +88,8 @@ USAGE:
     spinbox create <PROJECT_NAME> [OPTIONS]
 
 OPTIONS:
+    --profile NAME         Use predefined project profile (web-app, api-only, data-science, ai-llm, minimal)
+    
     --python               Create Python DevContainer environment
     --node                 Create Node.js DevContainer environment
     --backend              Add FastAPI backend component
@@ -107,10 +113,13 @@ OPTIONS:
     -h, --help            Show this help message
 
 EXAMPLES:
-    spinbox create myproject --python
-    spinbox create webapp --python --node --database
-    spinbox create ai-project --python --template ai-llm --chroma
-    spinbox create api --backend --database --redis
+    spinbox create myproject --profile web-app       Create full-stack web application
+    spinbox create api-server --profile api-only     Create backend API with database and Redis
+    spinbox create ml-project --profile data-science Create data science environment
+    spinbox create ai-project --profile ai-llm       Create AI/LLM development environment
+    
+    spinbox create myproject --python                Create custom Python project
+    spinbox create webapp --python --node --database Create custom full-stack project
 
 TEMPLATES:
     minimal          Basic development tools (uv, pytest, black, requests)
@@ -230,6 +239,36 @@ EXAMPLES:
 EOF
 }
 
+# Display help for profiles command
+function show_profiles_help() {
+    cat << EOF
+spinbox profiles - List and show available project profiles
+
+USAGE:
+    spinbox profiles [OPTIONS] [PROFILE_NAME]
+
+OPTIONS:
+    --list                 List all available profiles (default)
+    --show PROFILE         Show detailed information about a specific profile
+    
+    -v, --verbose          Enable verbose output
+    -h, --help            Show this help message
+
+EXAMPLES:
+    spinbox profiles                  List all available profiles
+    spinbox profiles --show web-app   Show details for web-app profile
+    spinbox profiles web-app          Show details for web-app profile
+
+AVAILABLE PROFILES:
+    web-app         Full-stack web application with backend, frontend, and database
+    api-only        Backend API with database and Redis caching
+    data-science    Data science environment with Python and ML libraries
+    ai-llm          AI/LLM development environment with vector database
+    minimal         Minimal development environment with basic tools
+
+EOF
+}
+
 # Display help for start command
 function show_start_help() {
     cat << EOF
@@ -331,7 +370,7 @@ function parse_args() {
     
     # Validate command
     case "$COMMAND" in
-        create|add|start|config|status|version|help)
+        create|add|start|config|status|profiles|version|help)
             ;;
         "")
             show_main_help
@@ -361,6 +400,12 @@ function parse_args() {
         status)
             parse_status_args "$@"
             ;;
+        profiles)
+            parse_profiles_args "$@"
+            ;;
+        start)
+            parse_start_args "$@"
+            ;;
         version)
             show_version
             exit 0
@@ -373,6 +418,7 @@ function parse_args() {
                     start) show_start_help ;;
                     config) show_config_help ;;
                     status) show_status_help ;;
+                    profiles) show_profiles_help ;;
                     *) 
                         print_error "No help available for: $1"
                         show_main_help
@@ -431,6 +477,10 @@ function parse_create_args() {
                 ;;
             --template)
                 TEMPLATE="$2"
+                shift 2
+                ;;
+            --profile)
+                PROFILE="$2"
                 shift 2
                 ;;
             -f|--force)
@@ -546,6 +596,51 @@ function parse_config_args() {
     CONFIG_ACTION="$config_action"
 }
 
+# Parse profiles command arguments
+function parse_profiles_args() {
+    local profiles_action="list"
+    local show_profile=""
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_profiles_help
+                exit 0
+                ;;
+            --list)
+                profiles_action="list"
+                shift
+                ;;
+            --show)
+                profiles_action="show"
+                show_profile="$2"
+                shift 2
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -*)
+                print_error "Unknown option for profiles: $1"
+                echo "Use 'spinbox profiles --help' for usage information."
+                exit 1
+                ;;
+            *)
+                # If no flag specified, treat as profile name to show
+                if [[ "$profiles_action" == "list" ]]; then
+                    profiles_action="show"
+                    show_profile="$1"
+                fi
+                shift
+                ;;
+        esac
+    done
+    
+    PROFILES_ACTION="$profiles_action"
+    PROFILES_SHOW_PROFILE="$show_profile"
+}
+
 # Parse start command arguments
 function parse_start_args() {
     # Parse arguments
@@ -640,11 +735,22 @@ function parse_status_args() {
 function execute_command() {
     case "$COMMAND" in
         create)
+            # Initialize profile system
+            init_profiles
+            
+            # Apply profile if specified
+            if [[ -n "$PROFILE" ]]; then
+                if ! apply_profile "$PROFILE"; then
+                    exit 1
+                fi
+            fi
+            
             # Debug output
             print_debug "CLI PROJECT_NAME: '$PROJECT_NAME'"
             print_debug "CLI COMPONENTS: '$COMPONENTS'"
+            print_debug "CLI PROFILE: '$PROFILE'"
             # Export variables needed by project generator
-            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE FORCE DRY_RUN VERBOSE
+            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE FORCE DRY_RUN VERBOSE
             source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             create_project
             ;;
@@ -662,6 +768,32 @@ function execute_command() {
             ;;
         status)
             execute_status_command
+            ;;
+        profiles)
+            execute_profiles_command
+            ;;
+    esac
+}
+
+# Execute profiles command
+function execute_profiles_command() {
+    # Initialize profile system
+    init_profiles
+    
+    case "$PROFILES_ACTION" in
+        list)
+            list_profiles
+            ;;
+        show)
+            if [[ -z "$PROFILES_SHOW_PROFILE" ]]; then
+                print_error "No profile specified to show"
+                exit 1
+            fi
+            show_profile "$PROFILES_SHOW_PROFILE"
+            ;;
+        *)
+            print_error "Unknown profiles action: $PROFILES_ACTION"
+            exit 1
             ;;
     esac
 }

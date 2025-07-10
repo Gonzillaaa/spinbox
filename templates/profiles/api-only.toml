@@ -1,0 +1,19 @@
+[profile]
+name = "api-only"
+description = "Backend API with database and optional caching"
+
+[components]
+backend = true
+frontend = false
+database = true
+redis = true
+mongodb = false
+chroma = false
+
+[configuration]
+python_version = "3.12"
+postgres_version = "15"
+redis_version = "7"
+
+[templates]
+python_requirements = "api-development"

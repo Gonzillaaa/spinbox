@@ -1,0 +1,19 @@
+[profile]
+name = "web-app"
+description = "Full-stack web application with backend, frontend, and database"
+
+[components]
+backend = true
+frontend = true
+database = true
+redis = false
+mongodb = false
+chroma = false
+
+[configuration]
+python_version = "3.12"
+node_version = "20"
+postgres_version = "15"
+
+[templates]
+python_requirements = "api-development"
