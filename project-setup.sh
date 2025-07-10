@@ -17,6 +17,12 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+# Load configuration if available
+CONFIG_DIR="${SETUP_DIR}/.config"
+if [[ -f "${CONFIG_DIR}/global.conf" ]]; then
+  source "${CONFIG_DIR}/global.conf"
+fi
+
 # Print colored status messages
 function print_status() {
   echo -e "${GREEN}[+] $1${NC}"
@@ -29,6 +35,19 @@ function print_warning() {
 function print_error() {
   echo -e "${RED}[-] $1${NC}"
 }
+
+# Set default versions (can be overridden by config)
+PYTHON_VERSION="${PYTHON_VERSION:-3.12}"
+NODE_VERSION="${NODE_VERSION:-20}"
+POSTGRES_VERSION="${POSTGRES_VERSION:-15}"
+REDIS_VERSION="${REDIS_VERSION:-7}"
+
+# Show configuration source
+if [[ -f "${CONFIG_DIR}/global.conf" ]]; then
+  print_status "Using configuration: Python ${PYTHON_VERSION}, Node ${NODE_VERSION}, PostgreSQL ${POSTGRES_VERSION}, Redis ${REDIS_VERSION}"
+else
+  print_status "Using default versions: Python ${PYTHON_VERSION}, Node ${NODE_VERSION}, PostgreSQL ${POSTGRES_VERSION}, Redis ${REDIS_VERSION}"
+fi
 
 # Set component flags (default to false)
 USE_BACKEND=false
@@ -454,10 +473,10 @@ EOF
   
   # Add Redis service if selected
   if [ "$USE_REDIS" = true ]; then
-    cat >> docker-compose.yml << 'EOF'
+    cat >> docker-compose.yml << EOF
   # Redis for queues
   redis:
-    image: redis:7-alpine
+    image: redis:${REDIS_VERSION}-alpine
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
       - redis-data:/data
@@ -536,8 +555,8 @@ function create_backend_files() {
   cd "$PROJECT_ROOT"
   
   # Create Dockerfile.dev
-  cat > backend/Dockerfile.dev << 'EOF'
-FROM python:3.12-slim
+  cat > backend/Dockerfile.dev << EOF
+FROM python:${PYTHON_VERSION}-slim
 
 WORKDIR /workspace
 
@@ -612,8 +631,8 @@ CMD ["zsh", "-c", "while sleep 1000; do :; done"]
 EOF
 
   # Create production Dockerfile
-  cat > backend/Dockerfile << 'EOF'
-FROM python:3.12-slim
+  cat > backend/Dockerfile << EOF
+FROM python:${PYTHON_VERSION}-slim
 
 WORKDIR /app
 
@@ -845,8 +864,8 @@ function create_frontend_files() {
   cd "$PROJECT_ROOT"
   
   # Create Dockerfile.dev
-  cat > frontend/Dockerfile.dev << 'EOF'
-FROM node:20-alpine
+  cat > frontend/Dockerfile.dev << EOF
+FROM node:${NODE_VERSION}-alpine
 
 WORKDIR /app
 
@@ -891,8 +910,8 @@ CMD ["zsh", "-c", "npm run dev"]
 EOF
 
   # Create production Dockerfile
-  cat > frontend/Dockerfile << 'EOF'
-FROM node:20-alpine AS builder
+  cat > frontend/Dockerfile << EOF
+FROM node:${NODE_VERSION}-alpine AS builder
 
 WORKDIR /app
 
@@ -902,7 +921,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM node:20-alpine AS runner
+FROM node:${NODE_VERSION}-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -968,8 +987,8 @@ function create_database_files() {
   cd "$PROJECT_ROOT"
   
   # Create Dockerfile
-  cat > database/Dockerfile << 'EOF'
-FROM postgres:15
+  cat > database/Dockerfile << EOF
+FROM postgres:${POSTGRES_VERSION}
 
 # Install necessary packages
 RUN apt-get update && apt-get install -y \
@@ -1511,13 +1530,27 @@ function create_minimal_python_project() {
   # Select requirements.txt template
   select_requirements_template
   
-  # Copy selected requirements template
+  # Copy and process selected requirements template
   if [ -f "$SETUP_DIR/templates/requirements/$REQUIREMENTS_TEMPLATE" ]; then
     cp "$SETUP_DIR/templates/requirements/$REQUIREMENTS_TEMPLATE" requirements.txt
-    print_status "Requirements template applied: $REQUIREMENTS_TEMPLATE"
+    
+    # Add Python version constraint at the top if not already present
+    if ! grep -q "python_requires" requirements.txt; then
+      {
+        echo "# Python version constraint (based on configuration)"
+        echo "# python_requires = \"~=${PYTHON_VERSION}.0\""
+        echo ""
+        cat requirements.txt
+      } > requirements.txt.tmp && mv requirements.txt.tmp requirements.txt
+    fi
+    
+    print_status "Requirements template applied: $REQUIREMENTS_TEMPLATE (Python ${PYTHON_VERSION})"
   else
     # Fallback to minimal template
-    cat > requirements.txt << 'EOF'
+    cat > requirements.txt << EOF
+# Python version constraint (based on configuration)
+# python_requires = "~=${PYTHON_VERSION}.0"
+
 # Development tools
 uv>=0.1.0
 pytest>=7.4.0
@@ -1541,8 +1574,8 @@ function create_minimal_devcontainer() {
   mkdir -p .devcontainer
   
   # Create Dockerfile for minimal Python environment
-  cat > .devcontainer/Dockerfile << 'EOF'
-FROM python:3.12-slim
+  cat > .devcontainer/Dockerfile << EOF
+FROM python:${PYTHON_VERSION}-slim
 
 WORKDIR /workspace
 
