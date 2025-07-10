@@ -5,12 +5,12 @@
 set -euo pipefail
 
 # Get the directory where this script is located
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"
 
 # Source required libraries
-source "$PROJECT_ROOT/lib/utils.sh"
-source "$PROJECT_ROOT/lib/config.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/utils.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/config.sh"
 
 # Script information
 readonly SCRIPT_NAME="spinbox"
@@ -348,6 +348,12 @@ function parse_args() {
 
 # Parse create command arguments
 function parse_create_args() {
+    # Check for help first
+    if [[ $# -gt 0 && "$1" == "--help" ]] || [[ $# -gt 0 && "$1" == "-h" ]]; then
+        show_create_help
+        exit 0
+    fi
+    
     if [[ $# -eq 0 ]]; then
         print_error "Project name is required"
         echo "Use 'spinbox create --help' for usage information."
@@ -546,11 +552,11 @@ function parse_status_args() {
 function execute_command() {
     case "$COMMAND" in
         create)
-            source "$PROJECT_ROOT/lib/project-generator.sh"
+            source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             create_project
             ;;
         add)
-            source "$PROJECT_ROOT/lib/project-generator.sh"
+            source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             add_components
             ;;
         config)
