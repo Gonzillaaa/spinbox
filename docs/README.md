@@ -1,118 +1,62 @@
 # Spinbox Documentation Index
 
-## 🎯 Core Planning Documents
-- [`global-cli-strategy.md`](./global-cli-strategy.md) - High-level vision and approach
-- [`global-cli-implementation.md`](./global-cli-implementation.md) - Detailed technical implementation
+## 🚀 User Guides (Start Here!)
+- [`installation.md`](./installation.md) - Complete installation guide for all platforms
+- [`quick-start.md`](./quick-start.md) - 5-minute tutorial to get started
+- [`cli-reference.md`](./cli-reference.md) - Complete command-line interface reference
+
+## 📚 Core Documentation  
+- [`adding-components.md`](./adding-components.md) - How to add components to projects
+- [`chroma-usage.md`](./chroma-usage.md) - Chroma vector database usage guide
+- [`troubleshooting.md`](./troubleshooting.md) - Common issues and solutions
 - [`bare-bones-projects.md`](./bare-bones-projects.md) - Minimal project specifications
 
-## 📋 Implementation Tracking
-- [x] Always read these docs before starting implementation tasks
-- [x] Update progress in implementation.md as tasks are completed
-- [x] Document any deviations or new ideas in strategy.md
+## 🏗️ Implementation Documentation
+- [`global-cli-strategy.md`](./global-cli-strategy.md) - High-level vision and approach
+- [`global-cli-implementation.md`](./global-cli-implementation.md) - Detailed technical implementation
+- [`implementation-strategy.md`](./implementation-strategy.md) - Implementation strategy overview
 
-## 🎯 Quick Task Navigation
+## 🎯 Quick Navigation
 
-### Working on CLI Entry Point?
-- **Read**: `global-cli-implementation.md` Phase 1, Step 1.1 only
-- **Status**: Update line 981 in `global-cli-implementation.md`
-- **Code**: Create `bin/spinbox`
-- **Key**: Command parsing, help system, routing
+### New to Spinbox?
+1. **[Installation Guide](./installation.md)** - Set up Spinbox on your system
+2. **[Quick Start Tutorial](./quick-start.md)** - 5-minute walkthrough 
+3. **[CLI Reference](./cli-reference.md)** - Complete command documentation
 
-### Working on Configuration Management?
-- **Read**: `global-cli-implementation.md` Phase 1, Step 1.2 only
-- **Status**: Update line 982 in `global-cli-implementation.md`
-- **Code**: Create `lib/config.sh`
-- **Key**: Global config file, defaults
+### Common Tasks
+- **Creating Projects**: See [Quick Start Guide](./quick-start.md) for examples
+- **Adding Components**: Check [Adding Components Guide](./adding-components.md)
+- **Troubleshooting**: Visit [Troubleshooting Guide](./troubleshooting.md)
+- **Configuration**: Reference [CLI Reference - Config](./cli-reference.md#spinbox-config)
 
-### Working on Version Configuration?
-- **Read**: `global-cli-strategy.md` "Version Configuration Strategy" section
-- **Read**: `global-cli-implementation.md` Phase 1, Step 1.4 only
-- **Status**: Update line 983 in `global-cli-implementation.md`
-- **Code**: Create `lib/version-config.sh`
-- **Key**: CLI flags override hierarchy
+### Advanced Usage
+- **Custom Profiles**: See [CLI Reference - Profiles](./cli-reference.md#templates)
+- **Component Development**: Check [Implementation Docs](./global-cli-implementation.md)
+- **Contributing**: Review implementation and strategy documents
 
-### Working on Project Creation?
-- **Read**: `global-cli-implementation.md` Phase 1, Step 1.3 only
-- **Status**: Update line 984 in `global-cli-implementation.md`
-- **Code**: Create `lib/project-generator.sh`
-- **Key**: Project directory creation, component orchestration
+## 🎯 Profiles Quick Reference
 
-### Working on Minimal Python Projects?
-- **Read**: `bare-bones-projects.md` "Bare-bones Python Project" section
-- **Read**: `global-cli-implementation.md` Phase 2, Step 2.1 (minimal-python.sh)
-- **Status**: Update line 991 in `global-cli-implementation.md`
-- **Code**: Create `generators/minimal-python.sh`
+| Profile | Use Case | Components | Command |
+|---------|----------|------------|---------|
+| `web-app` | Full-stack web application | Backend + Frontend + Database | `spinbox create myapp --profile web-app` |
+| `api-only` | Backend API development | Backend + Database + Redis | `spinbox create api --profile api-only` |
+| `data-science` | ML/Data science projects | Python + Database | `spinbox create ml-proj --profile data-science` |
+| `ai-llm` | AI/LLM development | Python + Database + Chroma | `spinbox create ai-proj --profile ai-llm` |
+| `minimal` | Basic development | Python DevContainer | `spinbox create basic --profile minimal` |
 
-### Working on Minimal Node Projects?
-- **Read**: `bare-bones-projects.md` "Bare-bones Node/JavaScript Project" section
-- **Read**: `global-cli-implementation.md` Phase 2, Step 2.1 (minimal-node.sh)
-- **Status**: Update line 992 in `global-cli-implementation.md`
-- **Code**: Create `generators/minimal-node.sh`
+## 🔧 Components Quick Reference
 
-### Working on Component Generators?
-- **Read**: `global-cli-implementation.md` Phase 2, Step 2.1 only
-- **Status**: Update line 990 in `global-cli-implementation.md`
-- **Code**: Create files in `generators/` directory
-- **Key**: Backend, frontend, database, etc. modules
-
-### Working on Installation?
-- **Read**: `global-cli-implementation.md` Phase 3 only
-- **Status**: Update lines 997-1000 in `global-cli-implementation.md`
-- **Code**: Create `install.sh` and `Formula/spinbox.rb`
-- **Key**: Direct formula URL, not tap
-
-## 📝 Lightweight Status Updates
-
-### Status Symbols:
-- ✅ Complete | 🔄 In Progress | ⏳ Pending | ❌ Blocked | 🔀 Changed
-
-### Quick Update Format:
-```markdown
-**[Feature Name]** - Status changed from ⏳ to 🔄
-- Brief note if different from plan
-```
-
-## 🔗 Cross-References
-
-When working on specific features, refer to these document sections:
-
-### CLI Entry Point
-- Strategy: Command Structure section
-- Implementation: Phase 1, Step 1.1
-
-### Version Configuration
-- Strategy: Version Configuration Strategy section
-- Implementation: Phase 1, Step 1.4
-
-### Project Creation
-- Strategy: Project Types section
-- Implementation: Phase 1, Step 1.3 & Phase 2
-
-### Installation
-- Strategy: Installation Methods section  
-- Implementation: Phase 3
-
-### Component Generators
-- Bare-bones: All project type sections
-- Implementation: Phase 2, Step 2.1
-
-### Migration
-- Migration Path: All sections
-- Implementation: Phase 5, Step 5.2
-
-## 📚 Additional Documentation
-
-### Existing Documentation
-- [`adding-components.md`](./adding-components.md) - How to add components to projects
-- [`chroma-usage.md`](./chroma-usage.md) - Chroma vector database usage
-- [`performance.md`](./performance.md) - Performance optimization guidelines
-- [`troubleshooting.md`](./troubleshooting.md) - Common issues and solutions
-
-### Implementation Artifacts
-- [`decisions/`](./decisions/) - Architecture decision records
-- [`learnings/`](./learnings/) - Implementation insights and best practices
-- [`archive/`](./archive/) - Archived planning documents and outdated files
+| Component | Description | Flag | Use With |
+|-----------|-------------|------|----------|
+| Python | Python DevContainer | `--python` | Any project |
+| Node.js | Node.js DevContainer | `--node` | Frontend projects |
+| Backend | FastAPI backend | `--backend` | API development |
+| Frontend | Next.js frontend | `--frontend` | Web applications |
+| Database | PostgreSQL + PGVector | `--database` | Data storage |
+| MongoDB | Document database | `--mongodb` | NoSQL projects |
+| Redis | Caching and queues | `--redis` | Performance |
+| Chroma | Vector database | `--chroma` | AI/ML projects |
 
 ---
 
-**Remember**: These planning documents are living resources. Update them as you learn and implement. They should reflect both the original plan AND the actual implementation experience.
+**Implementation Status: ✅ Complete** - All planned features have been implemented and tested. This documentation reflects the current production-ready state of Spinbox v1.0.0.
