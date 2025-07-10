@@ -1,0 +1,1017 @@
+#!/bin/bash
+# Spinbox - Development Environment Scaffolding Tool
+# Main CLI entry point for the Spinbox toolkit
+
+set -euo pipefail
+
+# Get the directory where this script is located
+SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"
+
+# Source required libraries
+source "$SPINBOX_PROJECT_ROOT/lib/utils.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/config.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/profiles.sh"
+
+# Script information
+readonly SCRIPT_NAME="spinbox"
+readonly VERSION="1.0.0"
+
+# Initialize logging
+init_logging "$SCRIPT_NAME"
+
+# Global variables
+COMMAND=""
+SUBCOMMAND=""
+PROJECT_NAME=""
+PROJECT_DIR=""
+COMPONENTS=""
+TEMPLATE=""
+PROFILE=""
+FORCE=false
+VERBOSE=false
+DRY_RUN=false
+
+# Display version information
+function show_version() {
+    echo "Spinbox v$VERSION"
+    echo "Development Environment Scaffolding Tool"
+    echo ""
+    echo "Copyright (c) 2024 Spinbox Contributors"
+    echo "Licensed under MIT License"
+}
+
+# Display main help
+function show_main_help() {
+    cat << EOF
+Spinbox - Development Environment Scaffolding Tool
+
+USAGE:
+    spinbox <COMMAND> [OPTIONS] [ARGS]
+
+COMMANDS:
+    create      Create a new development project
+    add         Add components to an existing project
+    start       Start project services (Docker containers)
+    config      Manage global configuration
+    status      Show project and configuration status
+    profiles    List and show available project profiles
+    version     Show version information
+    help        Show help for commands
+
+GLOBAL OPTIONS:
+    -v, --verbose       Enable verbose output
+    -d, --dry-run      Show what would be done without making changes
+    -h, --help         Show this help message
+
+EXAMPLES:
+    spinbox create myproject --python          Create minimal Python project
+    spinbox create webapp --python --node     Create full-stack project
+    spinbox add --database                     Add database to existing project
+    spinbox start                              Start project services
+    spinbox config --list                     Show current configuration
+    spinbox status                             Show project status
+    spinbox profiles                           List available profiles
+
+For detailed help on a specific command:
+    spinbox <command> --help
+
+EOF
+}
+
+# Display help for create command
+function show_create_help() {
+    cat << EOF
+spinbox create - Create a new development project
+
+USAGE:
+    spinbox create <PROJECT_NAME> [OPTIONS]
+
+OPTIONS:
+    --profile NAME         Use predefined project profile (web-app, api-only, data-science, ai-llm, minimal)
+    
+    --python               Create Python DevContainer environment
+    --node                 Create Node.js DevContainer environment
+    --backend              Add FastAPI backend component
+    --frontend             Add Next.js frontend component
+    --database             Add PostgreSQL database with PGVector
+    --mongodb              Add MongoDB document database
+    --redis                Add Redis for caching and queues
+    --chroma               Add Chroma vector database
+    
+    --python-version VER   Python version (default: 3.12)
+    --node-version VER     Node.js version (default: 20)
+    --postgres-version VER PostgreSQL version (default: 15)
+    --redis-version VER    Redis version (default: 7)
+    
+    --dir PATH             Create project in specific directory
+    --template NAME        Use requirements.txt template (minimal, data-science, ai-llm, etc.)
+    
+    -f, --force            Overwrite existing directory
+    -v, --verbose          Enable verbose output
+    -d, --dry-run         Show what would be done without making changes
+    -h, --help            Show this help message
+
+EXAMPLES:
+    spinbox create myproject --profile web-app       Create full-stack web application
+    spinbox create api-server --profile api-only     Create backend API with database and Redis
+    spinbox create ml-project --profile data-science Create data science environment
+    spinbox create ai-project --profile ai-llm       Create AI/LLM development environment
+    
+    spinbox create myproject --python                Create custom Python project
+    spinbox create webapp --python --node --database Create custom full-stack project
+
+TEMPLATES:
+    minimal          Basic development tools (uv, pytest, black, requests)
+    data-science     pandas, numpy, matplotlib, jupyter, plotly, scikit-learn
+    ai-llm           openai, anthropic, langchain, llama-index, tiktoken
+    web-scraping     beautifulsoup4, selenium, scrapy, lxml
+    api-development  fastapi, uvicorn, pydantic, httpx
+    custom           Minimal template you can customize
+
+EOF
+}
+
+# Display help for add command
+function show_add_help() {
+    cat << EOF
+spinbox add - Add components to an existing project
+
+USAGE:
+    spinbox add [OPTIONS]
+
+OPTIONS:
+    --backend              Add FastAPI backend component
+    --frontend             Add Next.js frontend component
+    --database             Add PostgreSQL database with PGVector
+    --mongodb              Add MongoDB document database
+    --redis                Add Redis for caching and queues
+    --chroma               Add Chroma vector database
+    
+    --python-version VER   Python version (default: current or 3.12)
+    --node-version VER     Node.js version (default: current or 20)
+    --postgres-version VER PostgreSQL version (default: current or 15)
+    --redis-version VER    Redis version (default: current or 7)
+    
+    -v, --verbose          Enable verbose output
+    -d, --dry-run         Show what would be done without making changes
+    -h, --help            Show this help message
+
+EXAMPLES:
+    spinbox add --database             Add PostgreSQL to current project
+    spinbox add --backend --redis      Add FastAPI backend with Redis
+    spinbox add --chroma               Add vector database for AI projects
+
+NOTES:
+    - Must be run from within a project directory
+    - Will detect existing components and only add new ones
+    - Preserves existing configuration where possible
+
+EOF
+}
+
+# Display help for config command
+function show_config_help() {
+    cat << EOF
+spinbox config - Manage global configuration
+
+USAGE:
+    spinbox config [OPTIONS]
+
+OPTIONS:
+    --list                 Show current configuration
+    --set KEY=VALUE        Set configuration value
+    --get KEY              Get configuration value
+    --reset SCOPE          Reset configuration to defaults
+    --setup                Interactive configuration setup
+    
+    --global               Operate on global configuration (default)
+    --user                 Operate on user preferences
+    
+    -v, --verbose          Enable verbose output
+    -h, --help            Show this help message
+
+CONFIGURATION SCOPES:
+    global    Software versions, project defaults, author info
+    user      Editor preferences, UI settings, behavior
+
+EXAMPLES:
+    spinbox config --list                        Show all configuration
+    spinbox config --set PYTHON_VERSION=3.11     Set default Python version
+    spinbox config --get PROJECT_AUTHOR          Get author name
+    spinbox config --reset global                Reset global config
+    spinbox config --setup                       Interactive setup
+
+CONFIGURATION KEYS:
+    Global:
+        PYTHON_VERSION, NODE_VERSION, POSTGRES_VERSION, REDIS_VERSION
+        PROJECT_AUTHOR, PROJECT_EMAIL, PROJECT_LICENSE
+        DEFAULT_COMPONENTS, DOCKER_REGISTRY
+    
+    User:
+        PREFERRED_EDITOR, AUTO_START_SERVICES, SKIP_CONFIRMATIONS
+
+EOF
+}
+
+# Display help for status command  
+function show_status_help() {
+    cat << EOF
+spinbox status - Show project and configuration status
+
+USAGE:
+    spinbox status [OPTIONS]
+
+OPTIONS:
+    --project              Show project-specific information
+    --config               Show configuration status
+    --components           Show available components
+    --all                  Show all status information (default)
+    
+    -v, --verbose          Enable verbose output
+    -h, --help            Show this help message
+
+EXAMPLES:
+    spinbox status                    Show all status information
+    spinbox status --project          Show current project status
+    spinbox status --config           Show configuration status
+
+EOF
+}
+
+# Display help for profiles command
+function show_profiles_help() {
+    cat << EOF
+spinbox profiles - List and show available project profiles
+
+USAGE:
+    spinbox profiles [OPTIONS] [PROFILE_NAME]
+
+OPTIONS:
+    --list                 List all available profiles (default)
+    --show PROFILE         Show detailed information about a specific profile
+    
+    -v, --verbose          Enable verbose output
+    -h, --help            Show this help message
+
+EXAMPLES:
+    spinbox profiles                  List all available profiles
+    spinbox profiles --show web-app   Show details for web-app profile
+    spinbox profiles web-app          Show details for web-app profile
+
+AVAILABLE PROFILES:
+    web-app         Full-stack web application with backend, frontend, and database
+    api-only        Backend API with database and Redis caching
+    data-science    Data science environment with Python and ML libraries
+    ai-llm          AI/LLM development environment with vector database
+    minimal         Minimal development environment with basic tools
+
+EOF
+}
+
+# Display help for start command
+function show_start_help() {
+    cat << EOF
+spinbox start - Start project services (Docker containers)
+
+USAGE:
+    spinbox start [OPTIONS]
+
+OPTIONS:
+    --detach, -d          Run containers in background (default)
+    --logs                Show service logs after starting
+    --build               Build images before starting
+    --force-recreate      Recreate containers even if config hasn't changed
+    
+    -v, --verbose         Enable verbose output
+    -h, --help           Show this help message
+
+EXAMPLES:
+    spinbox start                     Start all project services in background
+    spinbox start --logs              Start services and show logs
+    spinbox start --build             Rebuild and start services
+    spinbox start --force-recreate    Force recreate all containers
+
+NOTES:
+    - Must be run from within a Spinbox project directory
+    - Requires docker-compose.yml file
+    - Services will be started in detached mode by default
+
+EOF
+}
+
+# Parse version configuration flags and update global variables
+function parse_version_flags() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --python-version)
+                PYTHON_VERSION="$2"
+                shift 2
+                ;;
+            --node-version)
+                NODE_VERSION="$2"
+                shift 2
+                ;;
+            --postgres-version)
+                POSTGRES_VERSION="$2"
+                shift 2
+                ;;
+            --redis-version)
+                REDIS_VERSION="$2"
+                shift 2
+                ;;
+            *)
+                # Return remaining arguments
+                break
+                ;;
+        esac
+    done
+}
+
+# Parse command line arguments
+function parse_args() {
+    if [[ $# -eq 0 ]]; then
+        show_main_help
+        exit 0
+    fi
+    
+    # Parse global flags first
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -d|--dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            -h|--help)
+                show_main_help
+                exit 0
+                ;;
+            --version)
+                show_version
+                exit 0
+                ;;
+            -*)
+                print_error "Unknown global option: $1"
+                echo "Use 'spinbox --help' for usage information."
+                exit 1
+                ;;
+            *)
+                # This should be a command
+                COMMAND="$1"
+                shift
+                break
+                ;;
+        esac
+    done
+    
+    # Validate command
+    case "$COMMAND" in
+        create|add|start|config|status|profiles|version|help)
+            ;;
+        "")
+            show_main_help
+            exit 0
+            ;;
+        *)
+            print_error "Unknown command: $COMMAND"
+            echo "Use 'spinbox --help' for available commands."
+            exit 1
+            ;;
+    esac
+    
+    # Parse remaining arguments for the specific command
+    case "$COMMAND" in
+        create)
+            parse_create_args "$@"
+            ;;
+        add)
+            parse_add_args "$@"
+            ;;
+        start)
+            parse_start_args "$@"
+            ;;
+        config)
+            parse_config_args "$@"
+            ;;
+        status)
+            parse_status_args "$@"
+            ;;
+        profiles)
+            parse_profiles_args "$@"
+            ;;
+        start)
+            parse_start_args "$@"
+            ;;
+        version)
+            show_version
+            exit 0
+            ;;
+        help)
+            if [[ $# -gt 0 ]]; then
+                case "$1" in
+                    create) show_create_help ;;
+                    add) show_add_help ;;
+                    start) show_start_help ;;
+                    config) show_config_help ;;
+                    status) show_status_help ;;
+                    profiles) show_profiles_help ;;
+                    *) 
+                        print_error "No help available for: $1"
+                        show_main_help
+                        ;;
+                esac
+            else
+                show_main_help
+            fi
+            exit 0
+            ;;
+    esac
+}
+
+# Parse create command arguments
+function parse_create_args() {
+    # Check for help first
+    if [[ $# -gt 0 && "$1" == "--help" ]] || [[ $# -gt 0 && "$1" == "-h" ]]; then
+        show_create_help
+        exit 0
+    fi
+    
+    if [[ $# -eq 0 ]]; then
+        print_error "Project name is required"
+        echo "Use 'spinbox create --help' for usage information."
+        exit 1
+    fi
+    
+    # First argument should be project name
+    PROJECT_NAME="$1"
+    shift
+    
+    # Validate project name
+    if ! validate_project_name "$PROJECT_NAME"; then
+        exit 1
+    fi
+    
+    # Parse remaining arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_create_help
+                exit 0
+                ;;
+            --python|--node|--backend|--frontend|--database|--mongodb|--redis|--chroma)
+                # Component flags - will be handled by project generator
+                COMPONENTS+=" $1"
+                shift
+                ;;
+            --python-version|--node-version|--postgres-version|--redis-version)
+                parse_version_flags "$@"
+                break
+                ;;
+            --dir)
+                PROJECT_DIR="$2"
+                shift 2
+                ;;
+            --template)
+                TEMPLATE="$2"
+                shift 2
+                ;;
+            --profile)
+                PROFILE="$2"
+                shift 2
+                ;;
+            -f|--force)
+                FORCE=true
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -d|--dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            *)
+                print_error "Unknown option for create: $1"
+                echo "Use 'spinbox create --help' for usage information."
+                exit 1
+                ;;
+        esac
+    done
+}
+
+# Parse add command arguments
+function parse_add_args() {
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_add_help
+                exit 0
+                ;;
+            --backend|--frontend|--database|--mongodb|--redis|--chroma)
+                # Component flags - will be handled by project generator
+                COMPONENTS+=" $1"
+                shift
+                ;;
+            --python-version|--node-version|--postgres-version|--redis-version)
+                parse_version_flags "$@"
+                break
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -d|--dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            *)
+                print_error "Unknown option for add: $1"
+                echo "Use 'spinbox add --help' for usage information."
+                exit 1
+                ;;
+        esac
+    done
+}
+
+# Parse config command arguments
+function parse_config_args() {
+    local config_action=""
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_config_help
+                exit 0
+                ;;
+            --list)
+                config_action="list"
+                shift
+                ;;
+            --set)
+                config_action="set"
+                CONFIG_SET_VALUE="$2"
+                shift 2
+                ;;
+            --get)
+                config_action="get"
+                CONFIG_GET_KEY="$2"
+                shift 2
+                ;;
+            --reset)
+                config_action="reset"
+                CONFIG_RESET_SCOPE="$2"
+                shift 2
+                ;;
+            --setup)
+                config_action="setup"
+                shift
+                ;;
+            --global)
+                CONFIG_SCOPE="global"
+                shift
+                ;;
+            --user)
+                CONFIG_SCOPE="user"
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            *)
+                print_error "Unknown option for config: $1"
+                echo "Use 'spinbox config --help' for usage information."
+                exit 1
+                ;;
+        esac
+    done
+    
+    CONFIG_ACTION="$config_action"
+}
+
+# Parse profiles command arguments
+function parse_profiles_args() {
+    local profiles_action="list"
+    local show_profile=""
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_profiles_help
+                exit 0
+                ;;
+            --list)
+                profiles_action="list"
+                shift
+                ;;
+            --show)
+                profiles_action="show"
+                show_profile="$2"
+                shift 2
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -*)
+                print_error "Unknown option for profiles: $1"
+                echo "Use 'spinbox profiles --help' for usage information."
+                exit 1
+                ;;
+            *)
+                # If no flag specified, treat as profile name to show
+                if [[ "$profiles_action" == "list" ]]; then
+                    profiles_action="show"
+                    show_profile="$1"
+                fi
+                shift
+                ;;
+        esac
+    done
+    
+    PROFILES_ACTION="$profiles_action"
+    PROFILES_SHOW_PROFILE="$show_profile"
+}
+
+# Parse start command arguments
+function parse_start_args() {
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_start_help
+                exit 0
+                ;;
+            -d|--detach)
+                START_DETACH=true
+                shift
+                ;;
+            --logs)
+                START_LOGS=true
+                shift
+                ;;
+            --build)
+                START_BUILD=true
+                shift
+                ;;
+            --force-recreate)
+                START_FORCE_RECREATE=true
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            --dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            *)
+                print_error "Unknown option for start: $1"
+                echo "Use 'spinbox start --help' for usage information."
+                exit 1
+                ;;
+        esac
+    done
+    
+    # Set defaults
+    START_DETACH="${START_DETACH:-true}"
+    START_LOGS="${START_LOGS:-false}"
+    START_BUILD="${START_BUILD:-false}"
+    START_FORCE_RECREATE="${START_FORCE_RECREATE:-false}"
+}
+
+# Parse status command arguments
+function parse_status_args() {
+    local status_type="all"
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_status_help
+                exit 0
+                ;;
+            --project)
+                status_type="project"
+                shift
+                ;;
+            --config)
+                status_type="config"
+                shift
+                ;;
+            --components)
+                status_type="components"
+                shift
+                ;;
+            --all)
+                status_type="all"
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            *)
+                print_error "Unknown option for status: $1"
+                echo "Use 'spinbox status --help' for usage information."
+                exit 1
+                ;;
+        esac
+    done
+    
+    STATUS_TYPE="$status_type"
+}
+
+# Execute the appropriate command
+function execute_command() {
+    case "$COMMAND" in
+        create)
+            # Initialize profile system
+            init_profiles
+            
+            # Apply profile if specified
+            if [[ -n "$PROFILE" ]]; then
+                if ! apply_profile "$PROFILE"; then
+                    exit 1
+                fi
+            fi
+            
+            # Debug output
+            print_debug "CLI PROJECT_NAME: '$PROJECT_NAME'"
+            print_debug "CLI COMPONENTS: '$COMPONENTS'"
+            print_debug "CLI PROFILE: '$PROFILE'"
+            # Export variables needed by project generator
+            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE FORCE DRY_RUN VERBOSE
+            source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
+            create_project
+            ;;
+        add)
+            # Export variables needed by project generator
+            export COMPONENTS DRY_RUN VERBOSE
+            source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
+            add_components
+            ;;
+        start)
+            execute_start_command
+            ;;
+        config)
+            execute_config_command
+            ;;
+        status)
+            execute_status_command
+            ;;
+        profiles)
+            execute_profiles_command
+            ;;
+    esac
+}
+
+# Execute profiles command
+function execute_profiles_command() {
+    # Initialize profile system
+    init_profiles
+    
+    case "$PROFILES_ACTION" in
+        list)
+            list_profiles
+            ;;
+        show)
+            if [[ -z "$PROFILES_SHOW_PROFILE" ]]; then
+                print_error "No profile specified to show"
+                exit 1
+            fi
+            show_profile "$PROFILES_SHOW_PROFILE"
+            ;;
+        *)
+            print_error "Unknown profiles action: $PROFILES_ACTION"
+            exit 1
+            ;;
+    esac
+}
+
+# Execute start command
+function execute_start_command() {
+    # Check if we're in a Spinbox project
+    if [[ ! -f "docker-compose.yml" ]]; then
+        print_error "No docker-compose.yml found in current directory"
+        print_info "Make sure you're in a Spinbox project directory"
+        print_info "Create a project with: spinbox create myproject --python"
+        exit 1
+    fi
+    
+    # Build docker-compose command
+    local compose_cmd="docker-compose"
+    local compose_args=()
+    
+    # Add build flag if requested
+    if [[ "$START_BUILD" == "true" ]]; then
+        compose_args+=("--build")
+    fi
+    
+    # Add force recreate flag if requested
+    if [[ "$START_FORCE_RECREATE" == "true" ]]; then
+        compose_args+=("--force-recreate")
+    fi
+    
+    # Add detach flag (default behavior)
+    if [[ "$START_DETACH" == "true" ]]; then
+        compose_args+=("-d")
+    fi
+    
+    print_info "Starting project services..."
+    
+    # Execute docker-compose up
+    if [[ "$DRY_RUN" == "true" ]]; then
+        print_info "Would run: $compose_cmd up ${compose_args[*]}"
+    else
+        if [[ "$VERBOSE" == "true" ]]; then
+            print_debug "Running: $compose_cmd up ${compose_args[*]}"
+        fi
+        
+        if $compose_cmd up "${compose_args[@]}"; then
+            print_status "Services started successfully!"
+            
+            # Show logs if requested
+            if [[ "$START_LOGS" == "true" ]]; then
+                print_info "Showing service logs (Ctrl+C to stop watching):"
+                $compose_cmd logs -f
+            else
+                print_info "Use 'docker-compose logs -f' to view service logs"
+            fi
+        else
+            print_error "Failed to start services"
+            print_info "Check 'docker-compose logs' for error details"
+            exit 1
+        fi
+    fi
+}
+
+# Execute config command
+function execute_config_command() {
+    case "$CONFIG_ACTION" in
+        list)
+            list_config "${CONFIG_SCOPE:-all}"
+            ;;
+        set)
+            if [[ -z "$CONFIG_SET_VALUE" ]]; then
+                print_error "No value provided for --set"
+                exit 1
+            fi
+            IFS='=' read -r key value <<< "$CONFIG_SET_VALUE"
+            set_config_value "$key" "$value" "${CONFIG_SCOPE:-global}"
+            ;;
+        get)
+            if [[ -z "$CONFIG_GET_KEY" ]]; then
+                print_error "No key provided for --get"
+                exit 1
+            fi
+            value=$(get_config_value "$CONFIG_GET_KEY" "")
+            if [[ -n "$value" ]]; then
+                echo "$value"
+            else
+                print_error "Configuration key not found: $CONFIG_GET_KEY"
+                exit 1
+            fi
+            ;;
+        reset)
+            if [[ -z "$CONFIG_RESET_SCOPE" ]]; then
+                print_error "No scope provided for --reset"
+                exit 1
+            fi
+            reset_config "$CONFIG_RESET_SCOPE"
+            ;;
+        setup)
+            setup_global_config
+            setup_user_config
+            ;;
+        "")
+            list_config "all"
+            ;;
+        *)
+            print_error "Unknown config action: $CONFIG_ACTION"
+            exit 1
+            ;;
+    esac
+}
+
+# Execute status command
+function execute_status_command() {
+    case "$STATUS_TYPE" in
+        all)
+            print_info "Spinbox Status"
+            echo ""
+            show_project_status
+            echo ""
+            show_config_status
+            echo ""
+            show_components_status
+            ;;
+        project)
+            show_project_status
+            ;;
+        config)
+            show_config_status
+            ;;
+        components)
+            show_components_status
+            ;;
+    esac
+}
+
+# Show project status
+function show_project_status() {
+    print_info "Project Status:"
+    
+    if [[ -f "docker-compose.yml" ]] || [[ -d ".devcontainer" ]]; then
+        print_status "Spinbox project detected"
+        
+        if [[ -f ".config/project.conf" ]]; then
+            load_project_config
+            echo "  Project Name: ${PROJECT_NAME:-<not set>}"
+            echo "  Description: ${PROJECT_DESCRIPTION:-<not set>}"
+        fi
+        
+        # Check components
+        local components=()
+        [[ -d "backend" ]] && components+=("backend")
+        [[ -d "frontend" ]] && components+=("frontend")
+        [[ -f "docker-compose.yml" ]] && grep -q "postgres" docker-compose.yml && components+=("database")
+        [[ -f "docker-compose.yml" ]] && grep -q "redis" docker-compose.yml && components+=("redis")
+        [[ -f "docker-compose.yml" ]] && grep -q "mongo" docker-compose.yml && components+=("mongodb")
+        [[ -d "chroma_data" ]] && components+=("chroma")
+        
+        if [[ ${#components[@]} -gt 0 ]]; then
+            echo "  Components: ${components[*]}"
+        else
+            echo "  Components: DevContainer only"
+        fi
+    else
+        print_warning "No Spinbox project detected in current directory"
+    fi
+}
+
+# Show config status
+function show_config_status() {
+    print_info "Configuration Status:"
+    
+    local global_config_path="$(get_global_config_path)"
+    local user_config_path="$(get_user_config_path)"
+    
+    if [[ -f "$global_config_path" ]]; then
+        print_status "Global configuration found"
+        echo "  Python: ${PYTHON_VERSION:-$DEFAULT_PYTHON_VERSION}"
+        echo "  Node.js: ${NODE_VERSION:-$DEFAULT_NODE_VERSION}"
+        echo "  PostgreSQL: ${POSTGRES_VERSION:-$DEFAULT_POSTGRES_VERSION}"
+        echo "  Redis: ${REDIS_VERSION:-$DEFAULT_REDIS_VERSION}"
+    else
+        print_warning "No global configuration found (will use defaults)"
+    fi
+    
+    if [[ -f "$user_config_path" ]]; then
+        print_status "User preferences found"
+        echo "  Editor: ${PREFERRED_EDITOR:-code}"
+        echo "  Auto-start: ${AUTO_START_SERVICES:-true}"
+    else
+        print_info "Using default user preferences"
+    fi
+}
+
+# Show components status
+function show_components_status() {
+    print_info "Available Components:"
+    echo "  --python       Python DevContainer with virtual environment"
+    echo "  --node         Node.js DevContainer with package management"
+    echo "  --backend      FastAPI backend with SQLAlchemy"
+    echo "  --frontend     Next.js frontend with TypeScript"
+    echo "  --database     PostgreSQL with PGVector extension"
+    echo "  --mongodb      MongoDB document database"
+    echo "  --redis        Redis for caching and queues"
+    echo "  --chroma       Chroma vector database for embeddings"
+}
+
+# Main execution
+function main() {
+    # Set up error handling
+    setup_error_handling
+    
+    # Initialize configuration
+    init_config
+    
+    # Parse command line arguments
+    parse_args "$@"
+    
+    # Execute the command
+    execute_command
+}
+
+# Run main function with all arguments
+main "$@"

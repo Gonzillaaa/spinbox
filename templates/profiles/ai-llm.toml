@@ -1,0 +1,17 @@
+[profile]
+name = "ai-llm"
+description = "AI/LLM development environment with vector database"
+
+[components]
+backend = false
+frontend = false
+database = false
+redis = false
+mongodb = false
+chroma = true
+
+[configuration]
+python_version = "3.12"
+
+[templates]
+python_requirements = "ai-llm"

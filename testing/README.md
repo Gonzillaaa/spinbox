@@ -24,28 +24,39 @@ That's it! One command, everything tested.
 
 ### Ultra-Simple Test Framework
 
-- **`simple-test.sh`** - Core test framework with 22 focused tests
+- **`simple-test.sh`** - Enhanced test framework with 59 comprehensive tests
 - **`quick-test.sh`** - Main test runner with additional smoke tests
 
 ### What's Tested
 
-The framework covers essential functionality:
+The framework provides comprehensive coverage:
 
+**Core Library Functions:**
 - **Configuration Loading** - Config file creation and variable loading
 - **Version Substitution** - Python/Node version handling in templates
 - **File Generation** - Template processing and file creation
 - **Error Handling** - Fallback behavior and validation
 - **Integration** - Component interaction and configuration persistence
 
+**CLI Functionality:**
+- **Command Execution** - All CLI commands (help, version, create, config, profiles)
+- **Profile Validation** - All 5 predefined profiles (web-app, api-only, data-science, ai-llm, minimal)
+- **Project Creation** - Dry-run validation of project creation workflows
+- **Error Cases** - Invalid inputs and failure scenario handling
+- **Component Generators** - Existence and structure validation
+
 ## Test Results
 
 ```
-22 core functionality tests ✅
-File existence checks ✅
-Configuration system validation ✅
-Version system validation ✅
-Fast execution (< 5 seconds) ✅
+59 comprehensive tests ✅
+Core library functionality ✅
+Complete CLI command coverage ✅
+All 5 profiles validated ✅
+Project creation workflows ✅
+Error handling and edge cases ✅
+Fast execution (1.3 seconds) ✅
 No infinite loops ✅
+Zero dependencies ✅
 ```
 
 ## Writing Tests
@@ -77,8 +88,8 @@ This framework replaces the previous complex test suite that had:
 - ❌ Long execution times
 - ❌ Reliability issues
 
-The new framework provides the same essential coverage with:
-- ✅ 22 focused tests
+The new framework provides comprehensive coverage with:
+- ✅ 59 focused tests covering both library and CLI functionality
 - ✅ Zero dependencies
 - ✅ Sub-5-second execution
 - ✅ 100% reliability

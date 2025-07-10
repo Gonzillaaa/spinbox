@@ -2,21 +2,31 @@
 # Shared utilities library for project template scripts
 # This library provides common functionality used across all scripts
 
-# Constants
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+# Constants (avoid conflicts with multiple sourcing)
+if [[ -z "${SCRIPT_DIR:-}" ]]; then
+    readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
+if [[ -z "${PROJECT_ROOT:-}" ]]; then
+    readonly PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+fi
 # Allow CONFIG_DIR to be overridden for testing
-: "${CONFIG_DIR:=$PROJECT_ROOT/.config}"
-readonly LOG_DIR="$PROJECT_ROOT/.logs"
-readonly BACKUP_DIR="$PROJECT_ROOT/.backups"
+: "${CONFIG_DIR:=$HOME/.spinbox}"
+if [[ -z "${LOG_DIR:-}" ]]; then
+    readonly LOG_DIR="$PROJECT_ROOT/.logs"
+fi
+if [[ -z "${BACKUP_DIR:-}" ]]; then
+    readonly BACKUP_DIR="$PROJECT_ROOT/.backups"
+fi
 
-# Color codes for output
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly RED='\033[0;31m'
-readonly BLUE='\033[0;34m'
-readonly PURPLE='\033[0;35m'
-readonly NC='\033[0m' # No Color
+# Color codes for output (avoid conflicts with multiple sourcing)
+if [[ -z "${GREEN:-}" ]]; then
+    readonly GREEN='\033[0;32m'
+    readonly YELLOW='\033[1;33m'
+    readonly RED='\033[0;31m'
+    readonly BLUE='\033[0;34m'
+    readonly PURPLE='\033[0;35m'
+    readonly NC='\033[0m' # No Color
+fi
 
 # Global variables
 VERBOSE=false
@@ -37,7 +47,11 @@ function log_message() {
   local level="$1"
   local message="$2"
   local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-  echo "[$timestamp] [$level] $message" >> "$LOG_FILE"
+  
+  # Only log to file if LOG_FILE is set and exists
+  if [[ -n "${LOG_FILE:-}" && -f "$LOG_FILE" ]]; then
+    echo "[$timestamp] [$level] $message" >> "$LOG_FILE"
+  fi
   
   if [[ "$VERBOSE" == true ]]; then
     echo "[$level] $message" >&2

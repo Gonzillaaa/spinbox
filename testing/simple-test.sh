@@ -112,6 +112,9 @@ run_tests() {
     test_error_handling
     test_config_integration
     test_project_setup_config
+    test_cli_commands
+    test_profile_validation
+    test_project_creation_smoke
     
     # Clean up
     cleanup_tests
@@ -329,6 +332,101 @@ EOF
     local dockerfile_content
     dockerfile_content="FROM python:${PYTHON_VERSION}-slim"
     test_contains "$dockerfile_content" "python:3.10-slim" "Project setup: Dockerfile uses config version"
+    
+    echo ""
+}
+
+# CLI command tests
+test_cli_commands() {
+    echo -e "${YELLOW}=== CLI Command Tests ===${NC}"
+    
+    # Get CLI path
+    local cli_path="$PROJECT_ROOT/bin/spinbox"
+    
+    # Test CLI exists and is executable
+    test_file_exists "$cli_path" "CLI executable exists"
+    test_assert '[[ -x "$cli_path" ]]' "CLI is executable"
+    
+    # Test help commands (these should always work and be fast)
+    test_assert '"$cli_path" --help >/dev/null 2>&1' "Main help command works"
+    test_assert '"$cli_path" --version >/dev/null 2>&1' "Version command works"
+    
+    # Test specific command help
+    test_assert '"$cli_path" create --help >/dev/null 2>&1' "Create help command works"
+    test_assert '"$cli_path" config --help >/dev/null 2>&1' "Config help command works"
+    test_assert '"$cli_path" profiles --help >/dev/null 2>&1' "Profiles help command works"
+    
+    # Test profiles command (should list available profiles)
+    test_assert '"$cli_path" profiles >/dev/null 2>&1' "Profiles command works"
+    
+    # Test config command (should show current config)
+    test_assert '"$cli_path" config --list >/dev/null 2>&1' "Config list command works"
+    
+    echo ""
+}
+
+# Profile validation tests
+test_profile_validation() {
+    echo -e "${YELLOW}=== Profile Validation Tests ===${NC}"
+    
+    local cli_path="$PROJECT_ROOT/bin/spinbox"
+    local profiles_dir="$PROJECT_ROOT/templates/profiles"
+    
+    # Test that profile templates directory exists
+    test_assert '[[ -d "$profiles_dir" ]]' "Profiles directory exists"
+    
+    # Test that all 5 expected profiles exist
+    local expected_profiles=("web-app" "api-only" "data-science" "ai-llm" "minimal")
+    
+    for profile in "${expected_profiles[@]}"; do
+        local profile_file="$profiles_dir/${profile}.toml"
+        test_file_exists "$profile_file" "Profile $profile exists"
+        
+        # Test profile file has required sections
+        test_assert 'grep -q "\\[profile\\]" "$profile_file"' "Profile $profile has [profile] section"
+        test_assert 'grep -q "\\[components\\]" "$profile_file"' "Profile $profile has [components] section"
+        
+        # Test profile can be shown via CLI (should not error)
+        test_assert '"$cli_path" profiles "$profile" >/dev/null 2>&1' "Profile $profile can be displayed via CLI"
+    done
+    
+    echo ""
+}
+
+# Basic project creation smoke tests  
+test_project_creation_smoke() {
+    echo -e "${YELLOW}=== Project Creation Smoke Tests ===${NC}"
+    
+    local cli_path="$PROJECT_ROOT/bin/spinbox"
+    local test_project_dir="$TEST_DIR/smoke-test-project"
+    
+    # Test minimal project creation (fastest, most basic test)
+    cd "$TEST_DIR"
+    
+    # Use dry-run mode to test command parsing without actually creating files
+    test_assert '"$cli_path" create smoke-test --python --dry-run >/dev/null 2>&1' "Dry run project creation works"
+    
+    # Test profile validation with dry-run
+    test_assert '"$cli_path" create smoke-profile-test --profile minimal --dry-run >/dev/null 2>&1' "Dry run with profile works"
+    
+    # Test version override with dry-run
+    test_assert '"$cli_path" create smoke-version-test --python --python-version 3.11 --dry-run >/dev/null 2>&1' "Dry run with version override works"
+    
+    # Test that invalid profile fails appropriately
+    if "$cli_path" create smoke-invalid --profile nonexistent --dry-run >/dev/null 2>&1; then
+        echo -e "${RED}✗ FAIL: Invalid profile should have failed${NC}"
+        ((TESTS_FAILED++))
+    else
+        echo -e "${GREEN}✓ PASS: Invalid profile fails appropriately${NC}"
+        ((TESTS_PASSED++))
+    fi
+    ((TESTS_RUN++))
+    
+    # Test component generators exist
+    local generators_dir="$PROJECT_ROOT/generators"
+    test_assert '[[ -d "$generators_dir" ]]' "Generators directory exists"
+    test_file_exists "$generators_dir/minimal-python.sh" "Python generator exists"
+    test_file_exists "$generators_dir/minimal-node.sh" "Node generator exists"
     
     echo ""
 }

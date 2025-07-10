@@ -1,0 +1,18 @@
+[profile]
+name = "minimal"
+description = "Minimal development environment with basic tools"
+
+[components]
+backend = false
+frontend = false
+database = false
+redis = false
+mongodb = false
+chroma = false
+
+[configuration]
+python_version = "3.12"
+node_version = "20"
+
+[templates]
+python_requirements = "minimal"

@@ -1,0 +1,17 @@
+[profile]
+name = "data-science"
+description = "Data science environment with Python, Jupyter, and common ML libraries"
+
+[components]
+backend = false
+frontend = false
+database = false
+redis = false
+mongodb = false
+chroma = false
+
+[configuration]
+python_version = "3.12"
+
+[templates]
+python_requirements = "data-science"

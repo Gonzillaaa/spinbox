@@ -32,6 +32,8 @@ This file contains development philosophy and preferences for working on the Spi
 - Eliminate infinite loops, timeouts, and hanging processes
 - **Use simple, flat directory structures** - avoid unnecessary nesting or complexity
 - Keep file organization clear and straightforward
+- Always cleanup as you go along. Delete temporary files, also files not needed anymore.
+- Always create files in directories following the project structure. 
 
 ## Decision Making Guidelines
 
@@ -46,18 +48,22 @@ When choosing between multiple approaches:
 
 - Write code that's easy to understand and modify
 - Prefer explicit over implicit behavior
-- Use clear naming and minimal comments
+- Use clear naming
+- Add comments but not too many
 - Eliminate unnecessary complexity
 - Make failures obvious and fast
+
+## GitHub Workflow
+
+- **Keep commits atomic**: Each commit should represent one logical change or fix
+- **Commit frequently**: Avoid large, complex commits that are hard to review and understand
+- **Use feature branches**: Create feature branches for major functionality chunks or version changes
+- **Always commit and push**: Commit and push to the remote repository as you go to maintain backup and collaboration
+- **Create pull requests**: Once work is completed on a feature branch, create a pull request for code review and integration
 
 ## File Deletion Policy
 
 **ALWAYS ASK BEFORE DELETING FILES**: Even with preferences set for automatic edits, ALWAYS check with the user before deleting any files or directories, regardless of how unnecessary they may seem. This overrides all other automation settings for deletion operations specifically.
 
-## Memory Note
-
-**This is a critical preference**: The user strongly values simplicity above all else. When in doubt, always err on the side of the simpler solution, especially for testing infrastructure.
-
----
-
-*Remember: The goal is reliable, maintainable software that does what users need without unnecessary complexity.*
+## Implementation Process
+**ALWAYS READ /docs/README.md for documentation and project guidance**
