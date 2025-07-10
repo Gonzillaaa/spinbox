@@ -50,6 +50,7 @@ USAGE:
 COMMANDS:
     create      Create a new development project
     add         Add components to an existing project
+    start       Start project services (Docker containers)
     config      Manage global configuration
     status      Show project and configuration status
     version     Show version information
@@ -64,6 +65,7 @@ EXAMPLES:
     spinbox create myproject --python          Create minimal Python project
     spinbox create webapp --python --node     Create full-stack project
     spinbox add --database                     Add database to existing project
+    spinbox start                              Start project services
     spinbox config --list                     Show current configuration
     spinbox status                             Show project status
 
@@ -228,6 +230,37 @@ EXAMPLES:
 EOF
 }
 
+# Display help for start command
+function show_start_help() {
+    cat << EOF
+spinbox start - Start project services (Docker containers)
+
+USAGE:
+    spinbox start [OPTIONS]
+
+OPTIONS:
+    --detach, -d          Run containers in background (default)
+    --logs                Show service logs after starting
+    --build               Build images before starting
+    --force-recreate      Recreate containers even if config hasn't changed
+    
+    -v, --verbose         Enable verbose output
+    -h, --help           Show this help message
+
+EXAMPLES:
+    spinbox start                     Start all project services in background
+    spinbox start --logs              Start services and show logs
+    spinbox start --build             Rebuild and start services
+    spinbox start --force-recreate    Force recreate all containers
+
+NOTES:
+    - Must be run from within a Spinbox project directory
+    - Requires docker-compose.yml file
+    - Services will be started in detached mode by default
+
+EOF
+}
+
 # Parse version configuration flags and update global variables
 function parse_version_flags() {
     while [[ $# -gt 0 ]]; do
@@ -298,7 +331,7 @@ function parse_args() {
     
     # Validate command
     case "$COMMAND" in
-        create|add|config|status|version|help)
+        create|add|start|config|status|version|help)
             ;;
         "")
             show_main_help
@@ -319,6 +352,9 @@ function parse_args() {
         add)
             parse_add_args "$@"
             ;;
+        start)
+            parse_start_args "$@"
+            ;;
         config)
             parse_config_args "$@"
             ;;
@@ -334,6 +370,7 @@ function parse_args() {
                 case "$1" in
                     create) show_create_help ;;
                     add) show_add_help ;;
+                    start) show_start_help ;;
                     config) show_config_help ;;
                     status) show_status_help ;;
                     *) 
@@ -509,6 +546,54 @@ function parse_config_args() {
     CONFIG_ACTION="$config_action"
 }
 
+# Parse start command arguments
+function parse_start_args() {
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_start_help
+                exit 0
+                ;;
+            -d|--detach)
+                START_DETACH=true
+                shift
+                ;;
+            --logs)
+                START_LOGS=true
+                shift
+                ;;
+            --build)
+                START_BUILD=true
+                shift
+                ;;
+            --force-recreate)
+                START_FORCE_RECREATE=true
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            --dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            *)
+                print_error "Unknown option for start: $1"
+                echo "Use 'spinbox start --help' for usage information."
+                exit 1
+                ;;
+        esac
+    done
+    
+    # Set defaults
+    START_DETACH="${START_DETACH:-true}"
+    START_LOGS="${START_LOGS:-false}"
+    START_BUILD="${START_BUILD:-false}"
+    START_FORCE_RECREATE="${START_FORCE_RECREATE:-false}"
+}
+
 # Parse status command arguments
 function parse_status_args() {
     local status_type="all"
@@ -569,6 +654,9 @@ function execute_command() {
             source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             add_components
             ;;
+        start)
+            execute_start_command
+            ;;
         config)
             execute_config_command
             ;;
@@ -576,6 +664,63 @@ function execute_command() {
             execute_status_command
             ;;
     esac
+}
+
+# Execute start command
+function execute_start_command() {
+    # Check if we're in a Spinbox project
+    if [[ ! -f "docker-compose.yml" ]]; then
+        print_error "No docker-compose.yml found in current directory"
+        print_info "Make sure you're in a Spinbox project directory"
+        print_info "Create a project with: spinbox create myproject --python"
+        exit 1
+    fi
+    
+    # Build docker-compose command
+    local compose_cmd="docker-compose"
+    local compose_args=()
+    
+    # Add build flag if requested
+    if [[ "$START_BUILD" == "true" ]]; then
+        compose_args+=("--build")
+    fi
+    
+    # Add force recreate flag if requested
+    if [[ "$START_FORCE_RECREATE" == "true" ]]; then
+        compose_args+=("--force-recreate")
+    fi
+    
+    # Add detach flag (default behavior)
+    if [[ "$START_DETACH" == "true" ]]; then
+        compose_args+=("-d")
+    fi
+    
+    print_info "Starting project services..."
+    
+    # Execute docker-compose up
+    if [[ "$DRY_RUN" == "true" ]]; then
+        print_info "Would run: $compose_cmd up ${compose_args[*]}"
+    else
+        if [[ "$VERBOSE" == "true" ]]; then
+            print_debug "Running: $compose_cmd up ${compose_args[*]}"
+        fi
+        
+        if $compose_cmd up "${compose_args[@]}"; then
+            print_status "Services started successfully!"
+            
+            # Show logs if requested
+            if [[ "$START_LOGS" == "true" ]]; then
+                print_info "Showing service logs (Ctrl+C to stop watching):"
+                $compose_cmd logs -f
+            else
+                print_info "Use 'docker-compose logs -f' to view service logs"
+            fi
+        else
+            print_error "Failed to start services"
+            print_info "Check 'docker-compose logs' for error details"
+            exit 1
+        fi
+    fi
 }
 
 # Execute config command
