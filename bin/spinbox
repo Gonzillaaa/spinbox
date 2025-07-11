@@ -118,7 +118,7 @@ OPTIONS:
     
     Workflow Frameworks (Specialized work methodologies):
     --data-science         Add Data Science workflow (Jupyter, pandas, scikit-learn)
-    --ai-ml                Add AI/ML workflow (LLMs, agents, vector processing)
+    --ai-ml                Add AI/ML workflow (OpenAI, Anthropic, LangChain, ChromaDB)
     
     Infrastructure Services (Data storage & core services):
     --postgresql           Add PostgreSQL database with PGVector
@@ -181,7 +181,7 @@ OPTIONS:
     
     Workflow Frameworks (Specialized work methodologies):
     --data-science         Add Data Science workflow (Jupyter, pandas, scikit-learn)
-    --ai-ml                Add AI/ML workflow (LLMs, agents, vector processing)
+    --ai-ml                Add AI/ML workflow (OpenAI, Anthropic, LangChain, ChromaDB)
     
     Infrastructure Services (Data storage & core services):
     --postgresql           Add PostgreSQL database with PGVector
@@ -1462,7 +1462,7 @@ function show_components_status() {
     echo ""
     echo "  Workflow Frameworks (Specialized work methodologies):"
     echo "    --data-science   Data Science workflow (Jupyter, pandas, ML)"
-    echo "    --ai-ml          AI/ML workflow (LLMs, agents, vector processing)"
+    echo "    --ai-ml          AI/ML workflow (OpenAI, Anthropic, LangChain, ChromaDB)"
     echo ""
     echo "  Infrastructure Services (Data storage & core services):"
     echo "    --postgresql     PostgreSQL with PGVector extension"
