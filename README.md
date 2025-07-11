@@ -6,12 +6,23 @@
 
 A **global CLI tool** for spinning up customizable prototyping environments with predefined profiles or custom component selection. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and comes with a modern prototyping setup. Build your stack by selecting any combination of:
 
-- FastAPI backend (Python 3.12+)
-- Next.js frontend (TypeScript)
+**Application Frameworks** (Build user interfaces):
+- FastAPI backend framework (Python 3.12+)
+- Next.js frontend framework (TypeScript)
+
+**Workflow Frameworks** (Specialized methodologies):
+- Data Science workflow (Jupyter, pandas, scikit-learn, ML libraries)
+- AI/ML workflow (LLMs, agents, vector processing, embeddings)
+
+**Infrastructure Services** (Data storage & core services):
 - PostgreSQL database with PGVector
 - MongoDB document database
 - Redis for caching and queues
 - Chroma vector database for embeddings
+
+**Foundation Environments** (Base containers):
+- Python DevContainer with virtual environment
+- Node.js DevContainer with TypeScript
 
 ## 🚀 Features
 
@@ -116,6 +127,8 @@ spinbox create fullstack --fastapi --nextjs --postgresql --with-deps --with-exam
 # Add components to existing projects
 cd myproject
 spinbox add --postgresql --redis
+spinbox add --data-science --with-examples
+spinbox add --ai-ml --chroma --with-deps
 
 # Add with dependencies and examples
 spinbox add --redis --with-deps --with-examples
