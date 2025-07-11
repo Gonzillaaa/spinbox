@@ -87,7 +87,7 @@ spinbox profiles web-app
 # Build custom projects by selecting components
 spinbox create myproject --python             # Simple Python project
 spinbox create webapp --python --node --database  # Custom full-stack
-spinbox create api --backend --redis          # API with caching
+spinbox create api --backend --redis          # API layer with caching
 
 # Customize versions
 spinbox create api --backend --redis --python-version 3.11
@@ -114,14 +114,37 @@ spinbox config --set PYTHON_VERSION=3.11
 
 ## 📦 Available Components
 
+### Development Environment
 - `--python` - Python DevContainer with virtual environment
 - `--node` - Node.js DevContainer with TypeScript  
+
+### Application Layer
 - `--backend` - FastAPI backend (includes Python)
 - `--frontend` - Next.js frontend (includes Node.js)
-- `--database` - PostgreSQL with PGVector extension
-- `--mongodb` - MongoDB document database
-- `--redis` - Redis for caching and queues
-- `--chroma` - Chroma vector database for embeddings
+
+### Storage Layer
+- `--database` - PostgreSQL with PGVector (primary relational storage)
+- `--mongodb` - MongoDB (alternative document storage)
+
+### Performance & Specialized Layer
+- `--redis` - Redis (caching and queues)
+- `--chroma` - Chroma (vector search for AI/ML)
+
+### Component Categorization
+
+Components are organized by their **architectural role** rather than technical type:
+
+| Component | Flag | Architectural Role | Use With |
+|-----------|------|-------------------|----------|
+| PostgreSQL | `--database` | Primary storage | Most projects |
+| MongoDB | `--mongodb` | Alternative primary storage | Document-heavy projects |
+| Redis | `--redis` | Caching/queue layer | Performance optimization |
+| Chroma | `--chroma` | Vector search layer | AI/ML applications |
+
+**Examples of combining storage components:**
+- `--database --redis` - Primary storage + caching
+- `--mongodb --chroma` - Document storage + vector search
+- `--database --mongodb --redis` - Multiple storage strategies
 
 ## 🎯 Predefined Profiles
 
@@ -260,8 +283,9 @@ Already set up a project but need to add more components? No problem!
 
 ```bash
 # In your existing project directory:
-spinbox add --backend --redis
-spinbox add --database --mongodb
+spinbox add --database --redis        # Add primary storage + caching layer
+spinbox add --mongodb --chroma        # Add alternative storage + vector search
+spinbox add --backend --frontend      # Add API layer + web interface
 ```
 
 **Note**: The `spinbox add` command is fully implemented and ready to use.
@@ -330,7 +354,14 @@ Every container comes with:
 
 ### Custom Components
 
-The project setup script can be extended to support additional components. Modify `project-setup.sh` to add your own component templates and configuration logic.
+Spinbox uses a modular generator system for creating components. You can extend the system by:
+
+- **Adding new generators**: Create new component generators in the `generators/` directory
+- **Modifying existing generators**: Update component logic in existing generator scripts
+- **Creating custom profiles**: Add new profiles to the `templates/profiles/` directory
+- **Customizing requirements**: Add new requirements templates to `templates/requirements/`
+
+Each generator is a self-contained script that handles component creation, configuration, and integration with the project structure.
 
 ### Local Development
 
@@ -345,15 +376,9 @@ Development is designed to happen inside DevContainers for consistency. The virt
    - Virtual environment must be created manually: `python3 -m venv venv`
    - Activate with: `source venv/bin/activate`
 
-### Cleanup After Setup
+### Development Environment
 
-Once your project is set up, the `spinbox/` directory serves no purpose:
-
-```bash
-rm -rf spinbox/
-```
-
-All your development environment files are now at the root level and will continue working normally.
+All development environment files are created at the root level of your project directory. The global CLI tool manages project creation and component addition without requiring temporary directories or cleanup.
 
 ## 🔍 Troubleshooting
 

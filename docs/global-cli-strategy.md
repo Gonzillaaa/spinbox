@@ -12,23 +12,19 @@ Transform Spinbox from a template-based scaffolding system into a globally insta
 git clone https://github.com/Gonzillaaa/spinbox.git
 cd spinbox
 
-# Run macOS setup (one-time)
-./macos-setup.sh
+# Install Spinbox globally (one-time)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
 
 # Navigate to project location
 cd ../my-project/
-git clone https://github.com/Gonzillaaa/spinbox.git spinbox/
 
-# Run project setup
-./spinbox/project-setup.sh
-# Interactive component selection
-# Generate files at project root
-
-# Clean up
-rm -rf spinbox/
+# Create project with components
+spinbox create myproject --profile web-app
+# Or with custom components:
+spinbox create myproject --backend --database --redis
 
 # Start development
-./start.sh  # or docker-compose up -d
+spinbox start
 ```
 
 ### Target Workflow
@@ -229,7 +225,7 @@ spinbox/
 │   ├── utils.sh                  # Shared utilities (existing)
 │   ├── config.sh                 # Configuration management (existing)
 │   ├── project-generator.sh      # Main project generation logic
-│   └── environment-setup.sh      # Environment setup (from macos-setup.sh)
+│   └── environment-setup.sh      # Environment setup utilities
 ├── generators/
 │   ├── devcontainer.sh           # DevContainer generation
 │   ├── backend.sh                # FastAPI backend

@@ -1,10 +1,10 @@
 # Spinbox CLI Reference
 
-Complete command-line interface reference for Spinbox development environment tool.
+Complete command-line interface reference for Spinbox prototyping environment tool.
 
 ## Overview
 
-Spinbox provides a comprehensive CLI for creating and managing containerized development environments. This reference covers all commands, options, and usage patterns.
+Spinbox provides a comprehensive CLI for creating and managing containerized prototyping environments. This reference covers all commands, options, and usage patterns.
 
 ## Global Options
 
@@ -75,10 +75,10 @@ spinbox create api-server --profile api-only
 # Data science environment
 spinbox create ml-project --profile data-science
 
-# AI/LLM development environment
+# AI/LLM prototyping environment
 spinbox create ai-project --profile ai-llm
 
-# Minimal development environment
+# Minimal prototyping environment
 spinbox create basic-env --profile minimal
 ```
 
@@ -90,7 +90,7 @@ spinbox create myproject --python
 # Custom full-stack setup
 spinbox create webapp --python --node --database --redis
 
-# Backend API with caching
+# API layer with caching
 spinbox create api --backend --redis
 
 # Frontend with MongoDB
@@ -161,8 +161,9 @@ spinbox add [OPTIONS]
 cd myproject
 spinbox add --database
 
-# Add multiple components
-spinbox add --backend --redis
+# Add multiple components with clear architectural roles
+spinbox add --database --redis        # Primary storage + caching layer
+spinbox add --mongodb --chroma        # Alternative storage + vector search
 
 # Add with version specification
 spinbox add --database --postgres-version 14
@@ -223,6 +224,128 @@ spinbox start --no-detach
 - Services run in detached mode by default
 - Provides status feedback and error handling
 - Can show logs if requested
+
+### `spinbox update`
+
+Update Spinbox to the latest version or a specific version.
+
+#### Syntax
+```bash
+spinbox update [OPTIONS]
+```
+
+#### Options
+| Option | Description |
+|--------|-------------|
+| `--check` | Check for updates without installing |
+| `--version VERSION` | Update to specific version (e.g., 1.2.0) |
+| `--force` | Force update even if already on latest version |
+| `--yes` | Skip confirmation prompts |
+| `--dry-run` | Show what would be updated without making changes |
+| `--verbose` | Enable verbose output |
+
+#### Examples
+```bash
+# Check for updates
+spinbox update --check
+
+# Update to latest version
+spinbox update
+
+# Update to specific version
+spinbox update --version 1.2.0
+
+# Force update with no prompts
+spinbox update --force --yes
+
+# Preview update process
+spinbox update --dry-run
+```
+
+#### Behavior
+- **Automatic backup**: Creates backup of current installation before updating
+- **Installation method detection**: Automatically detects if installed via Homebrew or manual installation
+- **Homebrew integration**: Uses `brew upgrade spinbox` for Homebrew installations
+- **Rollback support**: Automatically rolls back on failed updates
+- **Configuration preservation**: Preserves user configuration during updates
+- **Version validation**: Validates version numbers and checks availability
+- **Network requirements**: Requires internet connection to check for updates
+
+#### Update Process
+1. **Check current version** and compare with target version
+2. **Detect installation method** (Homebrew vs manual)
+3. **Create backup** of current installation
+4. **Download update** from GitHub releases
+5. **Install update** atomically
+6. **Verify installation** works correctly
+7. **Clean up** temporary files
+8. **Rollback** if any step fails
+
+#### Notes
+- Updates preserve user configuration files in `~/.spinbox/config/`
+- Backup files are stored in `~/.spinbox/backup/`
+- Failed updates are automatically rolled back
+- Network connectivity is required for update checks
+- Homebrew users should use `brew upgrade spinbox` directly when possible
+
+### `spinbox uninstall`
+
+Remove Spinbox from the system with optional configuration cleanup.
+
+#### Syntax
+```bash
+spinbox uninstall [OPTIONS]
+```
+
+#### Options
+
+| Option | Description |
+|--------|-------------|
+| `--config` | Also remove configuration files (~/.spinbox) |
+| `--all` | Remove everything including config (same as --config) |
+| `--script` | Download and run standalone uninstall script |
+| `--force` | `-f` | Skip confirmation prompts |
+| `--dry-run` | `-d` | Show what would be removed without making changes |
+
+#### Examples
+
+**Basic uninstall:**
+```bash
+# Remove Spinbox binary only (preserves configuration)
+spinbox uninstall
+
+# Remove binary and configuration files  
+spinbox uninstall --config
+
+# Remove everything
+spinbox uninstall --all
+```
+
+**Advanced options:**
+```bash
+# Dry-run to see what would be removed
+spinbox uninstall --dry-run --config
+
+# Force removal without confirmation
+spinbox uninstall --force --config
+
+# Use standalone script (for corrupted installations)
+spinbox uninstall --script
+```
+
+#### Behavior
+- By default, only removes the Spinbox binary
+- Configuration files preserved unless `--config` or `--all` specified
+- Supports dry-run mode to preview changes
+- Provides confirmation prompts unless `--force` used
+- Detects Homebrew installations and suggests appropriate method
+- Standalone script option for recovery scenarios
+
+#### Notes
+- Homebrew installations should use `brew uninstall spinbox`
+- Projects created with Spinbox are not affected
+- Docker images and containers remain untouched
+- Use `--script` if the main binary is corrupted
 
 ### `spinbox config`
 
@@ -400,7 +523,7 @@ spinbox profiles --show api-only
 | `api-only` | Backend API with database | backend, database, redis |
 | `data-science` | Data science environment | python, database |
 | `ai-llm` | AI/LLM development | python, database, chroma |
-| `minimal` | Basic development environment | python |
+| `minimal` | Basic prototyping environment | python |
 
 #### Profile Details
 
@@ -515,7 +638,7 @@ Available Python requirements templates:
 
 | Template | Description | Key Libraries |
 |----------|-------------|---------------|
-| `minimal` | Basic development tools | uv, pytest, black, requests |
+| `minimal` | Basic prototyping tools | uv, pytest, black, requests |
 | `data-science` | ML/data science libraries | pandas, numpy, matplotlib, jupyter |
 | `ai-llm` | AI/LLM development | openai, anthropic, langchain, tiktoken |
 | `web-scraping` | Web scraping tools | beautifulsoup4, selenium, scrapy |

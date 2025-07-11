@@ -1,7 +1,7 @@
 class Spinbox < Formula
   desc "Global CLI for spinning up containerized development environments"
   homepage "https://github.com/Gonzillaaa/spinbox"
-  url "https://github.com/Gonzillaaa/spinbox/archive/v1.0.0.tar.gz"
+  url "https://github.com/Gonzillaaa/spinbox/archive/v0.1.0-beta.1.tar.gz"
   sha256 "PLACEHOLDER_SHA256_HASH"
   license "MIT"
 

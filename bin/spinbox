@@ -12,10 +12,12 @@ SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"
 source "$SPINBOX_PROJECT_ROOT/lib/utils.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/config.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/profiles.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/version.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/update.sh"
 
 # Script information
 readonly SCRIPT_NAME="spinbox"
-readonly VERSION="1.0.0"
+readonly VERSION="0.1.0-beta.2"
 
 # Initialize logging
 init_logging "$SCRIPT_NAME"
@@ -31,6 +33,13 @@ PROFILE=""
 FORCE=false
 VERBOSE=false
 DRY_RUN=false
+
+# Update-specific variables
+UPDATE_ACTION=""
+TARGET_VERSION=""
+FORCE_UPDATE=false
+CHECK_ONLY=false
+SKIP_CONFIRMATION=false
 
 # Display version information
 function show_version() {
@@ -56,6 +65,8 @@ COMMANDS:
     config      Manage global configuration
     status      Show project and configuration status
     profiles    List and show available project profiles
+    update      Update Spinbox to the latest version
+    uninstall   Remove Spinbox from system
     version     Show version information
     help        Show help for commands
 
@@ -300,6 +311,73 @@ NOTES:
 EOF
 }
 
+# Display help for uninstall command
+function show_uninstall_help() {
+    cat << EOF
+spinbox uninstall - Remove Spinbox from system
+
+USAGE:
+    spinbox uninstall [OPTIONS]
+
+OPTIONS:
+    --config              Also remove configuration files (~/.spinbox)
+    --all                 Remove everything including config (same as --config)
+    --script              Download and run standalone uninstall script
+    
+    -f, --force           Skip confirmation prompts
+    -v, --verbose         Enable verbose output
+    -d, --dry-run        Show what would be removed without making changes
+    -h, --help           Show this help message
+
+EXAMPLES:
+    spinbox uninstall                     Remove Spinbox binary only
+    spinbox uninstall --config            Remove Spinbox and configuration
+    spinbox uninstall --all               Remove everything
+    spinbox uninstall --script            Use standalone uninstall script
+    spinbox uninstall --dry-run           Show what would be removed
+
+NOTES:
+    - By default, only removes the Spinbox binary
+    - Configuration files are preserved unless --config or --all is used
+    - Use --script for complete removal when binary is corrupted
+    - Homebrew installations should use 'brew uninstall spinbox'
+
+EOF
+}
+
+# Display help for update command
+function show_update_help() {
+    cat << EOF
+spinbox update - Update Spinbox to the latest version
+
+USAGE:
+    spinbox update [OPTIONS]
+
+OPTIONS:
+    --check               Check for updates without installing
+    --version VERSION     Update to specific version (e.g., 1.0.0)
+    --force              Force update even if already on latest version
+    
+    -d, --dry-run        Show what would be updated without making changes
+    -y, --yes            Skip confirmation prompts
+    -v, --verbose        Enable verbose output
+
+EXAMPLES:
+    spinbox update                    # Update to latest version
+    spinbox update --check            # Check for updates
+    spinbox update --version 1.2.0    # Update to specific version
+    spinbox update --dry-run          # Preview update process
+
+NOTES:
+    - Creates backup of current installation before updating
+    - Preserves user configuration during updates
+    - Detects installation method (Homebrew vs manual)
+    - Homebrew installations will use 'brew upgrade spinbox'
+    - Failed updates can be rolled back automatically
+
+EOF
+}
+
 # Parse version configuration flags and update global variables
 function parse_version_flags() {
     while [[ $# -gt 0 ]]; do
@@ -370,7 +448,7 @@ function parse_args() {
     
     # Validate command
     case "$COMMAND" in
-        create|add|start|config|status|profiles|version|help)
+        create|add|start|config|status|profiles|update|uninstall|version|help)
             ;;
         "")
             show_main_help
@@ -406,6 +484,12 @@ function parse_args() {
         start)
             parse_start_args "$@"
             ;;
+        update)
+            parse_update_args "$@"
+            ;;
+        uninstall)
+            parse_uninstall_args "$@"
+            ;;
         version)
             show_version
             exit 0
@@ -419,6 +503,8 @@ function parse_args() {
                     config) show_config_help ;;
                     status) show_status_help ;;
                     profiles) show_profiles_help ;;
+                    update) show_update_help ;;
+                    uninstall) show_uninstall_help ;;
                     *) 
                         print_error "No help available for: $1"
                         show_main_help
@@ -731,6 +817,114 @@ function parse_status_args() {
     STATUS_TYPE="$status_type"
 }
 
+# Parse update command arguments
+function parse_update_args() {
+    local update_action="update"
+    local target_version=""
+    local force_update=false
+    local check_only=false
+    local skip_confirmation=false
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_update_help
+                exit 0
+                ;;
+            --check)
+                check_only=true
+                shift
+                ;;
+            --version)
+                if [[ -n "$2" ]]; then
+                    target_version="$2"
+                    shift 2
+                else
+                    print_error "Option --version requires a version number"
+                    exit 1
+                fi
+                ;;
+            --force)
+                force_update=true
+                shift
+                ;;
+            -y|--yes)
+                skip_confirmation=true
+                shift
+                ;;
+            -d|--dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -*)
+                print_error "Unknown option: $1"
+                show_update_help
+                exit 1
+                ;;
+            *)
+                print_error "Unknown argument: $1"
+                show_update_help
+                exit 1
+                ;;
+        esac
+    done
+    
+    # Set global variables
+    UPDATE_ACTION="$update_action"
+    TARGET_VERSION="$target_version"
+    FORCE_UPDATE="$force_update"
+    CHECK_ONLY="$check_only"
+    SKIP_CONFIRMATION="$skip_confirmation"
+}
+
+# Parse uninstall command arguments
+function parse_uninstall_args() {
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_uninstall_help
+                exit 0
+                ;;
+            --config|--all)
+                UNINSTALL_CONFIG=true
+                shift
+                ;;
+            --script)
+                UNINSTALL_SCRIPT=true
+                shift
+                ;;
+            -f|--force)
+                UNINSTALL_FORCE=true
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -d|--dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            *)
+                print_error "Unknown option for uninstall: $1"
+                echo "Use 'spinbox uninstall --help' for usage information."
+                exit 1
+                ;;
+        esac
+    done
+    
+    # Set defaults
+    UNINSTALL_CONFIG="${UNINSTALL_CONFIG:-false}"
+    UNINSTALL_SCRIPT="${UNINSTALL_SCRIPT:-false}"
+    UNINSTALL_FORCE="${UNINSTALL_FORCE:-false}"
+}
+
 # Execute the appropriate command
 function execute_command() {
     case "$COMMAND" in
@@ -771,6 +965,12 @@ function execute_command() {
             ;;
         profiles)
             execute_profiles_command
+            ;;
+        update)
+            execute_update_command
+            ;;
+        uninstall)
+            execute_uninstall_command
             ;;
     esac
 }
@@ -982,6 +1182,124 @@ function show_config_status() {
         echo "  Auto-start: ${AUTO_START_SERVICES:-true}"
     else
         print_info "Using default user preferences"
+    fi
+}
+
+# Execute update command
+function execute_update_command() {
+    # Check if just checking for updates
+    if [[ "$CHECK_ONLY" == "true" ]]; then
+        check_for_updates
+        return $?
+    fi
+    
+    # Perform the update
+    perform_update "$TARGET_VERSION" "$FORCE_UPDATE" "$SKIP_CONFIRMATION"
+    return $?
+}
+
+# Execute uninstall command
+function execute_uninstall_command() {
+    # Check if using --script option
+    if [[ "$UNINSTALL_SCRIPT" == "true" ]]; then
+        print_info "Downloading and running standalone uninstall script..."
+        if [[ "$DRY_RUN" == "true" ]]; then
+            print_info "Would download: https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/uninstall.sh"
+        else
+            curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/uninstall.sh | bash
+        fi
+        return
+    fi
+    
+    # Define what will be removed
+    local items_to_remove=()
+    local binary_path
+    binary_path="$(which spinbox 2>/dev/null || echo "/usr/local/bin/spinbox")"
+    
+    if [[ -f "$binary_path" ]]; then
+        items_to_remove+=("Spinbox binary: $binary_path")
+    fi
+    
+    if [[ "$UNINSTALL_CONFIG" == "true" && -d "$HOME/.spinbox" ]]; then
+        items_to_remove+=("Configuration directory: $HOME/.spinbox")
+    fi
+    
+    # Check if anything to remove
+    if [[ ${#items_to_remove[@]} -eq 0 ]]; then
+        print_warning "No Spinbox installation found to remove"
+        return 0
+    fi
+    
+    # Show what will be removed
+    print_info "The following will be removed:"
+    for item in "${items_to_remove[@]}"; do
+        echo "  - $item"
+    done
+    
+    if [[ "$UNINSTALL_CONFIG" == "false" ]]; then
+        print_info "Configuration files will be preserved (use --config to remove)"
+    fi
+    
+    # Dry run mode
+    if [[ "$DRY_RUN" == "true" ]]; then
+        print_info "Dry run: No files would be removed"
+        return 0
+    fi
+    
+    # Confirmation unless force mode
+    if [[ "$UNINSTALL_FORCE" == "false" ]]; then
+        echo ""
+        read -p "Do you want to continue? [y/N]: " -r
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            print_info "Uninstall cancelled"
+            return 0
+        fi
+    fi
+    
+    # Perform removal
+    local errors=0
+    
+    # Remove binary
+    if [[ -f "$binary_path" ]]; then
+        if [[ "$VERBOSE" == "true" ]]; then
+            print_debug "Removing: $binary_path"
+        fi
+        
+        if rm -f "$binary_path" 2>/dev/null; then
+            print_status "Removed Spinbox binary"
+        else
+            print_error "Failed to remove $binary_path (try with sudo)"
+            ((errors++))
+        fi
+    fi
+    
+    # Remove configuration if requested
+    if [[ "$UNINSTALL_CONFIG" == "true" && -d "$HOME/.spinbox" ]]; then
+        if [[ "$VERBOSE" == "true" ]]; then
+            print_debug "Removing: $HOME/.spinbox"
+        fi
+        
+        if rm -rf "$HOME/.spinbox" 2>/dev/null; then
+            print_status "Removed configuration directory"
+        else
+            print_error "Failed to remove $HOME/.spinbox"
+            ((errors++))
+        fi
+    fi
+    
+    # Final message
+    if [[ $errors -eq 0 ]]; then
+        print_status "Spinbox uninstalled successfully!"
+        echo ""
+        print_info "Thank you for using Spinbox!"
+        if [[ "$UNINSTALL_CONFIG" == "false" ]]; then
+            print_info "Your configuration is preserved at ~/.spinbox"
+            print_info "To remove it later: rm -rf ~/.spinbox"
+        fi
+    else
+        print_error "Uninstallation completed with $errors errors"
+        print_info "You may need to run with sudo or manually remove files"
+        exit 1
     fi
 }
 

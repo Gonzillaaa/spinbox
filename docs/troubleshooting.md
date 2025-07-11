@@ -211,7 +211,7 @@ This project uses a **DevContainer-first approach**. All development is designed
 
 ## DevContainer Issues
 
-DevContainers are the primary development environment for this project. All Python virtual environments and dependencies are managed inside containers.
+DevContainers are the primary prototyping environment for this project. All Python virtual environments and dependencies are managed inside containers.
 
 ### DevContainer Won't Open
 
@@ -494,8 +494,8 @@ DevContainers are the primary development environment for this project. All Pyth
 2. **Reset configuration:**
    ```bash
    # Reset to defaults
-   rm -rf .config
-   ./macos-setup.sh
+   rm -rf ~/.spinbox/config/
+   spinbox config --reset
    ```
 
 3. **Check syntax:**
