@@ -362,6 +362,9 @@ test_cli_commands() {
     # Test config command (should show current config)
     test_assert '"$cli_path" config --list >/dev/null 2>&1' "Config list command works"
     
+    # Test update command
+    test_assert '"$cli_path" update --help >/dev/null 2>&1' "Update help command works"
+    
     # Test uninstall command (dry-run only)
     test_assert '"$cli_path" uninstall --help >/dev/null 2>&1' "Uninstall help command works"
     test_assert '"$cli_path" uninstall --dry-run >/dev/null 2>&1' "Uninstall dry-run command works"

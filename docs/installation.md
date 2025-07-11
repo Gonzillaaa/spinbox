@@ -508,19 +508,40 @@ After successful installation:
 
 ## Version Updates
 
+### Built-in Update Command (Recommended)
+```bash
+# Check for updates
+spinbox update --check
+
+# Update to latest version
+spinbox update
+
+# Update to specific version
+spinbox update --version 1.2.0
+
+# Force update with no prompts
+spinbox update --force --yes
+```
+
 ### Homebrew Updates
 ```bash
 # Update Homebrew
 brew update
 
-# Reinstall latest version
+# Upgrade Spinbox
+brew upgrade spinbox
+
+# Or reinstall latest version
 brew uninstall spinbox
 brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
 ```
 
 ### Manual Updates
 ```bash
-# Re-run installation script
+# Use built-in update command (recommended)
+spinbox update
+
+# Or re-run installation script
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
 ```
 

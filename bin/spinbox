@@ -12,6 +12,8 @@ SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"
 source "$SPINBOX_PROJECT_ROOT/lib/utils.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/config.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/profiles.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/version.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/update.sh"
 
 # Script information
 readonly SCRIPT_NAME="spinbox"
@@ -31,6 +33,13 @@ PROFILE=""
 FORCE=false
 VERBOSE=false
 DRY_RUN=false
+
+# Update-specific variables
+UPDATE_ACTION=""
+TARGET_VERSION=""
+FORCE_UPDATE=false
+CHECK_ONLY=false
+SKIP_CONFIRMATION=false
 
 # Display version information
 function show_version() {
@@ -56,6 +65,7 @@ COMMANDS:
     config      Manage global configuration
     status      Show project and configuration status
     profiles    List and show available project profiles
+    update      Update Spinbox to the latest version
     uninstall   Remove Spinbox from system
     version     Show version information
     help        Show help for commands
@@ -335,6 +345,39 @@ NOTES:
 EOF
 }
 
+# Display help for update command
+function show_update_help() {
+    cat << EOF
+spinbox update - Update Spinbox to the latest version
+
+USAGE:
+    spinbox update [OPTIONS]
+
+OPTIONS:
+    --check               Check for updates without installing
+    --version VERSION     Update to specific version (e.g., 1.0.0)
+    --force              Force update even if already on latest version
+    
+    -d, --dry-run        Show what would be updated without making changes
+    -y, --yes            Skip confirmation prompts
+    -v, --verbose        Enable verbose output
+
+EXAMPLES:
+    spinbox update                    # Update to latest version
+    spinbox update --check            # Check for updates
+    spinbox update --version 1.2.0    # Update to specific version
+    spinbox update --dry-run          # Preview update process
+
+NOTES:
+    - Creates backup of current installation before updating
+    - Preserves user configuration during updates
+    - Detects installation method (Homebrew vs manual)
+    - Homebrew installations will use 'brew upgrade spinbox'
+    - Failed updates can be rolled back automatically
+
+EOF
+}
+
 # Parse version configuration flags and update global variables
 function parse_version_flags() {
     while [[ $# -gt 0 ]]; do
@@ -405,7 +448,7 @@ function parse_args() {
     
     # Validate command
     case "$COMMAND" in
-        create|add|start|config|status|profiles|uninstall|version|help)
+        create|add|start|config|status|profiles|update|uninstall|version|help)
             ;;
         "")
             show_main_help
@@ -441,6 +484,9 @@ function parse_args() {
         start)
             parse_start_args "$@"
             ;;
+        update)
+            parse_update_args "$@"
+            ;;
         uninstall)
             parse_uninstall_args "$@"
             ;;
@@ -457,6 +503,7 @@ function parse_args() {
                     config) show_config_help ;;
                     status) show_status_help ;;
                     profiles) show_profiles_help ;;
+                    update) show_update_help ;;
                     uninstall) show_uninstall_help ;;
                     *) 
                         print_error "No help available for: $1"
@@ -770,6 +817,71 @@ function parse_status_args() {
     STATUS_TYPE="$status_type"
 }
 
+# Parse update command arguments
+function parse_update_args() {
+    local update_action="update"
+    local target_version=""
+    local force_update=false
+    local check_only=false
+    local skip_confirmation=false
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_update_help
+                exit 0
+                ;;
+            --check)
+                check_only=true
+                shift
+                ;;
+            --version)
+                if [[ -n "$2" ]]; then
+                    target_version="$2"
+                    shift 2
+                else
+                    print_error "Option --version requires a version number"
+                    exit 1
+                fi
+                ;;
+            --force)
+                force_update=true
+                shift
+                ;;
+            -y|--yes)
+                skip_confirmation=true
+                shift
+                ;;
+            -d|--dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -*)
+                print_error "Unknown option: $1"
+                show_update_help
+                exit 1
+                ;;
+            *)
+                print_error "Unknown argument: $1"
+                show_update_help
+                exit 1
+                ;;
+        esac
+    done
+    
+    # Set global variables
+    UPDATE_ACTION="$update_action"
+    TARGET_VERSION="$target_version"
+    FORCE_UPDATE="$force_update"
+    CHECK_ONLY="$check_only"
+    SKIP_CONFIRMATION="$skip_confirmation"
+}
+
 # Parse uninstall command arguments
 function parse_uninstall_args() {
     # Parse arguments
@@ -853,6 +965,9 @@ function execute_command() {
             ;;
         profiles)
             execute_profiles_command
+            ;;
+        update)
+            execute_update_command
             ;;
         uninstall)
             execute_uninstall_command
@@ -1068,6 +1183,19 @@ function show_config_status() {
     else
         print_info "Using default user preferences"
     fi
+}
+
+# Execute update command
+function execute_update_command() {
+    # Check if just checking for updates
+    if [[ "$CHECK_ONLY" == "true" ]]; then
+        check_for_updates
+        return $?
+    fi
+    
+    # Perform the update
+    perform_update "$TARGET_VERSION" "$FORCE_UPDATE" "$SKIP_CONFIRMATION"
+    return $?
 }
 
 # Execute uninstall command

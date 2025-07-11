@@ -225,6 +225,69 @@ spinbox start --no-detach
 - Provides status feedback and error handling
 - Can show logs if requested
 
+### `spinbox update`
+
+Update Spinbox to the latest version or a specific version.
+
+#### Syntax
+```bash
+spinbox update [OPTIONS]
+```
+
+#### Options
+| Option | Description |
+|--------|-------------|
+| `--check` | Check for updates without installing |
+| `--version VERSION` | Update to specific version (e.g., 1.2.0) |
+| `--force` | Force update even if already on latest version |
+| `--yes` | Skip confirmation prompts |
+| `--dry-run` | Show what would be updated without making changes |
+| `--verbose` | Enable verbose output |
+
+#### Examples
+```bash
+# Check for updates
+spinbox update --check
+
+# Update to latest version
+spinbox update
+
+# Update to specific version
+spinbox update --version 1.2.0
+
+# Force update with no prompts
+spinbox update --force --yes
+
+# Preview update process
+spinbox update --dry-run
+```
+
+#### Behavior
+- **Automatic backup**: Creates backup of current installation before updating
+- **Installation method detection**: Automatically detects if installed via Homebrew or manual installation
+- **Homebrew integration**: Uses `brew upgrade spinbox` for Homebrew installations
+- **Rollback support**: Automatically rolls back on failed updates
+- **Configuration preservation**: Preserves user configuration during updates
+- **Version validation**: Validates version numbers and checks availability
+- **Network requirements**: Requires internet connection to check for updates
+
+#### Update Process
+1. **Check current version** and compare with target version
+2. **Detect installation method** (Homebrew vs manual)
+3. **Create backup** of current installation
+4. **Download update** from GitHub releases
+5. **Install update** atomically
+6. **Verify installation** works correctly
+7. **Clean up** temporary files
+8. **Rollback** if any step fails
+
+#### Notes
+- Updates preserve user configuration files in `~/.spinbox/config/`
+- Backup files are stored in `~/.spinbox/backup/`
+- Failed updates are automatically rolled back
+- Network connectivity is required for update checks
+- Homebrew users should use `brew upgrade spinbox` directly when possible
+
 ### `spinbox uninstall`
 
 Remove Spinbox from the system with optional configuration cleanup.
