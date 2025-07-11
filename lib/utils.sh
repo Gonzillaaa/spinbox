@@ -30,7 +30,7 @@ fi
 
 # Global variables
 VERBOSE=false
-DRY_RUN=false
+DRY_RUN=${DRY_RUN:-false}
 LOG_FILE=""
 ROLLBACK_ACTIONS=()
 

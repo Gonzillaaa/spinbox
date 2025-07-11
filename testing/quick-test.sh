@@ -18,7 +18,20 @@ if bash "$SCRIPT_DIR/simple-test.sh"; then
     echo "Running --with-deps and --with-examples tests..."
     if bash "$SCRIPT_DIR/with-flags-test.sh" >/dev/null 2>&1; then
         echo ""
-        echo "✅ Flag tests: All passed!"
+        echo "✅ Basic flag tests: All passed!"
+        
+        # Run essential dependency/examples tests
+        echo ""
+        echo "Running essential dependency/examples tests..."
+        if bash "$SCRIPT_DIR/deps-examples-test.sh" >/dev/null 2>&1; then
+            echo ""
+            echo "✅ Dependency/examples tests: All passed!"
+        else
+            echo ""
+            echo "❌ Dependency/examples tests: Some failed!"
+            echo "Run ./testing/deps-examples-test.sh directly for details"
+            exit 1
+        fi
     else
         echo ""
         echo "❌ Flag tests: Some failed!"
@@ -86,7 +99,8 @@ echo "🎉 All quick tests passed!"
 echo ""
 echo "This replaces the hanging test suite with:"
 echo "• 22 core functionality tests ✅"
-echo "• 9 --with-deps and --with-examples tests ✅"
+echo "• 9 basic flag tests ✅"
+echo "• 6 essential dependency/examples tests ✅"
 echo "• File existence checks ✅"
 echo "• Configuration system validation ✅"
 echo "• Version system validation ✅"
