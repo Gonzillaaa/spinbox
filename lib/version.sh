@@ -8,14 +8,14 @@ get_current_version() {
 
 # Get latest version from GitHub releases
 get_latest_version() {
-    local repo_url="https://api.github.com/repos/Gonzillaaa/spinbox/releases/latest"
+    local repo_url="https://api.github.com/repos/Gonzillaaa/spinbox/releases"
     local latest_version
     
-    # Try to get latest version from GitHub API
+    # Try to get latest version from GitHub API (including prereleases)
     if command -v curl &> /dev/null; then
-        latest_version=$(curl -s "$repo_url" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+        latest_version=$(curl -s "$repo_url" | grep '"tag_name"' | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
     elif command -v wget &> /dev/null; then
-        latest_version=$(wget -qO- "$repo_url" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+        latest_version=$(wget -qO- "$repo_url" | grep '"tag_name"' | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
     else
         print_error "Neither curl nor wget is available. Cannot check for updates."
         return 1

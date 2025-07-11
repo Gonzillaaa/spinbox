@@ -17,7 +17,7 @@ source "$SPINBOX_PROJECT_ROOT/lib/update.sh"
 
 # Script information
 readonly SCRIPT_NAME="spinbox"
-readonly VERSION="0.1.0-beta.1"
+readonly VERSION="0.1.0-beta.2"
 
 # Initialize logging
 init_logging "$SCRIPT_NAME"
