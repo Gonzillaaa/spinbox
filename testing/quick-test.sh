@@ -12,6 +12,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if bash "$SCRIPT_DIR/simple-test.sh"; then
     echo ""
     echo "✅ Core tests: All passed!"
+    
+    # Run --with-deps and --with-examples tests
+    echo ""
+    echo "Running --with-deps and --with-examples tests..."
+    if bash "$SCRIPT_DIR/with-flags-test.sh" >/dev/null 2>&1; then
+        echo ""
+        echo "✅ Flag tests: All passed!"
+    else
+        echo ""
+        echo "❌ Flag tests: Some failed!"
+        echo "Run ./testing/with-flags-test.sh directly for details"
+        exit 1
+    fi
 else
     echo ""
     echo "❌ Core tests: Some failed!"
@@ -73,6 +86,7 @@ echo "🎉 All quick tests passed!"
 echo ""
 echo "This replaces the hanging test suite with:"
 echo "• 22 core functionality tests ✅"
+echo "• 9 --with-deps and --with-examples tests ✅"
 echo "• File existence checks ✅"
 echo "• Configuration system validation ✅"
 echo "• Version system validation ✅"
