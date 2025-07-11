@@ -1,38 +1,66 @@
-[logo]: https://github.com/Gonzillaaa/spinbox/blob/main/docs/spinbox-logo-cropped.png "Spinbox"
+[logo]: https://github.com/Gonzillaaa/spinbox/blob/main/docs/spinbox-logo-cropped.png 'Spinbox'
 
 ![Spinbox][logo]
 
-# Spin up a containerized prototyping box in seconds! 
+# Spin up a containerized prototyping box in seconds!
 
-A **global CLI tool** for spinning up customizable prototyping environments with predefined profiles or custom component selection. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and comes with a modern prototyping setup. Build your stack by selecting any combination of:
+A **global CLI tool** for spinning up customizable prototyping boxes with predefined profiles or custom component selection.
 
-**Application Frameworks** (Build user interfaces):
+<p align="left">
+  <img src="https://img.shields.io/badge/Docker-blue?logo=docker&logoColor=white" alt="Docker" />
+  <img src="https://img.shields.io/badge/DevContainer-0078D4?logo=visualstudiocode&logoColor=white" alt="DevContainer" />
+  <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white" alt="MongoDB" />
+  <img src="https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white" alt="Redis" />
+  <img src="https://img.shields.io/badge/Chroma-FFB300?logo=google-chrome&logoColor=white" alt="Chroma" />
+  <img src="https://img.shields.io/badge/Jupyter-F37626?logo=jupyter&logoColor=white" alt="Jupyter" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+</p>
+
+Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and comes with a modern prototyping setup. Build your stack by selecting any combination of:
+
+**Application Frameworks**
+
 - FastAPI backend framework (Python 3.12+)
 - Next.js frontend framework (TypeScript)
 
-**Workflow Frameworks** (Specialized methodologies):
+**Workflow Frameworks**
+
 - Data Science workflow (Jupyter, pandas, scikit-learn, ML libraries)
 - AI/ML workflow (LLMs, agents, vector processing, embeddings)
 
-**Infrastructure Services** (Data storage & core services):
+**Infrastructure Services**
+
 - PostgreSQL database with PGVector
 - MongoDB document database
 - Redis for caching and queues
 - Chroma vector database for embeddings
 
-**Foundation Environments** (Base containers):
+**Foundation Environments**
+
 - Python DevContainer with virtual environment
 - Node.js DevContainer with TypeScript
 
 ## 🚀 Features
 
 ### **Global CLI Tool**
+
 - **Simple Commands**: `spinbox create myproject --profile web-app`
-- **Predefined Profiles**: 5 curated profiles for common development scenarios
+- **Predefined Profiles**: 5 curated profiles for common development scenarios:
+  - **web-app**: FastAPI backend + Next.js frontend + PostgreSQL (full-stack web app)
+  - **api-only**: FastAPI backend + PostgreSQL + Redis (API with caching)
+  - **data-science**: Data Science workflow + PostgreSQL (data analysis with storage)
+  - **ai-llm**: AI/ML workflow + Chroma (AI/LLM with vector search)
+  - **minimal**: Python DevContainer only (basic prototyping)
 - **Custom Components**: Mix and match components as needed
 - **Project Management**: Add components, start services, check status
 
 ### **Prototyping Environment**
+
 - **DevContainer-First**: Every project includes a DevContainer as the baseline
 - **Requirements.txt Templates**: Quick-start templates for different prototyping needs
 - **Modern Tech Stack**: Python 3.12+, UV package manager, Node.js 20+, TypeScript
@@ -42,6 +70,7 @@ A **global CLI tool** for spinning up customizable prototyping environments with
   - Pre-configured prototyping tools and shortcuts
 
 ### **Component System**
+
 - **Modular Design**: Start minimal, add what you need
 - **Service Management**: Built-in Docker Compose orchestration
 - **Version Control**: Customize software versions globally or per-project
@@ -72,6 +101,7 @@ A **global CLI tool** for spinning up customizable prototyping environments with
 ### 1. Install Spinbox (One-time)
 
 #### Option A: Quick Install (Recommended)
+
 ```bash
 # Install Spinbox globally
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
@@ -81,6 +111,7 @@ brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/s
 ```
 
 #### Option B: Manual Install
+
 ```bash
 # Clone and install
 git clone https://github.com/Gonzillaaa/spinbox.git
@@ -156,37 +187,38 @@ spinbox uninstall --config       # Remove Spinbox and configuration
 
 Components are organized by their **architectural role**:
 
-| Component | Flag | Architectural Role | Description |
-|-----------|------|-------------------|-------------|
-| **Application Frameworks** (Build user interfaces) |
-| FastAPI | `--fastapi` | Backend Framework | FastAPI backend with SQLAlchemy (includes Python) |
-| Next.js | `--nextjs` | Frontend Framework | Next.js frontend with TypeScript (includes Node.js) |
-| **Workflow Frameworks** (Specialized work methodologies) |
-| Data Science | `--data-science` | Data Workflow | Jupyter, pandas, scikit-learn, ML libraries |
-| AI/ML | `--ai-ml` | AI Workflow | LLMs, agents, vector processing, embeddings |
+| Component                                                  | Flag             | Architectural Role | Description                                         |
+| ---------------------------------------------------------- | ---------------- | ------------------ | --------------------------------------------------- |
+| **Application Frameworks** (Build user interfaces)         |
+| FastAPI                                                    | `--fastapi`      | Backend Framework  | FastAPI backend with SQLAlchemy (includes Python)   |
+| Next.js                                                    | `--nextjs`       | Frontend Framework | Next.js frontend with TypeScript (includes Node.js) |
+| **Workflow Frameworks** (Specialized work methodologies)   |
+| Data Science                                               | `--data-science` | Data Workflow      | Jupyter, pandas, scikit-learn, ML libraries         |
+| AI/ML                                                      | `--ai-ml`        | AI Workflow        | LLMs, agents, vector processing, embeddings         |
 | **Infrastructure Services** (Data storage & core services) |
-| PostgreSQL | `--postgresql` | Primary Storage | PostgreSQL with PGVector extension |
-| MongoDB | `--mongodb` | Document Storage | MongoDB document database |
-| Redis | `--redis` | Caching Layer | Redis for caching and queues |
-| Chroma | `--chroma` | Vector Search | Chroma vector database for AI/ML |
-| **Foundation Environments** (Base containers) |
-| Python | `--python` | DevContainer | Python DevContainer with virtual environment |
-| Node.js | `--node` | DevContainer | Node.js DevContainer with TypeScript |
+| PostgreSQL                                                 | `--postgresql`   | Primary Storage    | PostgreSQL with PGVector extension                  |
+| MongoDB                                                    | `--mongodb`      | Document Storage   | MongoDB document database                           |
+| Redis                                                      | `--redis`        | Caching Layer      | Redis for caching and queues                        |
+| Chroma                                                     | `--chroma`       | Vector Search      | Chroma vector database for AI/ML                    |
+| **Foundation Environments** (Base containers)              |
+| Python                                                     | `--python`       | DevContainer       | Python DevContainer with virtual environment        |
+| Node.js                                                    | `--node`         | DevContainer       | Node.js DevContainer with TypeScript                |
 
 ### 🎯 Enhancement Flags
 
-| Flag | Description | Usage |
-|------|-------------|-------|
-| `--with-deps` | Automatically install component dependencies | Uses `uv` for Python, `npm` for Node.js |
-| `--with-examples` | Generate working code examples | Creates functional boilerplate code |
+| Flag              | Description                                  | Usage                                   |
+| ----------------- | -------------------------------------------- | --------------------------------------- |
+| `--with-deps`     | Automatically install component dependencies | Uses `uv` for Python, `npm` for Node.js |
+| `--with-examples` | Generate working code examples               | Creates functional boilerplate code     |
 
 **Examples:**
+
 ```bash
 # Application frameworks (build user interfaces)
 spinbox create api --fastapi --with-deps
 spinbox create frontend --nextjs --with-examples
 
-# Workflow frameworks (specialized methodologies) 
+# Workflow frameworks (specialized methodologies)
 spinbox create analysis --data-science --with-deps --with-examples
 spinbox create ai-project --ai-ml --with-deps --with-examples
 
@@ -195,6 +227,7 @@ spinbox create webapp --fastapi --nextjs --postgresql --with-deps --with-example
 ```
 
 **Examples of combining components:**
+
 - `--postgresql --redis` - Primary storage + caching
 - `--mongodb --chroma` - Document storage + vector search
 - `--fastapi --nextjs --postgresql` - Full-stack web application
@@ -203,17 +236,18 @@ spinbox create webapp --fastapi --nextjs --postgresql --with-deps --with-example
 
 ## 🎯 Predefined Profiles
 
-| Profile | Description | Components |
-|---------|-------------|------------|
-| `web-app` | Full-stack web application | fastapi, nextjs, postgresql |
-| `api-only` | FastAPI API with caching | fastapi, postgresql, redis |
-| `data-science` | Data science workflow | data-science, postgresql |
-| `ai-llm` | AI/LLM workflow | ai-ml, chroma |
-| `minimal` | Basic prototyping environment | python |
+| Profile        | Description                   | Components                  |
+| -------------- | ----------------------------- | --------------------------- |
+| `web-app`      | Full-stack web application    | fastapi, nextjs, postgresql |
+| `api-only`     | FastAPI API with caching      | fastapi, postgresql, redis  |
+| `data-science` | Data science workflow         | data-science, postgresql    |
+| `ai-llm`       | AI/LLM workflow               | ai-ml, chroma               |
+| `minimal`      | Basic prototyping environment | python                      |
 
 ## 🛠️ Development Workflow
 
 ### 1. Open in Editor
+
 ```bash
 cd myproject
 code .     # VS Code
@@ -222,6 +256,7 @@ cursor .   # Cursor
 ```
 
 ### 2. Start Services (if needed)
+
 ```bash
 # Start all services in background
 spinbox start
@@ -235,12 +270,14 @@ Your editor will detect the DevContainer configuration and prompt to "Reopen in 
 ### 3. Security Setup
 
 **Python Projects:**
+
 ```bash
 cd fastapi
 ./setup_venv.sh  # Sets up virtual environment with security best practices
 ```
 
 **Environment Variables:**
+
 - Review and update `.env` files with your actual credentials
 - Never commit `.env` files to version control (already in .gitignore)
 - Use strong passwords and secure API keys
@@ -250,6 +287,7 @@ cd fastapi
 ## 🗂️ Project Structure
 
 ### After Project Creation
+
 ```
 your-project/
 ├── fastapi/               # FastAPI application framework (if selected)
@@ -270,14 +308,17 @@ your-project/
 ## 🧩 Component Details
 
 **Application Frameworks:**
+
 - **FastAPI** - Python 3.12+ with type hints, UV package manager, SQLAlchemy ORM with async support
 - **Next.js** - TypeScript, modern App Router, Tailwind CSS, ESLint
 
 **Workflow Frameworks:**
+
 - **Data Science** - Jupyter Lab, pandas, scikit-learn, matplotlib, automated analysis scripts
 - **AI/ML** - LLM clients (OpenAI, Anthropic), agent frameworks, vector processing, prompt management
 
 **Infrastructure Services:**
+
 - **PostgreSQL** - PGVector extension for vector embeddings, initialization scripts
 - **MongoDB** - Document database with authentication, collections and indexes
 - **Redis** - Caching and queues with persistence enabled
@@ -324,6 +365,7 @@ spinbox hooks remove all             # Remove hooks
 ```
 
 **What hooks provide:**
+
 - **Pre-commit**: Fast formatting and lint checks (< 5 seconds)
 - **Pre-push**: Comprehensive tests and security validation
 - **Project-aware**: Automatically detects Python, Node.js, FastAPI, Next.js projects
@@ -358,6 +400,7 @@ spinbox config --list
 ### Custom Components
 
 Spinbox uses a modular generator system. You can extend it by:
+
 - Adding new generators in the `generators/` directory
 - Creating custom profiles in `templates/profiles/`
 - Customizing requirements in `templates/requirements/`
@@ -365,11 +408,13 @@ Spinbox uses a modular generator system. You can extend it by:
 ### Local Development
 
 **Recommended**: Open in DevContainer for consistency
+
 - Virtual environment is auto-activated
 - All dependencies pre-installed
 - Editor extensions configured
 
 **Alternative**: Manual setup outside container
+
 - Create virtual environment: `python3 -m venv venv`
 - Activate: `source venv/bin/activate`
 

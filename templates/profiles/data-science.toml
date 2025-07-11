@@ -6,13 +6,14 @@ description = "Data science environment with Jupyter, pandas, scikit-learn, and 
 data_science = true
 fastapi = false
 nextjs = false
-postgresql = false
+postgresql = true
 redis = false
 mongodb = false
 chroma = false
 
 [configuration]
 python_version = "3.12"
+postgres_version = "15"
 
 [templates]
 python_requirements = "data-science"
