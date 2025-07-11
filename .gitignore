@@ -3,4 +3,5 @@
 .claude
 test_*
 .log*
+.logs/
 .backup*
