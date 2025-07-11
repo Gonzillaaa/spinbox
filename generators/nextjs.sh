@@ -1,5 +1,5 @@
 #!/bin/bash
-# Frontend component generator for Spinbox
+# Next.js component generator for Spinbox
 # Creates Next.js frontend with TypeScript, Tailwind CSS, and development tools
 
 # Source required libraries
@@ -8,9 +8,9 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
 
 # Generate Next.js frontend component
-function generate_frontend_component() {
+function generate_nextjs_component() {
     local project_dir="$1"
-    local frontend_dir="$project_dir/frontend"
+    local nextjs_dir="$project_dir/nextjs"
     
     if [[ "$DRY_RUN" == true ]]; then
         print_info "DRY RUN: Would generate Next.js frontend component"
@@ -20,31 +20,31 @@ function generate_frontend_component() {
     print_status "Creating Next.js frontend component..."
     
     # Ensure frontend directory exists
-    safe_create_dir "$frontend_dir"
-    safe_create_dir "$frontend_dir/src"
-    safe_create_dir "$frontend_dir/src/app"
-    safe_create_dir "$frontend_dir/src/components"
-    safe_create_dir "$frontend_dir/src/lib"
-    safe_create_dir "$frontend_dir/public"
+    safe_create_dir "$nextjs_dir"
+    safe_create_dir "$nextjs_dir/src"
+    safe_create_dir "$nextjs_dir/src/app"
+    safe_create_dir "$nextjs_dir/src/components"
+    safe_create_dir "$nextjs_dir/src/lib"
+    safe_create_dir "$nextjs_dir/public"
     
     # Generate frontend files
-    generate_frontend_dockerfiles "$frontend_dir"
-    generate_frontend_package_json "$frontend_dir"
-    generate_frontend_config_files "$frontend_dir"
-    generate_frontend_application "$frontend_dir"
-    generate_frontend_components "$frontend_dir"
-    generate_frontend_styles "$frontend_dir"
+    generate_nextjs_dockerfiles "$nextjs_dir"
+    generate_nextjs_package_json "$nextjs_dir"
+    generate_nextjs_config_files "$nextjs_dir"
+    generate_nextjs_application "$nextjs_dir"
+    generate_nextjs_components "$nextjs_dir"
+    generate_nextjs_styles "$nextjs_dir"
     
     print_status "Next.js frontend component created successfully"
 }
 
 # Generate Docker configuration for frontend
-function generate_frontend_dockerfiles() {
-    local frontend_dir="$1"
+function generate_nextjs_dockerfiles() {
+    local nextjs_dir="$1"
     local node_version=$(get_effective_node_version)
     
     # Development Dockerfile
-    cat > "$frontend_dir/Dockerfile.dev" << EOF
+    cat > "$nextjs_dir/Dockerfile.dev" << EOF
 FROM node:${node_version}-alpine
 
 WORKDIR /app
@@ -87,7 +87,7 @@ CMD ["zsh", "-c", "npm run dev"]
 EOF
 
     # Production Dockerfile
-    cat > "$frontend_dir/Dockerfile" << EOF
+    cat > "$nextjs_dir/Dockerfile" << EOF
 FROM node:${node_version}-alpine AS deps
 
 WORKDIR /app
@@ -132,7 +132,7 @@ CMD ["node", "server.js"]
 EOF
 
     # Docker ignore file
-    cat > "$frontend_dir/.dockerignore" << 'EOF'
+    cat > "$nextjs_dir/.dockerignore" << 'EOF'
 node_modules
 .next
 .git
@@ -146,11 +146,11 @@ EOF
 }
 
 # Generate package.json and related Node.js configuration
-function generate_frontend_package_json() {
-    local frontend_dir="$1"
+function generate_nextjs_package_json() {
+    local nextjs_dir="$1"
     local project_name=$(echo "${PROJECT_NAME:-frontend-app}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
     
-    cat > "$frontend_dir/package.json" << EOF
+    cat > "$nextjs_dir/package.json" << EOF
 {
   "name": "$project_name",
   "version": "0.1.0",
@@ -197,11 +197,11 @@ EOF
 }
 
 # Generate configuration files (Next.js, TypeScript, Tailwind)
-function generate_frontend_config_files() {
-    local frontend_dir="$1"
+function generate_nextjs_config_files() {
+    local nextjs_dir="$1"
     
     # Next.js configuration
-    cat > "$frontend_dir/next.config.js" << 'EOF'
+    cat > "$nextjs_dir/next.config.js" << 'EOF'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
@@ -222,7 +222,7 @@ module.exports = nextConfig
 EOF
 
     # TypeScript configuration
-    cat > "$frontend_dir/tsconfig.json" << 'EOF'
+    cat > "$nextjs_dir/tsconfig.json" << 'EOF'
 {
   "compilerOptions": {
     "target": "es5",
@@ -254,7 +254,7 @@ EOF
 EOF
 
     # Tailwind CSS configuration
-    cat > "$frontend_dir/tailwind.config.js" << 'EOF'
+    cat > "$nextjs_dir/tailwind.config.js" << 'EOF'
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -288,7 +288,7 @@ module.exports = {
 EOF
 
     # PostCSS configuration
-    cat > "$frontend_dir/postcss.config.js" << 'EOF'
+    cat > "$nextjs_dir/postcss.config.js" << 'EOF'
 module.exports = {
   plugins: {
     tailwindcss: {},
@@ -298,7 +298,7 @@ module.exports = {
 EOF
 
     # ESLint configuration
-    cat > "$frontend_dir/.eslintrc.json" << 'EOF'
+    cat > "$nextjs_dir/.eslintrc.json" << 'EOF'
 {
   "extends": ["next/core-web-vitals", "@typescript-eslint/recommended"],
   "parser": "@typescript-eslint/parser",
@@ -311,7 +311,7 @@ EOF
 EOF
 
     # Environment files
-    cat > "$frontend_dir/.env.local.example" << 'EOF'
+    cat > "$nextjs_dir/.env.local.example" << 'EOF'
 # API Configuration
 NEXT_PUBLIC_API_URL=http://localhost:8000
 BACKEND_URL=http://backend:8000
@@ -320,17 +320,17 @@ BACKEND_URL=http://backend:8000
 NEXT_PUBLIC_APP_NAME="Next.js App"
 EOF
 
-    if [[ ! -f "$frontend_dir/.env.local" ]]; then
-        cp "$frontend_dir/.env.local.example" "$frontend_dir/.env.local"
+    if [[ ! -f "$nextjs_dir/.env.local" ]]; then
+        cp "$nextjs_dir/.env.local.example" "$nextjs_dir/.env.local"
     fi
 
     print_debug "Generated configuration files"
 }
 
 # Generate main Next.js application structure
-function generate_frontend_application() {
-    local frontend_dir="$1"
-    local src_dir="$frontend_dir/src"
+function generate_nextjs_application() {
+    local nextjs_dir="$1"
+    local src_dir="$nextjs_dir/src"
     local app_dir="$src_dir/app"
     
     # App layout
@@ -411,9 +411,9 @@ EOF
 }
 
 # Generate reusable components
-function generate_frontend_components() {
-    local frontend_dir="$1"
-    local components_dir="$frontend_dir/src/components"
+function generate_nextjs_components() {
+    local nextjs_dir="$1"
+    local components_dir="$nextjs_dir/src/components"
     
     # UI components directory
     safe_create_dir "$components_dir/ui"
@@ -601,9 +601,9 @@ EOF
 }
 
 # Generate styles and global CSS
-function generate_frontend_styles() {
-    local frontend_dir="$1"
-    local app_dir="$frontend_dir/src/app"
+function generate_nextjs_styles() {
+    local nextjs_dir="$1"
+    local app_dir="$nextjs_dir/src/app"
     
     cat > "$app_dir/globals.css" << 'EOF'
 @tailwind base;
@@ -648,12 +648,12 @@ EOF
 }
 
 # Main function to create frontend component
-function create_frontend_component() {
+function create_nextjs_component() {
     local project_dir="$1"
     
     print_info "Creating Next.js frontend component in $project_dir"
     
-    generate_frontend_component "$project_dir"
+    generate_nextjs_component "$project_dir"
     
     print_status "Next.js frontend component created successfully!"
     print_info "Next steps:"
@@ -664,7 +664,7 @@ function create_frontend_component() {
 }
 
 # Export functions for use by project generator
-export -f generate_frontend_component create_frontend_component
-export -f generate_frontend_dockerfiles generate_frontend_package_json
-export -f generate_frontend_config_files generate_frontend_application
-export -f generate_frontend_components generate_frontend_styles
+export -f generate_nextjs_component create_nextjs_component
+export -f generate_nextjs_dockerfiles generate_nextjs_package_json
+export -f generate_nextjs_config_files generate_nextjs_application
+export -f generate_nextjs_components generate_nextjs_styles

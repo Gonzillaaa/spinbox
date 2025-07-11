@@ -3,9 +3,9 @@ name = "ai-llm"
 description = "AI/LLM development environment with vector database"
 
 [components]
-backend = false
-frontend = false
-database = false
+fastapi = false
+nextjs = false
+postgresql = false
 redis = false
 mongodb = false
 chroma = true

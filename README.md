@@ -70,7 +70,7 @@ chmod +x install.sh
 ```bash
 # Use predefined profiles for common scenarios
 spinbox create myapp --profile web-app        # Full-stack web application
-spinbox create api-server --profile api-only  # Backend API with database
+spinbox create api-server --profile api-only  # FastAPI API with PostgreSQL
 spinbox create ml-project --profile data-science  # Data science environment
 spinbox create ai-project --profile ai-llm    # AI/LLM development
 
@@ -86,11 +86,11 @@ spinbox profiles web-app
 ```bash
 # Build custom projects by selecting components
 spinbox create myproject --python             # Simple Python project
-spinbox create webapp --python --node --database  # Custom full-stack
-spinbox create api --backend --redis          # API layer with caching
+spinbox create webapp --python --node --postgresql  # Custom full-stack
+spinbox create api --fastapi --redis          # API layer with caching
 
 # Customize versions
-spinbox create api --backend --redis --python-version 3.11
+spinbox create api --fastapi --redis --python-version 3.11
 ```
 
 ### 4. Project Management
@@ -98,7 +98,7 @@ spinbox create api --backend --redis --python-version 3.11
 ```bash
 # Add components to existing projects
 cd myproject
-spinbox add --database --redis
+spinbox add --postgresql --redis
 
 # Start project services
 spinbox start                    # Start all services in background
@@ -129,27 +129,27 @@ Components are organized by their **architectural role**:
 | Python | `--python` | DevContainer | Python DevContainer with virtual environment |
 | Node.js | `--node` | DevContainer | Node.js DevContainer with TypeScript |
 | **Application Layer** |
-| Backend | `--backend` | API Layer | FastAPI backend (includes Python) |
-| Frontend | `--frontend` | UI Layer | Next.js frontend (includes Node.js) |
+| FastAPI | `--fastapi` | API Layer | FastAPI backend (includes Python) |
+| Next.js | `--nextjs` | UI Layer | Next.js frontend (includes Node.js) |
 | **Storage Layer** |
-| PostgreSQL | `--database` | Primary Storage | PostgreSQL with PGVector extension |
+| PostgreSQL | `--postgresql` | Primary Storage | PostgreSQL with PGVector extension |
 | MongoDB | `--mongodb` | Alternative Storage | MongoDB document database |
 | Redis | `--redis` | Caching Layer | Redis for caching and queues |
 | Chroma | `--chroma` | Vector Search | Chroma vector database for AI/ML |
 
 **Examples of combining components:**
-- `--database --redis` - Primary storage + caching
+- `--postgresql --redis` - Primary storage + caching
 - `--mongodb --chroma` - Document storage + vector search
-- `--backend --frontend --database` - Full-stack application
+- `--fastapi --nextjs --postgresql` - Full-stack application
 
 ## 🎯 Predefined Profiles
 
 | Profile | Description | Components |
 |---------|-------------|------------|
-| `web-app` | Full-stack web application | backend, frontend, database |
-| `api-only` | Backend API with caching | backend, database, redis |
-| `data-science` | ML/data science environment | python, database |
-| `ai-llm` | AI/LLM prototyping | python, database, chroma |
+| `web-app` | Full-stack web application | fastapi, nextjs, postgresql |
+| `api-only` | FastAPI API with caching | fastapi, postgresql, redis |
+| `data-science` | ML/data science environment | python, postgresql |
+| `ai-llm` | AI/LLM prototyping | python, postgresql, chroma |
 | `minimal` | Basic prototyping environment | python |
 
 ## 🛠️ Development Workflow
@@ -180,16 +180,16 @@ Your editor will detect the DevContainer configuration and prompt to "Reopen in 
 ### After Project Creation
 ```
 your-project/
-├── backend/               # FastAPI backend (if selected)
-├── frontend/              # Next.js frontend (if selected)
-├── database/              # PostgreSQL config (if selected)
+├── fastapi/               # FastAPI backend (if selected)
+├── nextjs/                # Next.js frontend (if selected)
+├── postgresql/            # PostgreSQL config (if selected)
 ├── mongodb/               # MongoDB config (if selected)
 ├── redis/                 # Redis config (if selected)
 ├── chroma_data/           # Chroma vector database data (if selected)
 ├── .devcontainer/         # DevContainer config (always created)
 ├── docker-compose.yml     # Docker services (if components selected)
 ├── requirements.txt       # Python dependencies
-├── package.json          # Node.js dependencies (if frontend)
+├── package.json          # Node.js dependencies (if Next.js)
 └── README.md             # Project documentation
 ```
 
@@ -230,9 +230,9 @@ Perfect for rapid prototyping - get started immediately with the right dependenc
 
 ```bash
 # In your existing project directory:
-spinbox add --database --redis        # Add primary storage + caching layer
+spinbox add --postgresql --redis        # Add primary storage + caching layer
 spinbox add --mongodb --chroma        # Add alternative storage + vector search
-spinbox add --backend --frontend      # Add API layer + web interface
+spinbox add --fastapi --nextjs      # Add API layer + web interface
 ```
 
 See [docs/adding-components.md](./docs/adding-components.md) for detailed guides.

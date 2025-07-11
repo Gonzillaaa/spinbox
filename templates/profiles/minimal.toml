@@ -3,9 +3,9 @@ name = "minimal"
 description = "Minimal development environment with basic tools"
 
 [components]
-backend = false
-frontend = false
-database = false
+fastapi = false
+nextjs = false
+postgresql = false
 redis = false
 mongodb = false
 chroma = false

@@ -16,9 +16,9 @@ TEMPLATE_NAME=""
 # Component flags
 USE_PYTHON=false
 USE_NODE=false
-USE_BACKEND=false
-USE_FRONTEND=false
-USE_DATABASE=false
+USE_FASTAPI=false
+USE_NEXTJS=false
+USE_POSTGRESQL=false
 USE_MONGODB=false
 USE_REDIS=false
 USE_CHROMA=false
@@ -37,19 +37,19 @@ function parse_component_flags() {
                 USE_NODE=true
                 SELECTED_COMPONENTS+=("node")
                 ;;
-            --backend)
-                USE_BACKEND=true
-                USE_PYTHON=true  # Backend requires Python
-                SELECTED_COMPONENTS+=("backend")
+            --fastapi)
+                USE_FASTAPI=true
+                USE_PYTHON=true  # FastAPI requires Python
+                SELECTED_COMPONENTS+=("fastapi")
                 ;;
-            --frontend)
-                USE_FRONTEND=true
-                USE_NODE=true    # Frontend requires Node
-                SELECTED_COMPONENTS+=("frontend")
+            --nextjs)
+                USE_NEXTJS=true
+                USE_NODE=true    # Next.js requires Node
+                SELECTED_COMPONENTS+=("nextjs")
                 ;;
-            --database)
-                USE_DATABASE=true
-                SELECTED_COMPONENTS+=("database")
+            --postgresql)
+                USE_POSTGRESQL=true
+                SELECTED_COMPONENTS+=("postgresql")
                 ;;
             --mongodb)
                 USE_MONGODB=true
@@ -123,15 +123,15 @@ function create_project_directory() {
     safe_create_dir "$project_dir/.devcontainer"
     
     # Create component-specific directories
-    if [[ "$USE_BACKEND" == true ]]; then
+    if [[ "$USE_FASTAPI" == true ]]; then
         safe_create_dir "$project_dir/backend"
     fi
     
-    if [[ "$USE_FRONTEND" == true ]]; then
+    if [[ "$USE_NEXTJS" == true ]]; then
         safe_create_dir "$project_dir/frontend"
     fi
     
-    if [[ "$USE_DATABASE" == true ]]; then
+    if [[ "$USE_POSTGRESQL" == true ]]; then
         safe_create_dir "$project_dir/database"
     fi
     
@@ -238,15 +238,15 @@ EOF
 function generate_port_list() {
     local ports=()
     
-    if [[ "$USE_BACKEND" == true ]]; then
+    if [[ "$USE_FASTAPI" == true ]]; then
         ports+=("$BACKEND_PORT")
     fi
     
-    if [[ "$USE_FRONTEND" == true ]]; then
+    if [[ "$USE_NEXTJS" == true ]]; then
         ports+=("$FRONTEND_PORT")
     fi
     
-    if [[ "$USE_DATABASE" == true ]]; then
+    if [[ "$USE_POSTGRESQL" == true ]]; then
         ports+=("$DATABASE_PORT")
     fi
     
@@ -282,7 +282,7 @@ function generate_vscode_extensions() {
         extensions+=("\"bradlc.vscode-tailwindcss\"")
     fi
     
-    if [[ "$USE_DATABASE" == true ]]; then
+    if [[ "$USE_POSTGRESQL" == true ]]; then
         extensions+=("\"ms-ossdata.vscode-postgresql\"")
     fi
     
@@ -411,7 +411,7 @@ function generate_docker_compose() {
     fi
     
     # Only generate docker-compose if we have services beyond DevContainer
-    if [[ "$USE_DATABASE" == false ]] && [[ "$USE_MONGODB" == false ]] && [[ "$USE_REDIS" == false ]] && [[ "$USE_CHROMA" == false ]]; then
+    if [[ "$USE_POSTGRESQL" == false ]] && [[ "$USE_MONGODB" == false ]] && [[ "$USE_REDIS" == false ]] && [[ "$USE_CHROMA" == false ]]; then
         print_debug "No services required, skipping Docker Compose"
         return 0
     fi
@@ -437,7 +437,7 @@ EOF
 function generate_compose_services() {
     local services=""
     
-    if [[ "$USE_DATABASE" == true ]]; then
+    if [[ "$USE_POSTGRESQL" == true ]]; then
         local postgres_image=$(get_postgres_image_tag)
         services+="
   postgres:
@@ -450,7 +450,7 @@ function generate_compose_services() {
       - \"$DATABASE_PORT:5432\"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/init:/docker-entrypoint-initdb.d
+      - ./postgresql/init:/docker-entrypoint-initdb.d
     restart: unless-stopped
 "
     fi
@@ -506,7 +506,7 @@ function generate_compose_services() {
 function generate_compose_volumes() {
     local volumes=""
     
-    if [[ "$USE_DATABASE" == true ]]; then
+    if [[ "$USE_POSTGRESQL" == true ]]; then
         volumes+="  postgres_data:"$'\n'
     fi
     
@@ -541,27 +541,27 @@ function generate_component_files() {
     fi
     
     # Generate component-specific configurations using modular generators
-    if [[ "$USE_BACKEND" == true ]]; then
+    if [[ "$USE_FASTAPI" == true ]]; then
         if source "$PROJECT_ROOT/generators/backend.sh" 2>/dev/null; then
-            generate_backend_component "$project_dir"
+            generate_fastapi_component "$project_dir"
         else
             print_warning "Backend generator not found, using fallback"
             generate_basic_backend "$project_dir"
         fi
     fi
     
-    if [[ "$USE_FRONTEND" == true ]]; then
+    if [[ "$USE_NEXTJS" == true ]]; then
         if source "$PROJECT_ROOT/generators/frontend.sh" 2>/dev/null; then
-            generate_frontend_component "$project_dir"
+            generate_nextjs_component "$project_dir"
         else
             print_warning "Frontend generator not found, using fallback"
             generate_basic_frontend "$project_dir"
         fi
     fi
     
-    if [[ "$USE_DATABASE" == true ]]; then
+    if [[ "$USE_POSTGRESQL" == true ]]; then
         if source "$PROJECT_ROOT/generators/database.sh" 2>/dev/null; then
-            generate_database_component "$project_dir"
+            generate_postgresql_component "$project_dir"
         else
             print_warning "Database generator not found, using fallback"
             generate_database_init "$project_dir"
@@ -633,7 +633,7 @@ EOF
 function generate_basic_backend() {
     local project_dir="$1"
     
-    cat > "$project_dir/backend/main.py" << EOF
+    cat > "$project_dir/fastapi/main.py" << EOF
 # FastAPI backend for $PROJECT_NAME
 # Generated by Spinbox on $(date)
 
@@ -655,9 +655,9 @@ EOF
 function generate_basic_frontend() {
     local project_dir="$1"
     
-    safe_create_dir "$project_dir/frontend/pages"
+    safe_create_dir "$project_dir/nextjs/pages"
     
-    cat > "$project_dir/frontend/pages/index.tsx" << EOF
+    cat > "$project_dir/nextjs/pages/index.tsx" << EOF
 // Next.js frontend for $PROJECT_NAME
 // Generated by Spinbox on $(date)
 
@@ -681,9 +681,9 @@ function generate_database_init() {
         return 0
     fi
     
-    safe_create_dir "$project_dir/database/init"
+    safe_create_dir "$project_dir/postgresql/init"
     
-    cat > "$project_dir/database/init/01-init.sql" << EOF
+    cat > "$project_dir/postgresql/init/01-init.sql" << EOF
 -- Database initialization for $PROJECT_NAME
 -- Generated by Spinbox on $(date)
 
@@ -717,9 +717,9 @@ function save_project_configuration() {
     
     # Set project configuration variables
     PROJECT_DESCRIPTION="Generated by Spinbox on $(date)"
-    USE_BACKEND="$USE_BACKEND"
-    USE_FRONTEND="$USE_FRONTEND"
-    USE_DATABASE="$USE_DATABASE"
+    USE_FASTAPI="$USE_FASTAPI"
+    USE_NEXTJS="$USE_NEXTJS"
+    USE_POSTGRESQL="$USE_POSTGRESQL"
     USE_REDIS="$USE_REDIS"
     
     # Save project-specific config
@@ -775,7 +775,7 @@ function create_project() {
     echo "  1. cd $PROJECT_NAME"
     echo "  2. Open in your preferred editor (code . or cursor .)"
     echo "  3. Reopen in DevContainer when prompted"
-    if [[ "$USE_DATABASE" == true ]] || [[ "$USE_REDIS" == true ]] || [[ "$USE_MONGODB" == true ]] || [[ "$USE_CHROMA" == true ]]; then
+    if [[ "$USE_POSTGRESQL" == true ]] || [[ "$USE_REDIS" == true ]] || [[ "$USE_MONGODB" == true ]] || [[ "$USE_CHROMA" == true ]]; then
         echo "  4. Start services: docker-compose up -d"
     fi
 }

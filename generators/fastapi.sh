@@ -1,5 +1,5 @@
 #!/bin/bash
-# Backend component generator for Spinbox
+# FastAPI component generator for Spinbox
 # Creates FastAPI backend with SQLAlchemy, Docker setup, and development tools
 
 # Source required libraries
@@ -8,9 +8,9 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
 
 # Generate FastAPI backend component
-function generate_backend_component() {
+function generate_fastapi_component() {
     local project_dir="$1"
-    local backend_dir="$project_dir/backend"
+    local fastapi_dir="$project_dir/fastapi"
     
     if [[ "$DRY_RUN" == true ]]; then
         print_info "DRY RUN: Would generate FastAPI backend component"
@@ -20,32 +20,32 @@ function generate_backend_component() {
     print_status "Creating FastAPI backend component..."
     
     # Ensure backend directory exists
-    safe_create_dir "$backend_dir"
-    safe_create_dir "$backend_dir/app"
-    safe_create_dir "$backend_dir/app/core"
-    safe_create_dir "$backend_dir/app/api"
-    safe_create_dir "$backend_dir/app/models"
-    safe_create_dir "$backend_dir/app/schemas"
-    safe_create_dir "$backend_dir/tests"
+    safe_create_dir "$fastapi_dir"
+    safe_create_dir "$fastapi_dir/app"
+    safe_create_dir "$fastapi_dir/app/core"
+    safe_create_dir "$fastapi_dir/app/api"
+    safe_create_dir "$fastapi_dir/app/models"
+    safe_create_dir "$fastapi_dir/app/schemas"
+    safe_create_dir "$fastapi_dir/tests"
     
     # Generate backend files
-    generate_backend_dockerfiles "$backend_dir"
-    generate_backend_requirements "$backend_dir"
-    generate_backend_application "$backend_dir"
-    generate_backend_database_config "$backend_dir"
-    generate_backend_tests "$backend_dir"
-    generate_backend_env_files "$backend_dir"
+    generate_fastapi_dockerfiles "$fastapi_dir"
+    generate_fastapi_requirements "$fastapi_dir"
+    generate_fastapi_application "$fastapi_dir"
+    generate_fastapi_database_config "$fastapi_dir"
+    generate_fastapi_tests "$fastapi_dir"
+    generate_fastapi_env_files "$fastapi_dir"
     
     print_status "FastAPI backend component created successfully"
 }
 
 # Generate Docker configuration for backend
-function generate_backend_dockerfiles() {
-    local backend_dir="$1"
+function generate_fastapi_dockerfiles() {
+    local fastapi_dir="$1"
     local python_version=$(get_effective_python_version)
     
     # Development Dockerfile
-    cat > "$backend_dir/Dockerfile.dev" << EOF
+    cat > "$fastapi_dir/Dockerfile.dev" << EOF
 FROM python:${python_version}-slim
 
 WORKDIR /workspace
@@ -93,7 +93,7 @@ CMD ["zsh", "-c", "while sleep 1000; do :; done"]
 EOF
 
     # Production Dockerfile
-    cat > "$backend_dir/Dockerfile" << EOF
+    cat > "$fastapi_dir/Dockerfile" << EOF
 FROM python:${python_version}-slim
 
 WORKDIR /app
@@ -117,7 +117,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 EOF
 
     # Docker ignore file
-    cat > "$backend_dir/.dockerignore" << 'EOF'
+    cat > "$fastapi_dir/.dockerignore" << 'EOF'
 venv/
 __pycache__/
 *.pyc
@@ -143,10 +143,10 @@ EOF
 }
 
 # Generate requirements.txt with appropriate dependencies
-function generate_backend_requirements() {
-    local backend_dir="$1"
+function generate_fastapi_requirements() {
+    local fastapi_dir="$1"
     
-    cat > "$backend_dir/requirements.txt" << 'EOF'
+    cat > "$fastapi_dir/requirements.txt" << 'EOF'
 # FastAPI and ASGI server
 fastapi>=0.103.0
 uvicorn[standard]>=0.23.0
@@ -184,7 +184,7 @@ EOF
 
     # Add optional dependencies based on selected components
     if [[ "${USE_MONGODB:-false}" == "true" ]]; then
-        cat >> "$backend_dir/requirements.txt" << 'EOF'
+        cat >> "$fastapi_dir/requirements.txt" << 'EOF'
 
 # MongoDB dependencies
 motor>=3.3.0
@@ -193,7 +193,7 @@ EOF
     fi
     
     if [[ "${USE_CHROMA:-false}" == "true" ]]; then
-        cat >> "$backend_dir/requirements.txt" << 'EOF'
+        cat >> "$fastapi_dir/requirements.txt" << 'EOF'
 
 # Vector database dependencies
 chromadb>=0.4.0
@@ -205,9 +205,9 @@ EOF
 }
 
 # Generate main FastAPI application structure
-function generate_backend_application() {
-    local backend_dir="$1"
-    local app_dir="$backend_dir/app"
+function generate_fastapi_application() {
+    local fastapi_dir="$1"
+    local app_dir="$fastapi_dir/app"
     
     # Main application entry point
     cat > "$app_dir/main.py" << 'EOF'
@@ -389,9 +389,9 @@ EOF
 }
 
 # Generate database configuration
-function generate_backend_database_config() {
-    local backend_dir="$1"
-    local app_dir="$backend_dir/app"
+function generate_fastapi_database_config() {
+    local fastapi_dir="$1"
+    local app_dir="$fastapi_dir/app"
     
     cat > "$app_dir/core/database.py" << 'EOF'
 """
@@ -418,7 +418,7 @@ def get_db():
 EOF
 
     # Alembic configuration
-    cat > "$backend_dir/alembic.ini" << 'EOF'
+    cat > "$fastapi_dir/alembic.ini" << 'EOF'
 # A generic, single database configuration.
 
 [alembic]
@@ -528,9 +528,9 @@ EOF
 }
 
 # Generate test files
-function generate_backend_tests() {
-    local backend_dir="$1"
-    local tests_dir="$backend_dir/tests"
+function generate_fastapi_tests() {
+    local fastapi_dir="$1"
+    local tests_dir="$fastapi_dir/tests"
     
     cat > "$tests_dir/__init__.py" << 'EOF'
 """Backend tests."""
@@ -606,10 +606,10 @@ EOF
 }
 
 # Generate environment files
-function generate_backend_env_files() {
-    local backend_dir="$1"
+function generate_fastapi_env_files() {
+    local fastapi_dir="$1"
     
-    cat > "$backend_dir/.env.example" << 'EOF'
+    cat > "$fastapi_dir/.env.example" << 'EOF'
 # Database
 POSTGRES_SERVER=localhost
 POSTGRES_USER=postgres
@@ -631,20 +631,20 @@ BACKEND_CORS_ORIGINS=http://localhost:3000,http://localhost:8080
 EOF
 
     # Create actual .env if it doesn't exist
-    if [[ ! -f "$backend_dir/.env" ]]; then
-        cp "$backend_dir/.env.example" "$backend_dir/.env"
+    if [[ ! -f "$fastapi_dir/.env" ]]; then
+        cp "$fastapi_dir/.env.example" "$fastapi_dir/.env"
     fi
 
     print_debug "Generated environment files"
 }
 
 # Main function to create backend component
-function create_backend_component() {
+function create_fastapi_component() {
     local project_dir="$1"
     
     print_info "Creating FastAPI backend component in $project_dir"
     
-    generate_backend_component "$project_dir"
+    generate_fastapi_component "$project_dir"
     
     print_status "FastAPI backend component created successfully!"
     print_info "Next steps:"
@@ -656,7 +656,7 @@ function create_backend_component() {
 }
 
 # Export functions for use by project generator
-export -f generate_backend_component create_backend_component
-export -f generate_backend_dockerfiles generate_backend_requirements
-export -f generate_backend_application generate_backend_database_config
-export -f generate_backend_tests generate_backend_env_files
+export -f generate_fastapi_component create_fastapi_component
+export -f generate_fastapi_dockerfiles generate_fastapi_requirements
+export -f generate_fastapi_application generate_fastapi_database_config
+export -f generate_fastapi_tests generate_fastapi_env_files

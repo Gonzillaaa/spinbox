@@ -1,11 +1,11 @@
 [profile]
 name = "api-only"
-description = "Backend API with database and optional caching"
+description = "FastAPI API with PostgreSQL and Redis caching"
 
 [components]
-backend = true
-frontend = false
-database = true
+fastapi = true
+nextjs = false
+postgresql = true
 redis = true
 mongodb = false
 chroma = false

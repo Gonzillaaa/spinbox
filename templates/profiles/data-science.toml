@@ -3,9 +3,9 @@ name = "data-science"
 description = "Data science environment with Python, Jupyter, and common ML libraries"
 
 [components]
-backend = false
-frontend = false
-database = false
+fastapi = false
+nextjs = false
+postgresql = false
 redis = false
 mongodb = false
 chroma = false

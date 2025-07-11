@@ -1,5 +1,5 @@
 #!/bin/bash
-# Database component generator for Spinbox
+# PostgreSQL component generator for Spinbox
 # Creates PostgreSQL database with PGVector extension and initialization scripts
 
 # Source required libraries
@@ -8,9 +8,9 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
 
 # Generate PostgreSQL database component
-function generate_database_component() {
+function generate_postgresql_component() {
     local project_dir="$1"
-    local database_dir="$project_dir/database"
+    local postgresql_dir="$project_dir/postgresql"
     
     if [[ "$DRY_RUN" == true ]]; then
         print_info "DRY RUN: Would generate PostgreSQL database component"
@@ -20,24 +20,24 @@ function generate_database_component() {
     print_status "Creating PostgreSQL database component..."
     
     # Ensure database directory exists
-    safe_create_dir "$database_dir"
-    safe_create_dir "$database_dir/init"
-    safe_create_dir "$database_dir/scripts"
-    safe_create_dir "$database_dir/migrations"
+    safe_create_dir "$postgresql_dir"
+    safe_create_dir "$postgresql_dir/init"
+    safe_create_dir "$postgresql_dir/scripts"
+    safe_create_dir "$postgresql_dir/migrations"
     
     # Generate database files
-    generate_database_init_scripts "$database_dir"
-    generate_database_config "$database_dir"
-    generate_database_scripts "$database_dir"
-    generate_database_env_files "$database_dir"
+    generate_postgresql_init_scripts "$postgresql_dir"
+    generate_postgresql_config "$postgresql_dir"
+    generate_postgresql_scripts "$postgresql_dir"
+    generate_postgresql_env_files "$postgresql_dir"
     
     print_status "PostgreSQL database component created successfully"
 }
 
 # Generate database initialization scripts
-function generate_database_init_scripts() {
-    local database_dir="$1"
-    local init_dir="$database_dir/init"
+function generate_postgresql_init_scripts() {
+    local postgresql_dir="$1"
+    local init_dir="$postgresql_dir/init"
     
     # Main initialization script
     cat > "$init_dir/01-init.sql" << EOF
@@ -287,11 +287,11 @@ EOF
 }
 
 # Generate database configuration files
-function generate_database_config() {
-    local database_dir="$1"
+function generate_postgresql_config() {
+    local postgresql_dir="$1"
     
     # PostgreSQL configuration
-    cat > "$database_dir/postgresql.conf" << 'EOF'
+    cat > "$postgresql_dir/postgresql.conf" << 'EOF'
 # PostgreSQL configuration for development
 # This file contains optimizations for development workloads
 
@@ -335,7 +335,7 @@ track_functions = all
 EOF
 
     # Database backup script
-    cat > "$database_dir/scripts/backup.sh" << 'EOF'
+    cat > "$postgresql_dir/scripts/backup.sh" << 'EOF'
 #!/bin/bash
 # Database backup script
 
@@ -366,10 +366,10 @@ find "$BACKUP_DIR" -name "${DB_NAME}_*.backup" -type f -mtime +7 -delete
 echo "Old backups cleaned up"
 EOF
 
-    chmod +x "$database_dir/scripts/backup.sh"
+    chmod +x "$postgresql_dir/scripts/backup.sh"
 
     # Database restore script
-    cat > "$database_dir/scripts/restore.sh" << 'EOF'
+    cat > "$postgresql_dir/scripts/restore.sh" << 'EOF'
 #!/bin/bash
 # Database restore script
 
@@ -399,15 +399,15 @@ pg_restore -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
 echo "Database restored successfully"
 EOF
 
-    chmod +x "$database_dir/scripts/restore.sh"
+    chmod +x "$postgresql_dir/scripts/restore.sh"
 
     print_debug "Generated database configuration"
 }
 
 # Generate utility scripts
-function generate_database_scripts() {
-    local database_dir="$1"
-    local scripts_dir="$database_dir/scripts"
+function generate_postgresql_scripts() {
+    local postgresql_dir="$1"
+    local scripts_dir="$postgresql_dir/scripts"
     
     # Database connection script
     cat > "$scripts_dir/connect.sh" << 'EOF'
@@ -511,10 +511,10 @@ EOF
 }
 
 # Generate environment files
-function generate_database_env_files() {
-    local database_dir="$1"
+function generate_postgresql_env_files() {
+    local postgresql_dir="$1"
     
-    cat > "$database_dir/.env.example" << 'EOF'
+    cat > "$postgresql_dir/.env.example" << 'EOF'
 # PostgreSQL Database Configuration
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
@@ -532,12 +532,12 @@ BACKUP_SCHEDULE="0 2 * * *"  # Daily at 2 AM
 EOF
 
     # Create actual .env if it doesn't exist
-    if [[ ! -f "$database_dir/.env" ]]; then
-        cp "$database_dir/.env.example" "$database_dir/.env"
+    if [[ ! -f "$postgresql_dir/.env" ]]; then
+        cp "$postgresql_dir/.env.example" "$postgresql_dir/.env"
     fi
 
     # Sample migration
-    cat > "$database_dir/migrations/001_initial_schema.sql" << 'EOF'
+    cat > "$postgresql_dir/migrations/001_initial_schema.sql" << 'EOF'
 -- Initial schema migration
 -- This is an example migration file
 
@@ -558,12 +558,12 @@ EOF
 }
 
 # Main function to create database component
-function create_database_component() {
+function create_postgresql_component() {
     local project_dir="$1"
     
     print_info "Creating PostgreSQL database component in $project_dir"
     
-    generate_database_component "$project_dir"
+    generate_postgresql_component "$project_dir"
     
     print_status "PostgreSQL database component created successfully!"
     print_info "Next steps:"
@@ -575,6 +575,6 @@ function create_database_component() {
 }
 
 # Export functions for use by project generator
-export -f generate_database_component create_database_component
-export -f generate_database_init_scripts generate_database_config
-export -f generate_database_scripts generate_database_env_files
+export -f generate_postgresql_component create_postgresql_component
+export -f generate_postgresql_init_scripts generate_postgresql_config
+export -f generate_postgresql_scripts generate_postgresql_env_files

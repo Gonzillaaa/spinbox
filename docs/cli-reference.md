@@ -40,9 +40,9 @@ spinbox create <PROJECT_NAME> [OPTIONS]
 |--------|-------------|
 | `--python` | Add Python DevContainer environment |
 | `--node` | Add Node.js DevContainer environment |
-| `--backend` | Add FastAPI backend component |
-| `--frontend` | Add Next.js frontend component |
-| `--database` | Add PostgreSQL database with PGVector |
+| `--fastapi` | Add FastAPI backend component |
+| `--nextjs` | Add Next.js frontend component |
+| `--postgresql` | Add PostgreSQL database with PGVector |
 | `--mongodb` | Add MongoDB document database |
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
@@ -69,7 +69,7 @@ spinbox create <PROJECT_NAME> [OPTIONS]
 # Full-stack web application
 spinbox create myapp --profile web-app
 
-# Backend API with database and Redis
+# FastAPI API with PostgreSQL and Redis
 spinbox create api-server --profile api-only
 
 # Data science environment
@@ -88,22 +88,22 @@ spinbox create basic-env --profile minimal
 spinbox create myproject --python
 
 # Custom full-stack setup
-spinbox create webapp --python --node --database --redis
+spinbox create webapp --python --node --postgresql --redis
 
 # API layer with caching
-spinbox create api --backend --redis
+spinbox create api --fastapi --redis
 
 # Frontend with MongoDB
-spinbox create frontend-app --frontend --mongodb
+spinbox create frontend-app --nextjs --mongodb
 ```
 
 **Version customization:**
 ```bash
 # Override Python version
-spinbox create legacy-api --backend --python-version 3.10
+spinbox create legacy-api --fastapi --python-version 3.10
 
 # Custom Node.js version
-spinbox create old-frontend --frontend --node-version 18
+spinbox create old-frontend --nextjs --node-version 18
 
 # Multiple version overrides
 spinbox create custom-stack --profile web-app --python-version 3.11 --node-version 19
@@ -139,9 +139,9 @@ spinbox add [OPTIONS]
 **Component Addition:**
 | Option | Description |
 |--------|-------------|
-| `--backend` | Add FastAPI backend component |
-| `--frontend` | Add Next.js frontend component |
-| `--database` | Add PostgreSQL database with PGVector |
+| `--fastapi` | Add FastAPI backend component |
+| `--nextjs` | Add Next.js frontend component |
+| `--postgresql` | Add PostgreSQL database with PGVector |
 | `--mongodb` | Add MongoDB document database |
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
@@ -157,19 +157,19 @@ spinbox add [OPTIONS]
 #### Examples
 
 ```bash
-# Add database to existing project
+# Add PostgreSQL to existing project
 cd myproject
-spinbox add --database
+spinbox add --postgresql
 
 # Add multiple components with clear architectural roles
-spinbox add --database --redis        # Primary storage + caching layer
+spinbox add --postgresql --redis        # Primary storage + caching layer
 spinbox add --mongodb --chroma        # Alternative storage + vector search
 
 # Add with version specification
-spinbox add --database --postgres-version 14
+spinbox add --postgresql --postgres-version 14
 
-# Add frontend to backend-only project
-spinbox add --frontend --node-version 18
+# Add Next.js to FastAPI-only project
+spinbox add --nextjs --node-version 18
 ```
 
 #### Behavior
@@ -473,7 +473,7 @@ spinbox status --components
 **Project Status:**
 - Project detection (Spinbox project or not)
 - Project name and description (if configured)
-- Detected components (backend, frontend, database, etc.)
+- Detected components (fastapi, nextjs, postgresql, etc.)
 - DevContainer status
 
 **Configuration Status:**
@@ -519,10 +519,10 @@ spinbox profiles --show api-only
 
 | Profile | Description | Components |
 |---------|-------------|------------|
-| `web-app` | Full-stack web application | backend, frontend, database |
-| `api-only` | Backend API with database | backend, database, redis |
-| `data-science` | Data science environment | python, database |
-| `ai-llm` | AI/LLM development | python, database, chroma |
+| `web-app` | Full-stack web application | fastapi, nextjs, postgresql |
+| `api-only` | FastAPI API with PostgreSQL | fastapi, postgresql, redis |
+| `data-science` | Data science environment | python, postgresql |
+| `ai-llm` | AI/LLM development | python, postgresql, chroma |
 | `minimal` | Basic prototyping environment | python |
 
 #### Profile Details
@@ -656,9 +656,9 @@ name = "web-app"
 description = "Full-stack web application"
 
 [components]
-backend = true
-frontend = true
-database = true
+fastapi = true
+nextjs = true
+postgresql = true
 redis = false
 mongodb = false
 chroma = false

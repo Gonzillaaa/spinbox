@@ -1,11 +1,11 @@
 [profile]
 name = "web-app"
-description = "Full-stack web application with backend, frontend, and database"
+description = "Full-stack web application with FastAPI, Next.js, and PostgreSQL"
 
 [components]
-backend = true
-frontend = true
-database = true
+fastapi = true
+nextjs = true
+postgresql = true
 redis = false
 mongodb = false
 chroma = false

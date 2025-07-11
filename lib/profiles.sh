@@ -39,7 +39,7 @@ function parse_profile_toml() {
     
     # Clear any existing profile variables
     unset PROFILE_NAME PROFILE_DESCRIPTION
-    unset PROFILE_BACKEND PROFILE_FRONTEND PROFILE_DATABASE
+    unset PROFILE_FASTAPI PROFILE_NEXTJS PROFILE_POSTGRESQL
     unset PROFILE_REDIS PROFILE_MONGODB PROFILE_CHROMA
     unset PROFILE_PYTHON_VERSION PROFILE_NODE_VERSION PROFILE_POSTGRES_VERSION PROFILE_REDIS_VERSION
     unset PROFILE_PYTHON_REQUIREMENTS
@@ -75,9 +75,9 @@ function parse_profile_toml() {
                     ;;
                 "components")
                     case "$key" in
-                        "backend") PROFILE_BACKEND="$value" ;;
-                        "frontend") PROFILE_FRONTEND="$value" ;;
-                        "database") PROFILE_DATABASE="$value" ;;
+                        "fastapi") PROFILE_FASTAPI="$value" ;;
+                        "nextjs") PROFILE_NEXTJS="$value" ;;
+                        "postgresql") PROFILE_POSTGRESQL="$value" ;;
                         "redis") PROFILE_REDIS="$value" ;;
                         "mongodb") PROFILE_MONGODB="$value" ;;
                         "chroma") PROFILE_CHROMA="$value" ;;
@@ -154,9 +154,9 @@ function apply_profile() {
     fi
     
     # Add components based on profile
-    [[ "${PROFILE_BACKEND:-}" == "true" ]] && components+=" --backend"
-    [[ "${PROFILE_FRONTEND:-}" == "true" ]] && components+=" --frontend"
-    [[ "${PROFILE_DATABASE:-}" == "true" ]] && components+=" --database"
+    [[ "${PROFILE_FASTAPI:-}" == "true" ]] && components+=" --fastapi"
+    [[ "${PROFILE_NEXTJS:-}" == "true" ]] && components+=" --nextjs"
+    [[ "${PROFILE_POSTGRESQL:-}" == "true" ]] && components+=" --postgresql"
     [[ "${PROFILE_REDIS:-}" == "true" ]] && components+=" --redis"
     [[ "${PROFILE_MONGODB:-}" == "true" ]] && components+=" --mongodb"
     [[ "${PROFILE_CHROMA:-}" == "true" ]] && components+=" --chroma"

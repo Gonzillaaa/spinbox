@@ -78,7 +78,7 @@ GLOBAL OPTIONS:
 EXAMPLES:
     spinbox create myproject --python          Create minimal Python project
     spinbox create webapp --python --node     Create full-stack project
-    spinbox add --database                     Add database to existing project
+    spinbox add --postgresql                   Add PostgreSQL to existing project
     spinbox start                              Start project services
     spinbox config --list                     Show current configuration
     spinbox status                             Show project status
@@ -103,9 +103,9 @@ OPTIONS:
     
     --python               Create Python DevContainer environment
     --node                 Create Node.js DevContainer environment
-    --backend              Add FastAPI backend component
-    --frontend             Add Next.js frontend component
-    --database             Add PostgreSQL database with PGVector
+    --fastapi              Add FastAPI backend component
+    --nextjs               Add Next.js frontend component
+    --postgresql           Add PostgreSQL database with PGVector
     --mongodb              Add MongoDB document database
     --redis                Add Redis for caching and queues
     --chroma               Add Chroma vector database
@@ -125,12 +125,12 @@ OPTIONS:
 
 EXAMPLES:
     spinbox create myproject --profile web-app       Create full-stack web application
-    spinbox create api-server --profile api-only     Create backend API with database and Redis
+    spinbox create api-server --profile api-only     Create FastAPI API with PostgreSQL and Redis
     spinbox create ml-project --profile data-science Create data science environment
     spinbox create ai-project --profile ai-llm       Create AI/LLM development environment
     
     spinbox create myproject --python                Create custom Python project
-    spinbox create webapp --python --node --database Create custom full-stack project
+    spinbox create webapp --python --node --postgresql Create custom full-stack project
 
 TEMPLATES:
     minimal          Basic development tools (uv, pytest, black, requests)
@@ -169,7 +169,7 @@ OPTIONS:
     -h, --help            Show this help message
 
 EXAMPLES:
-    spinbox add --database             Add PostgreSQL to current project
+    spinbox add --postgresql           Add PostgreSQL to current project
     spinbox add --backend --redis      Add FastAPI backend with Redis
     spinbox add --chroma               Add vector database for AI projects
 
