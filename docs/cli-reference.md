@@ -698,8 +698,8 @@ spinbox profiles --show api-only
 
 - **web-app**: FastAPI + Next.js + PostgreSQL + Docker networking + full-stack integration
 - **api-only**: FastAPI + PostgreSQL + Redis + performance optimization + caching strategies  
-- **data-science**: Jupyter Lab + pandas + scikit-learn + matplotlib + PostgreSQL + analysis scripts
-- **ai-llm**: OpenAI + Anthropic + LangChain + LlamaIndex + ChromaDB + AI workflows
+- **data-science**: Jupyter Lab + pandas + scikit-learn + matplotlib + PostgreSQL + Python utilities
+- **ai-llm**: OpenAI + Anthropic + LangChain + LlamaIndex + ChromaDB + prompt templates
 - **minimal**: Python DevContainer + UV + pytest + black + essential tools only
 
 #### Profile Details

@@ -277,7 +277,7 @@ spinbox create api-server --profile api-only
 - **Jupyter Lab** - Interactive notebooks with rich data visualization
 - **Scientific libraries** - pandas, scikit-learn, matplotlib, seaborn
 - **PostgreSQL database** - Structured data storage and analysis
-- **Analysis tools** - Pre-configured data pipeline and visualization scripts
+- **Ready-to-use scripts** - Data processing, model training, and visualization utilities
 
 **Use cases:** Data exploration, statistical analysis, ML model development, research projects
 
@@ -292,7 +292,7 @@ spinbox create analysis --profile data-science
 - **LLM integration** - OpenAI, Anthropic, and local model support
 - **Agent frameworks** - LangChain and LlamaIndex for RAG applications
 - **Vector database** - ChromaDB for semantic search and embeddings
-- **AI workflows** - Pre-built templates for common AI patterns
+- **AI workflows** - Pre-built agents, prompt templates, and example notebooks
 
 **Use cases:** Chatbots, document Q&A, content generation, AI agents, RAG applications
 
@@ -395,8 +395,8 @@ your-project/
 
 **Workflow Frameworks:**
 
-- **Data Science** - Jupyter Lab, pandas, scikit-learn, matplotlib, automated analysis scripts
-- **AI/ML** - OpenAI/Anthropic clients, LangChain/LlamaIndex agents, ChromaDB vector store, transformers, prompt management
+- **Data Science** - Jupyter Lab, pandas, scikit-learn, matplotlib, ready-to-use Python scripts
+- **AI/ML** - OpenAI/Anthropic clients, LangChain/LlamaIndex agents, ChromaDB vector store, transformers, prompt templates
 
 **Infrastructure Services:**
 

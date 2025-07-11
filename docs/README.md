@@ -44,8 +44,8 @@
 |---------|----------|-----------------|-------------|
 | **web-app** | Full-stack web applications | FastAPI + Next.js + PostgreSQL | E-commerce, SaaS, dashboards, content management |
 | **api-only** | High-performance APIs | FastAPI + PostgreSQL + Redis | Microservices, mobile backends, API gateways |
-| **data-science** | Data analysis & ML | Jupyter + pandas + scikit-learn + PostgreSQL | Research, data exploration, ML development |
-| **ai-llm** | AI/LLM applications | OpenAI + LangChain + LlamaIndex + ChromaDB | Chatbots, RAG apps, AI agents, document Q&A |
+| **data-science** | Data analysis & ML | Jupyter + pandas + scikit-learn + PostgreSQL + Python utilities | Research, data exploration, ML development |
+| **ai-llm** | AI/LLM applications | OpenAI + LangChain + LlamaIndex + ChromaDB + prompt templates | Chatbots, RAG apps, AI agents, document Q&A |
 | **minimal** | Simple Python projects | Python DevContainer + essential tools | Scripts, prototypes, learning, CLI tools |
 
 **Quick Commands:**
