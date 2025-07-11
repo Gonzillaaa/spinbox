@@ -85,13 +85,15 @@ GLOBAL OPTIONS:
     -h, --help         Show this help message
 
 EXAMPLES:
-    spinbox create myproject --python          Create minimal Python project
-    spinbox create webapp --python --node     Create full-stack project
-    spinbox add --postgresql                   Add PostgreSQL to existing project
-    spinbox start                              Start project services
-    spinbox config --list                     Show current configuration
-    spinbox status                             Show project status
-    spinbox profiles                           List available profiles
+    spinbox create myproject --profile minimal       Create minimal Python project
+    spinbox create webapp --profile web-app          Create full-stack web application
+    spinbox create analysis --data-science --with-examples  Create data science project
+    spinbox create ai-app --ai-ml --chroma           Create AI/ML project with vector search
+    spinbox add --postgresql                          Add PostgreSQL to existing project
+    spinbox start                                     Start project services
+    spinbox config --list                            Show current configuration
+    spinbox status                                    Show project status
+    spinbox profiles                                  List available profiles
 
 For detailed help on a specific command:
     spinbox <command> --help
@@ -150,7 +152,7 @@ EXAMPLES:
     spinbox create ml-project --profile data-science Create data science environment
     spinbox create ai-project --profile ai-llm       Create AI/LLM development environment
     
-    spinbox create myproject --python                Create custom Python project
+    spinbox create myproject --profile minimal       Create minimal Python project
     spinbox create webapp --python --node --postgresql Create custom full-stack project
 
 TEMPLATES:
@@ -1134,7 +1136,7 @@ function execute_start_command() {
     if [[ ! -f "docker-compose.yml" ]]; then
         print_error "No docker-compose.yml found in current directory"
         print_info "Make sure you're in a Spinbox project directory"
-        print_info "Create a project with: spinbox create myproject --python"
+        print_info "Create a project with: spinbox create myproject --profile minimal"
         exit 1
     fi
     
