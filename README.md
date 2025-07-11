@@ -2,7 +2,7 @@
 
 ![Spinbox][logo]
 
-# Spin up containerized prototyping environments in seconds! 
+# Spin up a containerized prototyping box in seconds! 
 
 A **global CLI tool** for spinning up customizable prototyping environments with predefined profiles or custom component selection. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and comes with a modern prototyping setup. Build your stack by selecting any combination of:
 
