@@ -103,9 +103,11 @@ Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors),
 #### Option A: Quick Install (Recommended)
 
 ```bash
-# Install Spinbox globally
+# Install Spinbox with curl
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
+```
 
+```bash
 # Or with Homebrew
 brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
 ```
