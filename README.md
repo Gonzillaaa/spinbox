@@ -36,6 +36,7 @@ A **global CLI tool** for spinning up customizable prototyping environments with
 - **Version Control**: Customize software versions globally or per-project
 - **Dependency Management**: Automatic dependency installation with `--with-deps`
 - **Code Examples**: Working code examples with `--with-examples`
+- **Git Hooks Integration**: Automated quality assurance with `spinbox hooks`
 - **Easy Installation**: Homebrew integration for macOS
 - **Root-Level Deployment**: All project files created at repository root
 
@@ -288,6 +289,30 @@ spinbox add --fastapi --nextjs      # Add API layer + web interface
 
 See [docs/adding-components.md](./docs/adding-components.md) for detailed guides.
 
+## 🔧 Git Hooks Integration
+
+Spinbox provides project-aware git hooks for automated quality assurance:
+
+```bash
+# Install git hooks for your project
+spinbox hooks add all
+
+# Install with example configurations
+spinbox hooks add all --with-examples
+
+# Manage hooks
+spinbox hooks list                    # List installed hooks
+spinbox hooks remove all             # Remove hooks
+```
+
+**What hooks provide:**
+- **Pre-commit**: Fast formatting and lint checks (< 5 seconds)
+- **Pre-push**: Comprehensive tests and security validation
+- **Project-aware**: Automatically detects Python, Node.js, FastAPI, Next.js projects
+- **Quality gates**: Prevents commits/pushes with formatting or test failures
+
+See [docs/git-hooks.md](./docs/git-hooks.md) for complete documentation.
+
 ## ⚙️ Configuration
 
 ### Software Version Configuration
@@ -339,6 +364,7 @@ See [docs/troubleshooting.md](./docs/troubleshooting.md) for solutions to common
 - [Quick Start Guide](./docs/quick-start.md)
 - [CLI Reference](./docs/cli-reference.md)
 - [Adding Components](./docs/adding-components.md)
+- [Git Hooks Integration](./docs/git-hooks.md)
 - [Installation Guide](./docs/installation.md)
 - [Troubleshooting](./docs/troubleshooting.md)
 
