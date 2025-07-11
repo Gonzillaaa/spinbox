@@ -2,7 +2,8 @@
 # Simple Tests for --with-deps and --with-examples flags
 # Standalone test following simple test framework pattern
 
-set -e
+# Don't use set -e here as it interferes with test functions
+# set -e
 
 # Test counters
 TESTS_RUN=0
@@ -74,11 +75,38 @@ test_command "$PROJECT_ROOT/bin/spinbox create test-python --python --dry-run" \
 test_command "$PROJECT_ROOT/bin/spinbox create test-deps --fastapi --with-deps --dry-run" \
     "Project with --with-deps only works"
 
+# Test 5: New framework components
+test_command "$PROJECT_ROOT/bin/spinbox create test-ds --data-science --dry-run" \
+    "Data science component works"
+
+test_command "$PROJECT_ROOT/bin/spinbox create test-ai --ai-ml --dry-run" \
+    "AI/ML component works"
+
+test_command "$PROJECT_ROOT/bin/spinbox create test-ds-ex --data-science --with-examples --dry-run" \
+    "Data science with examples works"
+
+test_command "$PROJECT_ROOT/bin/spinbox create test-ai-ex --ai-ml --with-examples --dry-run" \
+    "AI/ML with examples works"
+
+# Test 6: New framework generators exist
+test_command "test -f '$PROJECT_ROOT/generators/data-science.sh'" \
+    "Data science generator exists"
+
+test_command "test -f '$PROJECT_ROOT/generators/ai-ml.sh'" \
+    "AI/ML generator exists"
+
+# Test 7: Examples generator supports new components
+test_command "grep -q 'data-science' '$PROJECT_ROOT/lib/examples-generator.sh'" \
+    "Examples generator supports data-science"
+
+test_command "grep -q 'ai-ml' '$PROJECT_ROOT/lib/examples-generator.sh'" \
+    "Examples generator supports ai-ml"
+
 # Cleanup
 cd "$OLD_DIR"
 rm -rf "$TEST_DIR"
 
-# Test 5: Module integration 
+# Test 8: Module integration 
 test_command "grep -q 'dependency-manager.sh' '$PROJECT_ROOT/lib/project-generator.sh'" \
     "Project generator sources dependency manager"
 

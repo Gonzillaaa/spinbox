@@ -110,14 +110,23 @@ USAGE:
 OPTIONS:
     --profile NAME         Use predefined project profile (web-app, api-only, data-science, ai-llm, minimal)
     
-    --python               Create Python DevContainer environment
-    --node                 Create Node.js DevContainer environment
-    --fastapi              Add FastAPI backend component
-    --nextjs               Add Next.js frontend component
+    Application Frameworks (Build user interfaces):
+    --fastapi              Add FastAPI backend framework
+    --nextjs               Add Next.js frontend framework
+    
+    Workflow Frameworks (Specialized work methodologies):
+    --data-science         Add Data Science workflow (Jupyter, pandas, scikit-learn)
+    --ai-ml                Add AI/ML workflow (LLMs, agents, vector processing)
+    
+    Infrastructure Services (Data storage & core services):
     --postgresql           Add PostgreSQL database with PGVector
     --mongodb              Add MongoDB document database
     --redis                Add Redis for caching and queues
     --chroma               Add Chroma vector database
+    
+    Foundation Environments (Base containers):
+    --python               Create Python DevContainer environment
+    --node                 Create Node.js DevContainer environment
     
     --with-deps            Add component dependencies to requirements.txt/package.json
     --with-examples        Add working code examples for components
@@ -164,9 +173,16 @@ USAGE:
     spinbox add [OPTIONS]
 
 OPTIONS:
-    --fastapi              Add FastAPI backend component
-    --frontend             Add Next.js frontend component
-    --database             Add PostgreSQL database with PGVector
+    Application Frameworks (Build user interfaces):
+    --fastapi              Add FastAPI backend framework
+    --nextjs               Add Next.js frontend framework
+    
+    Workflow Frameworks (Specialized work methodologies):
+    --data-science         Add Data Science workflow (Jupyter, pandas, scikit-learn)
+    --ai-ml                Add AI/ML workflow (LLMs, agents, vector processing)
+    
+    Infrastructure Services (Data storage & core services):
+    --postgresql           Add PostgreSQL database with PGVector
     --mongodb              Add MongoDB document database
     --redis                Add Redis for caching and queues
     --chroma               Add Chroma vector database
@@ -567,7 +583,7 @@ function parse_create_args() {
                 show_create_help
                 exit 0
                 ;;
-            --python|--node|--fastapi|--nextjs|--postgresql|--mongodb|--redis|--chroma)
+            --python|--node|--fastapi|--nextjs|--data-science|--ai-ml|--postgresql|--mongodb|--redis|--chroma)
                 # Component flags - will be handled by project generator
                 COMPONENTS+=" $1"
                 shift
@@ -626,7 +642,7 @@ function parse_add_args() {
                 show_add_help
                 exit 0
                 ;;
-            --fastapi|--nextjs|--postgresql|--mongodb|--redis|--chroma)
+            --fastapi|--nextjs|--data-science|--ai-ml|--postgresql|--mongodb|--redis|--chroma)
                 # Component flags - will be handled by project generator
                 COMPONENTS+=" $1"
                 shift
@@ -1257,8 +1273,10 @@ function show_project_status() {
         # Check components
         local components=()
         [[ -d "fastapi" ]] && components+=("fastapi")
-        [[ -d "frontend" ]] && components+=("frontend")
-        [[ -f "docker-compose.yml" ]] && grep -q "postgres" docker-compose.yml && components+=("database")
+        [[ -d "nextjs" ]] && components+=("nextjs")
+        [[ -d "data-science" ]] && components+=("data-science")
+        [[ -d "ai-ml" ]] && components+=("ai-ml")
+        [[ -f "docker-compose.yml" ]] && grep -q "postgres" docker-compose.yml && components+=("postgresql")
         [[ -f "docker-compose.yml" ]] && grep -q "redis" docker-compose.yml && components+=("redis")
         [[ -f "docker-compose.yml" ]] && grep -q "mongo" docker-compose.yml && components+=("mongodb")
         [[ -d "chroma_data" ]] && components+=("chroma")
@@ -1435,14 +1453,24 @@ function execute_hooks_command() {
 # Show components status
 function show_components_status() {
     print_info "Available Components:"
-    echo "  --python       Python DevContainer with virtual environment"
-    echo "  --node         Node.js DevContainer with package management"
-    echo "  --fastapi      FastAPI backend with SQLAlchemy"
-    echo "  --frontend     Next.js frontend with TypeScript"
-    echo "  --database     PostgreSQL with PGVector extension"
-    echo "  --mongodb      MongoDB document database"
-    echo "  --redis        Redis for caching and queues"
-    echo "  --chroma       Chroma vector database for embeddings"
+    echo ""
+    echo "  Application Frameworks (Build user interfaces):"
+    echo "    --fastapi        FastAPI backend framework"
+    echo "    --nextjs         Next.js frontend framework"
+    echo ""
+    echo "  Workflow Frameworks (Specialized work methodologies):"
+    echo "    --data-science   Data Science workflow (Jupyter, pandas, ML)"
+    echo "    --ai-ml          AI/ML workflow (LLMs, agents, vector processing)"
+    echo ""
+    echo "  Infrastructure Services (Data storage & core services):"
+    echo "    --postgresql     PostgreSQL with PGVector extension"
+    echo "    --mongodb        MongoDB document database"
+    echo "    --redis          Redis for caching and queues"
+    echo "    --chroma         Chroma vector database for embeddings"
+    echo ""
+    echo "  Foundation Environments (Base containers):"
+    echo "    --python         Python DevContainer with virtual environment"
+    echo "    --node           Node.js DevContainer with package management"
 }
 
 # Main execution

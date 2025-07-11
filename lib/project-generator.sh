@@ -20,6 +20,8 @@ USE_PYTHON=false
 USE_NODE=false
 USE_FASTAPI=false
 USE_NEXTJS=false
+USE_DATA_SCIENCE=false
+USE_AI_ML=false
 USE_POSTGRESQL=false
 USE_MONGODB=false
 USE_REDIS=false
@@ -48,6 +50,16 @@ function parse_component_flags() {
                 USE_NEXTJS=true
                 USE_NODE=true    # Next.js requires Node
                 SELECTED_COMPONENTS+=("nextjs")
+                ;;
+            --data-science)
+                USE_DATA_SCIENCE=true
+                USE_PYTHON=true  # Data Science requires Python
+                SELECTED_COMPONENTS+=("data-science")
+                ;;
+            --ai-ml)
+                USE_AI_ML=true
+                USE_PYTHON=true  # AI/ML requires Python
+                SELECTED_COMPONENTS+=("ai-ml")
                 ;;
             --postgresql)
                 USE_POSTGRESQL=true
@@ -131,6 +143,14 @@ function create_project_directory() {
     
     if [[ "$USE_NEXTJS" == true ]]; then
         safe_create_dir "$project_dir/nextjs"
+    fi
+    
+    if [[ "$USE_DATA_SCIENCE" == true ]]; then
+        safe_create_dir "$project_dir/data-science"
+    fi
+    
+    if [[ "$USE_AI_ML" == true ]]; then
+        safe_create_dir "$project_dir/ai-ml"
     fi
     
     if [[ "$USE_POSTGRESQL" == true ]]; then
@@ -580,6 +600,24 @@ function generate_component_files() {
         fi
     fi
     
+    if [[ "$USE_DATA_SCIENCE" == true ]]; then
+        if source "$PROJECT_ROOT/generators/data-science.sh" 2>/dev/null; then
+            generate_data_science_component "$project_dir"
+        else
+            print_warning "Data Science generator not found, using fallback"
+            generate_basic_python "$project_dir"
+        fi
+    fi
+    
+    if [[ "$USE_AI_ML" == true ]]; then
+        if source "$PROJECT_ROOT/generators/ai-ml.sh" 2>/dev/null; then
+            generate_ai_ml_component "$project_dir"
+        else
+            print_warning "AI/ML generator not found, using fallback"
+            generate_basic_python "$project_dir"
+        fi
+    fi
+    
     if [[ "$USE_POSTGRESQL" == true ]]; then
         if source "$PROJECT_ROOT/generators/postgresql.sh" 2>/dev/null; then
             generate_postgresql_component "$project_dir"
@@ -804,6 +842,15 @@ function create_project() {
     fi
     if [[ "$USE_NEXTJS" == true ]]; then
         echo "  4. Install Node.js dependencies: cd nextjs && npm install"
+    fi
+    if [[ "$USE_DATA_SCIENCE" == true ]]; then
+        echo "  4. Set up Data Science environment: cd data-science && ./setup_venv.sh"
+        echo "  5. Start Jupyter Lab: cd data-science && jupyter lab"
+    fi
+    if [[ "$USE_AI_ML" == true ]]; then
+        echo "  4. Set up AI/ML environment: cd ai-ml && ./setup_venv.sh"
+        echo "  5. Configure API keys: cd ai-ml && edit .env file"
+        echo "  6. Start Jupyter Lab: cd ai-ml && jupyter lab"
     fi
     if [[ "$USE_POSTGRESQL" == true ]] || [[ "$USE_REDIS" == true ]] || [[ "$USE_MONGODB" == true ]] || [[ "$USE_CHROMA" == true ]]; then
         echo "  5. Start services: docker-compose up -d"

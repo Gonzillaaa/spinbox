@@ -39,8 +39,8 @@ function parse_profile_toml() {
     
     # Clear any existing profile variables
     unset PROFILE_NAME PROFILE_DESCRIPTION
-    unset PROFILE_FASTAPI PROFILE_NEXTJS PROFILE_POSTGRESQL
-    unset PROFILE_REDIS PROFILE_MONGODB PROFILE_CHROMA
+    unset PROFILE_FASTAPI PROFILE_NEXTJS PROFILE_DATA_SCIENCE PROFILE_AI_ML
+    unset PROFILE_POSTGRESQL PROFILE_REDIS PROFILE_MONGODB PROFILE_CHROMA
     unset PROFILE_PYTHON_VERSION PROFILE_NODE_VERSION PROFILE_POSTGRES_VERSION PROFILE_REDIS_VERSION
     unset PROFILE_PYTHON_REQUIREMENTS
     
@@ -77,6 +77,8 @@ function parse_profile_toml() {
                     case "$key" in
                         "fastapi") PROFILE_FASTAPI="$value" ;;
                         "nextjs") PROFILE_NEXTJS="$value" ;;
+                        "data_science") PROFILE_DATA_SCIENCE="$value" ;;
+                        "ai_ml") PROFILE_AI_ML="$value" ;;
                         "postgresql") PROFILE_POSTGRESQL="$value" ;;
                         "redis") PROFILE_REDIS="$value" ;;
                         "mongodb") PROFILE_MONGODB="$value" ;;
@@ -156,6 +158,8 @@ function apply_profile() {
     # Add components based on profile
     [[ "${PROFILE_FASTAPI:-}" == "true" ]] && components+=" --fastapi"
     [[ "${PROFILE_NEXTJS:-}" == "true" ]] && components+=" --nextjs"
+    [[ "${PROFILE_DATA_SCIENCE:-}" == "true" ]] && components+=" --data-science"
+    [[ "${PROFILE_AI_ML:-}" == "true" ]] && components+=" --ai-ml"
     [[ "${PROFILE_POSTGRESQL:-}" == "true" ]] && components+=" --postgresql"
     [[ "${PROFILE_REDIS:-}" == "true" ]] && components+=" --redis"
     [[ "${PROFILE_MONGODB:-}" == "true" ]] && components+=" --mongodb"
@@ -210,10 +214,11 @@ function show_profile() {
     echo "Description: $PROFILE_DESCRIPTION"
     echo ""
     echo "Components:"
-    echo "  Python: ${PROFILE_BACKEND:-false}"
-    echo "  Backend: ${PROFILE_BACKEND:-false}"
-    echo "  Frontend: ${PROFILE_FRONTEND:-false}"
-    echo "  Database: ${PROFILE_DATABASE:-false}"
+    echo "  FastAPI: ${PROFILE_FASTAPI:-false}"
+    echo "  Next.js: ${PROFILE_NEXTJS:-false}"
+    echo "  Data Science: ${PROFILE_DATA_SCIENCE:-false}"
+    echo "  AI/ML: ${PROFILE_AI_ML:-false}"
+    echo "  PostgreSQL: ${PROFILE_POSTGRESQL:-false}"
     echo "  Redis: ${PROFILE_REDIS:-false}"
     echo "  MongoDB: ${PROFILE_MONGODB:-false}"
     echo "  Chroma: ${PROFILE_CHROMA:-false}"

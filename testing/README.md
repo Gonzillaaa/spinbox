@@ -24,7 +24,10 @@ That's it! One command, everything tested.
 
 ### Ultra-Simple Test Framework
 
-- **`simple-test.sh`** - Enhanced test framework with 59 comprehensive tests
+- **`simple-test.sh`** - Core functionality tests (73 tests)
+- **`with-flags-test.sh`** - Component flag tests (17 tests)
+- **`framework-test.sh`** - Framework generator tests (29 tests)
+- **`deps-examples-test.sh`** - Dependencies/examples tests (8 tests)
 - **`quick-test.sh`** - Main test runner with additional smoke tests
 
 ### What's Tested
@@ -45,16 +48,28 @@ The framework provides comprehensive coverage:
 - **Error Cases** - Invalid inputs and failure scenario handling
 - **Component Generators** - Existence and structure validation
 
+**Framework Generators:**
+- **Data Science Component** - Generator file existence, functions, and integration
+- **AI/ML Component** - Generator file existence, functions, and integration
+- **CLI Integration** - New framework flags parsing and help text
+- **Examples Integration** - Framework examples generation support
+- **Profile Integration** - Framework-specific profile configurations
+
 ## Test Results
 
 ```
-59 comprehensive tests ✅
+127 comprehensive tests ✅
+• 73 core functionality tests ✅
+• 17 component flag tests ✅ 
+• 29 framework generator tests ✅
+• 8 dependencies/examples tests ✅
 Core library functionality ✅
 Complete CLI command coverage ✅
 All 5 profiles validated ✅
+Framework generators validated ✅
 Project creation workflows ✅
 Error handling and edge cases ✅
-Fast execution (1.3 seconds) ✅
+Fast execution (< 5 seconds) ✅
 No infinite loops ✅
 Zero dependencies ✅
 ```
@@ -89,7 +104,7 @@ This framework replaces the previous complex test suite that had:
 - ❌ Reliability issues
 
 The new framework provides comprehensive coverage with:
-- ✅ 59 focused tests covering both library and CLI functionality
+- ✅ 127 focused tests covering library, CLI, and framework functionality
 - ✅ Zero dependencies
 - ✅ Sub-5-second execution
 - ✅ 100% reliability

@@ -1,8 +1,9 @@
 [profile]
 name = "data-science"
-description = "Data science environment with Python, Jupyter, and common ML libraries"
+description = "Data science environment with Jupyter, pandas, scikit-learn, and ML libraries"
 
 [components]
+data_science = true
 fastapi = false
 nextjs = false
 postgresql = false

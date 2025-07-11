@@ -36,16 +36,32 @@ spinbox create <PROJECT_NAME> [OPTIONS]
 | `--profile <name>` | Use predefined project profile |
 
 **Component Selection:**
+
+*Application Frameworks (Build user interfaces):*
 | Option | Description |
 |--------|-------------|
-| `--python` | Add Python DevContainer environment |
-| `--node` | Add Node.js DevContainer environment |
 | `--fastapi` | Add FastAPI backend component |
 | `--nextjs` | Add Next.js frontend component |
+
+*Workflow Frameworks (Specialized methodologies):*
+| Option | Description |
+|--------|-------------|
+| `--data-science` | Add Data Science workflow (Jupyter, pandas, scikit-learn) |
+| `--ai-ml` | Add AI/ML workflow (LLMs, agents, vector processing) |
+
+*Infrastructure Services (Data storage & core services):*
+| Option | Description |
+|--------|-------------|
 | `--postgresql` | Add PostgreSQL database with PGVector |
 | `--mongodb` | Add MongoDB document database |
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
+
+*Foundation Environments (Base containers):*
+| Option | Description |
+|--------|-------------|
+| `--python` | Add Python DevContainer environment |
+| `--node` | Add Node.js DevContainer environment |
 
 **Enhancement Flags:**
 | Option | Description |
@@ -93,6 +109,12 @@ spinbox create basic-env --profile minimal
 # Simple Python project
 spinbox create myproject --python
 
+# Data science workflow
+spinbox create analysis --data-science --with-examples
+
+# AI/ML workflow
+spinbox create ai-project --ai-ml --with-examples
+
 # Custom full-stack setup
 spinbox create webapp --python --node --postgresql --redis
 
@@ -107,6 +129,12 @@ spinbox create frontend --nextjs --with-examples
 
 # Full-stack with dependencies and examples
 spinbox create webapp --fastapi --nextjs --postgresql --with-deps --with-examples
+
+# Data science with database storage
+spinbox create ds-project --data-science --postgresql --with-deps --with-examples
+
+# AI/ML with vector search
+spinbox create ai-search --ai-ml --chroma --with-deps --with-examples
 
 # Frontend with MongoDB
 spinbox create frontend-app --nextjs --mongodb
@@ -152,10 +180,22 @@ spinbox add [OPTIONS]
 #### Options
 
 **Component Addition:**
+
+*Application Frameworks:*
 | Option | Description |
 |--------|-------------|
 | `--fastapi` | Add FastAPI backend component |
 | `--nextjs` | Add Next.js frontend component |
+
+*Workflow Frameworks:*
+| Option | Description |
+|--------|-------------|
+| `--data-science` | Add Data Science workflow (Jupyter, pandas, scikit-learn) |
+| `--ai-ml` | Add AI/ML workflow (LLMs, agents, vector processing) |
+
+*Infrastructure Services:*
+| Option | Description |
+|--------|-------------|
 | `--postgresql` | Add PostgreSQL database with PGVector |
 | `--mongodb` | Add MongoDB document database |
 | `--redis` | Add Redis for caching and queues |
@@ -182,6 +222,10 @@ spinbox add [OPTIONS]
 cd myproject
 spinbox add --postgresql
 
+# Add workflow frameworks
+spinbox add --data-science --with-examples    # Add data science workflow
+spinbox add --ai-ml --with-examples           # Add AI/ML workflow
+
 # Add multiple components with clear architectural roles
 spinbox add --postgresql --redis        # Primary storage + caching layer
 spinbox add --mongodb --chroma        # Alternative storage + vector search
@@ -194,9 +238,11 @@ spinbox add --nextjs --node-version 18
 
 # Add with dependencies and examples
 spinbox add --redis --with-deps --with-examples
+spinbox add --data-science --with-deps --with-examples
 
 # Add multiple components with enhancements
 spinbox add --postgresql --redis --with-deps
+spinbox add --ai-ml --chroma --with-deps --with-examples
 ```
 
 #### Behavior
@@ -644,8 +690,8 @@ spinbox profiles --show api-only
 |---------|-------------|------------|
 | `web-app` | Full-stack web application | fastapi, nextjs, postgresql |
 | `api-only` | FastAPI API with PostgreSQL | fastapi, postgresql, redis |
-| `data-science` | Data science environment | python, postgresql |
-| `ai-llm` | AI/LLM development | python, postgresql, chroma |
+| `data-science` | Data science workflow | data-science, postgresql |
+| `ai-llm` | AI/LLM development | ai-ml, chroma |
 | `minimal` | Basic prototyping environment | python |
 
 #### Profile Details

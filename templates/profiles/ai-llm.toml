@@ -1,8 +1,9 @@
 [profile]
 name = "ai-llm"
-description = "AI/LLM development environment with vector database"
+description = "AI/LLM development environment with agents, vector processing, and LLM integration"
 
 [components]
+ai_ml = true
 fastapi = false
 nextjs = false
 postgresql = false

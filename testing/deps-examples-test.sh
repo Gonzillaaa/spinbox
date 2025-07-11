@@ -2,7 +2,8 @@
 # Simple Tests for --with-deps and --with-examples flags
 # Self-contained test following CLAUDE.md simplicity philosophy
 
-set -e
+# Don't use set -e here as it interferes with test functions
+# set -e
 
 # Test counters
 TESTS_RUN=0

@@ -145,17 +145,20 @@ Components are organized by their **architectural role**:
 
 | Component | Flag | Architectural Role | Description |
 |-----------|------|-------------------|-------------|
-| **Prototyping Environment** |
-| Python | `--python` | DevContainer | Python DevContainer with virtual environment |
-| Node.js | `--node` | DevContainer | Node.js DevContainer with TypeScript |
-| **Application Layer** |
-| FastAPI | `--fastapi` | API Layer | FastAPI backend (includes Python) |
-| Next.js | `--nextjs` | UI Layer | Next.js frontend (includes Node.js) |
-| **Storage Layer** |
+| **Application Frameworks** (Build user interfaces) |
+| FastAPI | `--fastapi` | Backend Framework | FastAPI backend with SQLAlchemy (includes Python) |
+| Next.js | `--nextjs` | Frontend Framework | Next.js frontend with TypeScript (includes Node.js) |
+| **Workflow Frameworks** (Specialized work methodologies) |
+| Data Science | `--data-science` | Data Workflow | Jupyter, pandas, scikit-learn, ML libraries |
+| AI/ML | `--ai-ml` | AI Workflow | LLMs, agents, vector processing, embeddings |
+| **Infrastructure Services** (Data storage & core services) |
 | PostgreSQL | `--postgresql` | Primary Storage | PostgreSQL with PGVector extension |
-| MongoDB | `--mongodb` | Alternative Storage | MongoDB document database |
+| MongoDB | `--mongodb` | Document Storage | MongoDB document database |
 | Redis | `--redis` | Caching Layer | Redis for caching and queues |
 | Chroma | `--chroma` | Vector Search | Chroma vector database for AI/ML |
+| **Foundation Environments** (Base containers) |
+| Python | `--python` | DevContainer | Python DevContainer with virtual environment |
+| Node.js | `--node` | DevContainer | Node.js DevContainer with TypeScript |
 
 ### 🎯 Enhancement Flags
 
@@ -166,20 +169,24 @@ Components are organized by their **architectural role**:
 
 **Examples:**
 ```bash
-# Add FastAPI with automatic dependency installation
+# Application frameworks (build user interfaces)
 spinbox create api --fastapi --with-deps
-
-# Add Next.js with working examples
 spinbox create frontend --nextjs --with-examples
 
-# Full-stack project with dependencies and examples
+# Workflow frameworks (specialized methodologies) 
+spinbox create analysis --data-science --with-deps --with-examples
+spinbox create ai-project --ai-ml --with-deps --with-examples
+
+# Combined projects
 spinbox create webapp --fastapi --nextjs --postgresql --with-deps --with-examples
 ```
 
 **Examples of combining components:**
 - `--postgresql --redis` - Primary storage + caching
 - `--mongodb --chroma` - Document storage + vector search
-- `--fastapi --nextjs --postgresql` - Full-stack application
+- `--fastapi --nextjs --postgresql` - Full-stack web application
+- `--data-science --postgresql` - Data analysis workflow with database
+- `--ai-ml --chroma` - AI/ML workflow with vector database
 
 ## 🎯 Predefined Profiles
 
@@ -187,8 +194,8 @@ spinbox create webapp --fastapi --nextjs --postgresql --with-deps --with-example
 |---------|-------------|------------|
 | `web-app` | Full-stack web application | fastapi, nextjs, postgresql |
 | `api-only` | FastAPI API with caching | fastapi, postgresql, redis |
-| `data-science` | ML/data science environment | python, postgresql |
-| `ai-llm` | AI/LLM prototyping | python, postgresql, chroma |
+| `data-science` | Data science workflow | data-science, postgresql |
+| `ai-llm` | AI/LLM workflow | ai-ml, chroma |
 | `minimal` | Basic prototyping environment | python |
 
 ## 🛠️ Development Workflow
@@ -232,12 +239,14 @@ cd fastapi
 ### After Project Creation
 ```
 your-project/
-├── fastapi/               # FastAPI backend (if selected)
-├── nextjs/                # Next.js frontend (if selected)
-├── postgresql/            # PostgreSQL config (if selected)
-├── mongodb/               # MongoDB config (if selected)
-├── redis/                 # Redis config (if selected)
-├── chroma_data/           # Chroma vector database data (if selected)
+├── fastapi/               # FastAPI application framework (if selected)
+├── nextjs/                # Next.js application framework (if selected)
+├── data-science/          # Data Science workflow framework (if selected)
+├── ai-ml/                 # AI/ML workflow framework (if selected)
+├── postgresql/            # PostgreSQL infrastructure service (if selected)
+├── mongodb/               # MongoDB infrastructure service (if selected)
+├── redis/                 # Redis infrastructure service (if selected)
+├── chroma_data/           # Chroma infrastructure service (if selected)
 ├── .devcontainer/         # DevContainer config (always created)
 ├── docker-compose.yml     # Docker services (if components selected)
 ├── requirements.txt       # Python dependencies
@@ -247,23 +256,19 @@ your-project/
 
 ## 🧩 Component Details
 
-**Backend (FastAPI)**
-- Python 3.12+ with type hints, UV package manager, SQLAlchemy ORM with async support
+**Application Frameworks:**
+- **FastAPI** - Python 3.12+ with type hints, UV package manager, SQLAlchemy ORM with async support
+- **Next.js** - TypeScript, modern App Router, Tailwind CSS, ESLint
 
-**Frontend (Next.js)**
-- TypeScript, modern App Router, Tailwind CSS, ESLint
+**Workflow Frameworks:**
+- **Data Science** - Jupyter Lab, pandas, scikit-learn, matplotlib, automated analysis scripts
+- **AI/ML** - LLM clients (OpenAI, Anthropic), agent frameworks, vector processing, prompt management
 
-**Database (PostgreSQL)**
-- PGVector extension for vector embeddings, initialization scripts
-
-**MongoDB**
-- Document database with authentication, collections and indexes
-
-**Redis**
-- Caching and queues with persistence enabled
-
-**Chroma**
-- Vector database for embeddings with persistent storage
+**Infrastructure Services:**
+- **PostgreSQL** - PGVector extension for vector embeddings, initialization scripts
+- **MongoDB** - Document database with authentication, collections and indexes
+- **Redis** - Caching and queues with persistence enabled
+- **Chroma** - Vector database for embeddings with persistent storage
 
 ## 📦 Requirements.txt Templates
 

@@ -19,6 +19,7 @@ This file contains development philosophy and preferences for working on the Spi
 7. **Make atomic commits** (one logical change per commit)
 8. **Push to remote** (maintain backup and collaboration)
 9. **Create pull request** (for feature branches)
+10. **Go back to main after pull request merge** (once a pull request has been merged do 'git checkout main')
 
 ## GitHub Workflow (MANDATORY)
 

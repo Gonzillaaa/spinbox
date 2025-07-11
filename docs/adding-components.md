@@ -7,12 +7,24 @@ This guide explains how to add new components to an existing Spinbox project usi
 Spinbox supports adding components to existing projects seamlessly through the `spinbox add` command. You can add any component that's available during project creation:
 
 ### Available Components
-- **Backend**: FastAPI backend with Python 3.12+
-- **Frontend**: Next.js frontend with TypeScript
-- **Database**: PostgreSQL with PGVector extension
-- **MongoDB**: MongoDB document database
-- **Redis**: Redis for caching and queues
-- **Chroma**: Chroma vector database for embeddings
+
+**Application Frameworks** (Build user interfaces):
+- **FastAPI**: Backend API framework with Python 3.12+
+- **Next.js**: Frontend framework with TypeScript
+
+**Workflow Frameworks** (Specialized methodologies):
+- **Data Science**: Data analysis workflow (Jupyter, pandas, scikit-learn)
+- **AI/ML**: AI/ML workflow (LLMs, agents, vector processing)
+
+**Infrastructure Services** (Data storage & core services):
+- **PostgreSQL**: Database with PGVector extension
+- **MongoDB**: Document database
+- **Redis**: Caching and queues
+- **Chroma**: Vector database for embeddings
+
+**Foundation Environments** (Base containers):
+- **Python**: Python DevContainer environment
+- **Node.js**: Node.js DevContainer environment
 
 ### Enhancement Flags
 - **`--with-deps`**: Automatically install component dependencies using `uv` (Python) or `npm` (Node.js)
@@ -35,17 +47,23 @@ The `spinbox add` command is the recommended and supported method for adding com
 cd myproject
 
 # Add a single component
-spinbox add --database
+spinbox add --postgresql
+
+# Add workflow frameworks
+spinbox add --data-science
+spinbox add --ai-ml
 
 # Add multiple components
-spinbox add --backend --redis
+spinbox add --fastapi --redis
+spinbox add --postgresql --chroma
 
 # Add components with version specifications
-spinbox add --database --postgres-version 14
-spinbox add --frontend --node-version 18
+spinbox add --postgresql --postgres-version 14
+spinbox add --nextjs --node-version 18
 
 # Add with automatic dependency installation
 spinbox add --fastapi --with-deps
+spinbox add --data-science --with-deps
 
 # Add with working code examples
 spinbox add --nextjs --with-examples
@@ -60,7 +78,7 @@ spinbox add --postgresql --with-deps --with-examples
 
 ```bash
 # Add primary database storage
-spinbox add --database
+spinbox add --postgresql
 
 # Add caching layer
 spinbox add --redis
@@ -72,32 +90,45 @@ spinbox add --mongodb
 spinbox add --chroma
 
 # Add multiple storage layers
-spinbox add --database --redis --chroma
+spinbox add --postgresql --redis --chroma
 ```
 
 #### Adding Application Layers
 
 ```bash
 # Add API backend to existing project
-spinbox add --backend
+spinbox add --fastapi
 
 # Add web frontend
-spinbox add --frontend
+spinbox add --nextjs
 
 # Add full web application stack
-spinbox add --backend --frontend --database
+spinbox add --fastapi --nextjs --postgresql
+```
+
+#### Adding Workflow Frameworks
+
+```bash
+# Add data science workflow
+spinbox add --data-science --with-examples
+
+# Add AI/ML workflow
+spinbox add --ai-ml --with-examples
+
+# Add AI/ML with vector search
+spinbox add --ai-ml --chroma --with-deps --with-examples
 ```
 
 #### Version-Specific Additions
 
 ```bash
 # Add components with specific versions
-spinbox add --database --postgres-version 15
-spinbox add --backend --python-version 3.11
-spinbox add --frontend --node-version 20
+spinbox add --postgresql --postgres-version 15
+spinbox add --fastapi --python-version 3.11
+spinbox add --nextjs --node-version 20
 
 # Multiple components with versions
-spinbox add --backend --redis --python-version 3.12 --redis-version 7
+spinbox add --fastapi --redis --python-version 3.12 --redis-version 7
 ```
 
 ## What Happens When You Add Components

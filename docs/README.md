@@ -40,24 +40,39 @@
 
 | Profile | Use Case | Components | Command |
 |---------|----------|------------|---------|
-| `web-app` | Full-stack web application | Backend + Frontend + Database | `spinbox create myapp --profile web-app` |
-| `api-only` | Backend API development | Backend + Database + Redis | `spinbox create api --profile api-only` |
-| `data-science` | ML/Data science projects | Python + Database | `spinbox create ml-proj --profile data-science` |
-| `ai-llm` | AI/LLM development | Python + Database + Chroma | `spinbox create ai-proj --profile ai-llm` |
+| `web-app` | Full-stack web application | FastAPI + Next.js + PostgreSQL | `spinbox create myapp --profile web-app` |
+| `api-only` | Backend API development | FastAPI + PostgreSQL + Redis | `spinbox create api --profile api-only` |
+| `data-science` | Data analysis workflow | Data Science + PostgreSQL | `spinbox create ml-proj --profile data-science` |
+| `ai-llm` | AI/LLM workflow | AI/ML + Chroma | `spinbox create ai-proj --profile ai-llm` |
 | `minimal` | Basic development | Python DevContainer | `spinbox create basic --profile minimal` |
 
 ## 🔧 Components Quick Reference
 
+**Application Frameworks** (Build user interfaces):
 | Component | Description | Flag | Use With |
 |-----------|-------------|------|----------|
-| Python | Python DevContainer | `--python` | Any project |
-| Node.js | Node.js DevContainer | `--node` | Frontend projects |
-| Backend | FastAPI backend | `--backend` | API development |
-| Frontend | Next.js frontend | `--frontend` | Web applications |
-| Database | PostgreSQL + PGVector (primary storage) | `--database` | Relational data |
-| MongoDB | MongoDB (alternative primary storage) | `--mongodb` | Document/NoSQL data |
-| Redis | Redis (caching/queue layer) | `--redis` | Performance/caching |
-| Chroma | Chroma (vector search layer) | `--chroma` | AI/ML embeddings |
+| FastAPI | Backend framework | `--fastapi` | API development |
+| Next.js | Frontend framework | `--nextjs` | Web applications |
+
+**Workflow Frameworks** (Specialized work methodologies):
+| Component | Description | Flag | Use With |
+|-----------|-------------|------|----------|
+| Data Science | Data analysis workflow | `--data-science` | ML/analysis projects |
+| AI/ML | AI/LLM workflow | `--ai-ml` | AI/agent projects |
+
+**Infrastructure Services** (Data storage & core services):
+| Component | Description | Flag | Use With |
+|-----------|-------------|------|----------|
+| PostgreSQL | Primary storage + PGVector | `--postgresql` | Relational data |
+| MongoDB | Document storage | `--mongodb` | Document/NoSQL data |
+| Redis | Caching/queue layer | `--redis` | Performance/caching |
+| Chroma | Vector search layer | `--chroma` | AI/ML embeddings |
+
+**Foundation Environments** (Base containers):
+| Component | Description | Flag | Use With |
+|-----------|-------------|------|----------|
+| Python | Python DevContainer | `--python` | Any Python project |
+| Node.js | Node.js DevContainer | `--node` | Any Node.js project |
 
 ---
 

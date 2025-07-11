@@ -419,6 +419,14 @@ test_project_creation_smoke() {
     # Test version override with dry-run
     test_assert '"$cli_path" create smoke-version-test --python --python-version 3.11 --dry-run >/dev/null 2>&1' "Dry run with version override works"
     
+    # Test new framework components with dry-run
+    test_assert '"$cli_path" create smoke-ds-test --data-science --dry-run >/dev/null 2>&1' "Dry run with data-science component works"
+    test_assert '"$cli_path" create smoke-ai-test --ai-ml --dry-run >/dev/null 2>&1' "Dry run with ai-ml component works"
+    
+    # Test new framework components with examples
+    test_assert '"$cli_path" create smoke-ds-ex --data-science --with-examples --dry-run >/dev/null 2>&1' "Dry run with data-science and examples works"
+    test_assert '"$cli_path" create smoke-ai-ex --ai-ml --with-examples --dry-run >/dev/null 2>&1' "Dry run with ai-ml and examples works"
+    
     # Test that invalid profile fails appropriately
     if "$cli_path" create smoke-invalid --profile nonexistent --dry-run >/dev/null 2>&1; then
         echo -e "${RED}✗ FAIL: Invalid profile should have failed${NC}"
@@ -434,6 +442,11 @@ test_project_creation_smoke() {
     test_assert '[[ -d "$generators_dir" ]]' "Generators directory exists"
     test_file_exists "$generators_dir/minimal-python.sh" "Python generator exists"
     test_file_exists "$generators_dir/minimal-node.sh" "Node generator exists"
+    test_file_exists "$generators_dir/fastapi.sh" "FastAPI generator exists"
+    test_file_exists "$generators_dir/nextjs.sh" "Next.js generator exists"
+    test_file_exists "$generators_dir/data-science.sh" "Data Science generator exists"
+    test_file_exists "$generators_dir/ai-ml.sh" "AI/ML generator exists"
+    test_file_exists "$generators_dir/postgresql.sh" "PostgreSQL generator exists"
     
     # Test uninstall script exists and is executable
     test_file_exists "$PROJECT_ROOT/uninstall.sh" "Uninstall script exists"

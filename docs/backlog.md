@@ -40,6 +40,9 @@ spinbox add --chroma --with-deps --with-examples
 ```
 
 #### **Recent Completions (Latest)**
+- ✅ **Framework generators integration** - Added data-science and ai-ml framework generators with examples support (2025-07-11)
+- ✅ **Architectural taxonomy implementation** - 5-tier system: Application/Workflow/Infrastructure/Platform/Foundation
+- ✅ **Examples generator enhancement** - Extended support for data-science and ai-ml components
 - ✅ **File cleanup** - Removed temporary `verify_fix.sh` script from root directory (2025-07-11)
 - ✅ **DRY_RUN variable scoping fix** - Fixed issue where `--dry-run` wasn't properly respected
 - ✅ **Test suite simplification** - Reduced complex test dependencies, improved execution speed
@@ -54,6 +57,8 @@ spinbox add --chroma --with-deps --with-examples
 - `--nodejs --with-examples` → Sample app.js, package.json setup
 - `--fastapi --with-examples` → Basic API routes, models, main.py
 - `--nextjs --with-examples` → Pages, components, API routes
+- `--data-science --with-examples` → Jupyter notebooks, data pipeline scripts, analysis workflows
+- `--ai-ml --with-examples` → Research agents, document processing, LLM integration
 
 **Two-Component Combinations**:
 - `--fastapi --postgresql --with-examples` → FastAPI + SQLAlchemy models, CRUD operations
@@ -61,6 +66,8 @@ spinbox add --chroma --with-deps --with-examples
 - `--fastapi --redis --with-examples` → FastAPI + Redis caching/queuing examples
 - `--fastapi --chroma --with-examples` → FastAPI + vector search endpoints
 - `--nextjs --fastapi --with-examples` → Next.js + API client integration
+- `--data-science --postgresql --with-examples` → Data analysis workflows with database storage
+- `--ai-ml --chroma --with-examples` → AI/ML workflows with vector search capabilities
 
 **Three-Component Combinations**:
 - `--fastapi --postgresql --redis --with-examples` → API + DB + caching patterns
@@ -70,6 +77,8 @@ spinbox add --chroma --with-deps --with-examples
 **Complex Combinations**:
 - `--nextjs --fastapi --postgresql --redis --with-examples` → Full stack + caching
 - `--fastapi --postgresql --mongodb --chroma --with-examples` → Multi-storage API
+- `--fastapi --ai-ml --chroma --postgresql --with-examples` → AI API with vector search and data storage
+- `--data-science --ai-ml --postgresql --chroma --with-examples` → Complete ML pipeline with data processing and vector search
 
 #### **Example Code Templates**
 
@@ -245,6 +254,270 @@ app = FastAPI(
 )
 
 # Rest of the FastAPI code remains the same...
+```
+
+**Data Science Workflow** (`templates/examples/data-science/`):
+```python
+# data_pipeline.py - Complete data processing pipeline
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from pathlib import Path
+import logging
+from datetime import datetime
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def load_data(file_path: str) -> pd.DataFrame:
+    """Load data from CSV file"""
+    try:
+        df = pd.read_csv(file_path)
+        logger.info(f"Loaded {len(df)} records from {file_path}")
+        return df
+    except FileNotFoundError:
+        logger.error(f"File not found: {file_path}")
+        return pd.DataFrame()
+
+def clean_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Clean and preprocess data"""
+    df = df.drop_duplicates()
+    df = df.fillna(method='ffill')
+    
+    if 'date' in df.columns:
+        df['date'] = pd.to_datetime(df['date'])
+    
+    logger.info(f"Cleaned data: {len(df)} records remaining")
+    return df
+
+def analyze_data(df: pd.DataFrame) -> dict:
+    """Perform basic data analysis"""
+    if df.empty:
+        return {}
+    
+    analysis = {
+        'record_count': len(df),
+        'numeric_columns': df.select_dtypes(include=[np.number]).columns.tolist(),
+        'categorical_columns': df.select_dtypes(include=['object']).columns.tolist(),
+        'missing_values': df.isnull().sum().to_dict(),
+        'summary_stats': df.describe().to_dict() if len(df.select_dtypes(include=[np.number]).columns) > 0 else {}
+    }
+    
+    return analysis
+
+def generate_visualizations(df: pd.DataFrame, output_dir: str):
+    """Generate and save visualizations"""
+    if df.empty:
+        return
+    
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    
+    if len(numeric_cols) > 0:
+        fig, axes = plt.subplots(len(numeric_cols), 1, figsize=(10, 4 * len(numeric_cols)))
+        if len(numeric_cols) == 1:
+            axes = [axes]
+        
+        for i, col in enumerate(numeric_cols):
+            axes[i].hist(df[col], bins=30, alpha=0.7)
+            axes[i].set_title(f'Distribution of {col}')
+        
+        plt.tight_layout()
+        plt.savefig(output_path / 'distributions.png', dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        logger.info(f"Visualizations saved to {output_path}")
+
+def main():
+    """Main pipeline execution"""
+    logger.info("Starting data pipeline...")
+    
+    # Generate sample data for demonstration
+    np.random.seed(42)
+    sample_data = pd.DataFrame({
+        'date': pd.date_range('2023-01-01', periods=1000, freq='D'),
+        'value': np.cumsum(np.random.randn(1000)) + 100,
+        'category': np.random.choice(['A', 'B', 'C'], 1000),
+        'amount': np.random.uniform(10, 1000, 1000)
+    })
+    
+    # Process data
+    df_clean = clean_data(sample_data)
+    analysis = analyze_data(df_clean)
+    generate_visualizations(df_clean, "./reports")
+    
+    logger.info("Pipeline completed successfully!")
+
+if __name__ == "__main__":
+    main()
+```
+
+**AI/ML Workflow** (`templates/examples/ai-ml/`):
+```python
+# research_agent.py - AI research agent with LLM integration
+import os
+import json
+from datetime import datetime
+from typing import List, Dict, Any, Optional
+from pathlib import Path
+
+try:
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+
+try:
+    import anthropic
+    ANTHROPIC_AVAILABLE = True
+except ImportError:
+    ANTHROPIC_AVAILABLE = False
+
+class ResearchAgent:
+    """AI Agent for conducting research and generating reports"""
+    
+    def __init__(self, provider: str = "openai", model: str = None):
+        self.provider = provider.lower()
+        self.model = model or self._get_default_model()
+        self.client = self._initialize_client()
+        
+    def _get_default_model(self) -> str:
+        """Get default model based on provider"""
+        defaults = {
+            "openai": "gpt-4",
+            "anthropic": "claude-3-sonnet-20240229"
+        }
+        return defaults.get(self.provider, "gpt-4")
+    
+    def _initialize_client(self):
+        """Initialize the LLM client"""
+        if self.provider == "openai" and OPENAI_AVAILABLE:
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                raise ValueError("OPENAI_API_KEY environment variable is required")
+            return OpenAI(api_key=api_key)
+        
+        elif self.provider == "anthropic" and ANTHROPIC_AVAILABLE:
+            api_key = os.getenv("ANTHROPIC_API_KEY")
+            if not api_key:
+                raise ValueError("ANTHROPIC_API_KEY environment variable is required")
+            return anthropic.Anthropic(api_key=api_key)
+        
+        else:
+            raise ValueError(f"Provider {self.provider} not supported or not installed")
+    
+    def generate_response(self, prompt: str, system_prompt: str = None) -> str:
+        """Generate response using configured LLM"""
+        try:
+            if self.provider == "openai":
+                messages = []
+                if system_prompt:
+                    messages.append({"role": "system", "content": system_prompt})
+                messages.append({"role": "user", "content": prompt})
+                
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    max_tokens=2000,
+                    temperature=0.7
+                )
+                return response.choices[0].message.content
+            
+            elif self.provider == "anthropic":
+                response = self.client.messages.create(
+                    model=self.model,
+                    max_tokens=2000,
+                    system=system_prompt or "You are a helpful research assistant.",
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                return response.content[0].text
+            
+        except Exception as e:
+            return f"Error generating response: {str(e)}"
+    
+    def research_topic(self, topic: str, depth: str = "medium") -> Dict[str, Any]:
+        """Research a topic and return structured findings"""
+        system_prompt = """You are a research assistant. Provide comprehensive, accurate information about the given topic. 
+        Structure your response with:
+        1. Overview
+        2. Key Points (3-5 main points)
+        3. Current Trends
+        4. Implications
+        5. References/Sources to explore further
+        
+        Be factual and cite your reasoning."""
+        
+        research_prompt = f"""
+        Research the topic: {topic}
+        
+        Depth level: {depth}
+        
+        Please provide a comprehensive analysis covering the key aspects, current state, 
+        and implications of this topic. Focus on accuracy and practical insights.
+        """
+        
+        response = self.generate_response(research_prompt, system_prompt)
+        
+        return {
+            "topic": topic,
+            "depth": depth,
+            "timestamp": datetime.now().isoformat(),
+            "content": response,
+            "agent_info": {
+                "provider": self.provider,
+                "model": self.model
+            }
+        }
+    
+    def save_research(self, research_data: Dict[str, Any], output_dir: str = "../reports"):
+        """Save research data to file"""
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        topic_slug = research_data['topic'].lower().replace(' ', '_').replace('/', '_')
+        
+        json_file = output_path / f"{topic_slug}_research_{timestamp}.json"
+        with open(json_file, 'w') as f:
+            json.dump(research_data, f, indent=2)
+        
+        return str(json_file)
+
+def main():
+    """Example usage of the Research Agent"""
+    print("🤖 Starting Research Agent Example...")
+    
+    try:
+        if OPENAI_AVAILABLE and os.getenv("OPENAI_API_KEY"):
+            agent = ResearchAgent(provider="openai")
+        elif ANTHROPIC_AVAILABLE and os.getenv("ANTHROPIC_API_KEY"):
+            agent = ResearchAgent(provider="anthropic")
+        else:
+            print("❌ No API keys found. Please set OPENAI_API_KEY or ANTHROPIC_API_KEY")
+            return
+    
+    except Exception as e:
+        print(f"❌ Error initializing agent: {e}")
+        return
+    
+    # Example research topic
+    topic = "Artificial Intelligence in Climate Change Solutions"
+    
+    print(f"🔍 Researching topic: {topic}")
+    
+    # Conduct research
+    research_data = agent.research_topic(topic, depth="medium")
+    
+    # Save research
+    output_file = agent.save_research(research_data)
+    
+    print(f"✅ Research completed and saved to: {output_file}")
+
+if __name__ == "__main__":
+    main()
 ```
 
 **FastAPI + Redis** (`templates/examples/fastapi-redis/`):
@@ -1148,6 +1421,37 @@ packages = [
 packages = [
     "beanie>=1.24.0",
     "motor>=3.3.0"
+]
+```
+
+**Data Science Dependencies**:
+```toml
+[dependencies.data_science]
+packages = [
+    "pandas>=2.1.0",
+    "numpy>=1.25.0",
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.0",
+    "jupyter>=1.0.0",
+    "jupyterlab>=4.0.0",
+    "scikit-learn>=1.3.0",
+    "plotly>=5.17.0"
+]
+```
+
+**AI/ML Dependencies**:
+```toml
+[dependencies.ai_ml]
+packages = [
+    "openai>=1.3.0",
+    "anthropic>=0.7.0",
+    "langchain>=0.0.350",
+    "langchain-community>=0.0.1",
+    "llama-index>=0.9.0",
+    "chromadb>=0.4.0",
+    "sentence-transformers>=2.2.0",
+    "transformers>=4.36.0",
+    "tiktoken>=0.5.0"
 ]
 ```
 
