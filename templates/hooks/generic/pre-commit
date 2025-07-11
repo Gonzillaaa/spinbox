@@ -1,0 +1,103 @@
+#!/bin/bash
+# Generic pre-commit hook for unknown project types
+# Runs basic checks and file validation
+
+set -e
+
+echo "Running generic pre-commit checks..."
+
+# Get list of files to check
+files=$(git diff --cached --name-only --diff-filter=ACM || true)
+
+if [[ -z "$files" ]]; then
+    echo "No files to check"
+    exit 0
+fi
+
+echo "Checking files: $files"
+
+# Check for large files (>10MB)
+echo "Checking for large files..."
+for file in $files; do
+    if [[ -f "$file" ]]; then
+        size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null || echo 0)
+        if [[ $size -gt 10485760 ]]; then
+            echo "❌ Large file detected: $file ($(( size / 1024 / 1024 ))MB)"
+            echo "Consider using Git LFS for large files"
+            exit 1
+        fi
+    fi
+done
+echo "✅ No large files detected"
+
+# Check for common secrets patterns
+echo "Checking for potential secrets..."
+secret_patterns=(
+    "password\s*=\s*['\"][^'\"]*['\"]"
+    "api_key\s*=\s*['\"][^'\"]*['\"]"
+    "secret\s*=\s*['\"][^'\"]*['\"]"
+    "token\s*=\s*['\"][^'\"]*['\"]"
+    "AWS_ACCESS_KEY_ID"
+    "AWS_SECRET_ACCESS_KEY"
+    "GITHUB_TOKEN"
+    "OPENAI_API_KEY"
+    "ANTHROPIC_API_KEY"
+)
+
+for file in $files; do
+    if [[ -f "$file" ]]; then
+        for pattern in "${secret_patterns[@]}"; do
+            if grep -iE "$pattern" "$file" >/dev/null 2>&1; then
+                echo "❌ Potential secret detected in $file"
+                echo "Pattern: $pattern"
+                echo "Please use environment variables or .env files for secrets"
+                exit 1
+            fi
+        done
+    fi
+done
+echo "✅ No potential secrets detected"
+
+# Check for .env files being committed
+for file in $files; do
+    if [[ "$file" == ".env" ]] || [[ "$file" == *".env.local" ]]; then
+        echo "❌ Environment file detected: $file"
+        echo "Environment files should not be committed to version control"
+        exit 1
+    fi
+done
+echo "✅ No environment files detected"
+
+# Check for trailing whitespace
+echo "Checking for trailing whitespace..."
+whitespace_files=()
+for file in $files; do
+    if [[ -f "$file" ]]; then
+        if grep -l "[[:space:]]$" "$file" >/dev/null 2>&1; then
+            whitespace_files+=("$file")
+        fi
+    fi
+done
+
+if [[ ${#whitespace_files[@]} -gt 0 ]]; then
+    echo "⚠️  Trailing whitespace detected in: ${whitespace_files[*]}"
+    echo "Fix with: sed -i 's/[[:space:]]*$//' ${whitespace_files[*]}"
+    # Don't fail for whitespace, just warn
+fi
+
+# Check file permissions
+echo "Checking file permissions..."
+for file in $files; do
+    if [[ -f "$file" ]]; then
+        # Check if file has execute permissions but shouldn't
+        if [[ "$file" =~ \.(txt|md|json|yml|yaml|env|gitignore)$ ]]; then
+            if [[ -x "$file" ]]; then
+                echo "⚠️  Executable permission on non-executable file: $file"
+                echo "Fix with: chmod 644 $file"
+            fi
+        fi
+    fi
+done
+
+echo "✅ Generic pre-commit checks passed"
+exit 0

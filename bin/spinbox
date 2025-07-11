@@ -14,6 +14,7 @@ source "$SPINBOX_PROJECT_ROOT/lib/config.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/profiles.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/version.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/update.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/git-hooks.sh"
 
 # Script information
 readonly SCRIPT_NAME="spinbox"
@@ -43,6 +44,11 @@ FORCE_UPDATE=false
 CHECK_ONLY=false
 SKIP_CONFIRMATION=false
 
+# Hooks-specific variables
+HOOKS_ACTION=""
+HOOKS_TYPE=""
+HOOKS_WITH_EXAMPLES=false
+
 # Display version information
 function show_version() {
     echo "Spinbox v$VERSION"
@@ -64,6 +70,7 @@ COMMANDS:
     create      Create a new development project
     add         Add components to an existing project
     start       Start project services (Docker containers)
+    hooks       Manage git hooks for quality assurance
     config      Manage global configuration
     status      Show project and configuration status
     profiles    List and show available project profiles
@@ -456,7 +463,7 @@ function parse_args() {
     
     # Validate command
     case "$COMMAND" in
-        create|add|start|config|status|profiles|update|uninstall|version|help)
+        create|add|start|hooks|config|status|profiles|update|uninstall|version|help)
             ;;
         "")
             show_main_help
@@ -479,6 +486,9 @@ function parse_args() {
             ;;
         start)
             parse_start_args "$@"
+            ;;
+        hooks)
+            parse_hooks_args "$@"
             ;;
         config)
             parse_config_args "$@"
@@ -508,6 +518,7 @@ function parse_args() {
                     create) show_create_help ;;
                     add) show_add_help ;;
                     start) show_start_help ;;
+                    hooks) show_hooks_usage ;;
                     config) show_config_help ;;
                     status) show_status_help ;;
                     profiles) show_profiles_help ;;
@@ -949,6 +960,82 @@ function parse_uninstall_args() {
     UNINSTALL_FORCE="${UNINSTALL_FORCE:-false}"
 }
 
+# Parse hooks command arguments
+function parse_hooks_args() {
+    # Check for help first
+    if [[ $# -gt 0 && "$1" == "--help" ]] || [[ $# -gt 0 && "$1" == "-h" ]]; then
+        show_hooks_usage
+        exit 0
+    fi
+    
+    if [[ $# -eq 0 ]]; then
+        print_error "Action is required"
+        echo "Use 'spinbox hooks --help' for usage information."
+        exit 1
+    fi
+    
+    # First argument should be action
+    HOOKS_ACTION="$1"
+    shift
+    
+    # Validate action
+    case "$HOOKS_ACTION" in
+        add|list|remove)
+            ;;
+        *)
+            print_error "Unknown action: $HOOKS_ACTION"
+            echo "Valid actions: add, list, remove"
+            exit 1
+            ;;
+    esac
+    
+    # Parse remaining arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_hooks_usage
+                exit 0
+                ;;
+            --pre-commit|--pre-push|--all)
+                HOOKS_TYPE="${1#--}"
+                shift
+                ;;
+            --with-examples)
+                HOOKS_WITH_EXAMPLES=true
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -d|--dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            *)
+                # For add/remove actions, this could be the hook type
+                if [[ ("$HOOKS_ACTION" == "add" || "$HOOKS_ACTION" == "remove") && -z "$HOOKS_TYPE" ]]; then
+                    HOOKS_TYPE="$1"
+                    shift
+                else
+                    print_error "Unknown option for hooks: $1"
+                    echo "Use 'spinbox hooks --help' for usage information."
+                    exit 1
+                fi
+                ;;
+        esac
+    done
+    
+    # Validate hook type for add/remove actions
+    if [[ "$HOOKS_ACTION" == "add" || "$HOOKS_ACTION" == "remove" ]]; then
+        if [[ -z "$HOOKS_TYPE" ]]; then
+            print_error "Hook type is required for $HOOKS_ACTION action"
+            echo "Valid types: pre-commit, pre-push, all"
+            exit 1
+        fi
+    fi
+}
+
 # Execute the appropriate command
 function execute_command() {
     case "$COMMAND" in
@@ -980,6 +1067,9 @@ function execute_command() {
             ;;
         start)
             execute_start_command
+            ;;
+        hooks)
+            execute_hooks_command
             ;;
         config)
             execute_config_command
@@ -1325,6 +1415,21 @@ function execute_uninstall_command() {
         print_info "You may need to run with sudo or manually remove files"
         exit 1
     fi
+}
+
+# Execute hooks command
+function execute_hooks_command() {
+    export DRY_RUN VERBOSE
+    
+    case "$HOOKS_ACTION" in
+        add|list|remove)
+            manage_hooks "$HOOKS_ACTION" "$HOOKS_TYPE" "$HOOKS_WITH_EXAMPLES"
+            ;;
+        *)
+            print_error "Unknown hooks action: $HOOKS_ACTION"
+            exit 1
+            ;;
+    esac
 }
 
 # Show components status

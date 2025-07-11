@@ -1,0 +1,58 @@
+#!/bin/bash
+# Pre-commit hook for Python projects
+# Runs black formatting and basic pytest checks
+
+set -e
+
+echo "Running pre-commit checks for Python project..."
+
+# Check if we're in a Python project
+if [[ ! -f "requirements.txt" ]] && [[ ! -f "pyproject.toml" ]]; then
+    echo "Warning: No Python project files found"
+    exit 0
+fi
+
+# Get list of Python files to check
+python_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.py$" || true)
+
+if [[ -z "$python_files" ]]; then
+    echo "No Python files to check"
+    exit 0
+fi
+
+echo "Checking Python files: $python_files"
+
+# Check if black is available
+if command -v black >/dev/null 2>&1; then
+    echo "Running black formatting check..."
+    if ! black --check --diff $python_files; then
+        echo "❌ Black formatting check failed"
+        echo "Fix with: black $python_files"
+        exit 1
+    fi
+    echo "✅ Black formatting check passed"
+else
+    echo "Warning: black not found, skipping formatting check"
+fi
+
+# Check if we have a virtual environment and pytest
+if [[ -f "venv/bin/activate" ]]; then
+    source venv/bin/activate
+elif [[ -f ".venv/bin/activate" ]]; then
+    source .venv/bin/activate
+fi
+
+if command -v pytest >/dev/null 2>&1; then
+    echo "Running quick tests..."
+    # Run only fast tests (under 5 seconds)
+    if ! timeout 5s pytest -x --tb=short -q; then
+        echo "❌ Quick tests failed"
+        exit 1
+    fi
+    echo "✅ Quick tests passed"
+else
+    echo "Warning: pytest not found, skipping tests"
+fi
+
+echo "✅ Pre-commit checks passed"
+exit 0

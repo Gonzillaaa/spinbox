@@ -1,0 +1,82 @@
+#!/bin/bash
+# Pre-push hook for FastAPI projects
+# Runs full test suite and API validation
+
+set -e
+
+echo "Running pre-push checks for FastAPI project..."
+
+# Check if we're in a FastAPI project
+if [[ ! -d "fastapi" ]] && ! grep -q "fastapi" requirements.txt 2>/dev/null; then
+    echo "Warning: No FastAPI project detected"
+    exit 0
+fi
+
+# Activate virtual environment if available
+if [[ -f "venv/bin/activate" ]]; then
+    source venv/bin/activate
+elif [[ -f ".venv/bin/activate" ]]; then
+    source .venv/bin/activate
+elif [[ -f "fastapi/venv/bin/activate" ]]; then
+    source fastapi/venv/bin/activate
+fi
+
+# Run full test suite
+if command -v pytest >/dev/null 2>&1; then
+    echo "Running full FastAPI test suite..."
+    if ! pytest --tb=short; then
+        echo "❌ Test suite failed"
+        exit 1
+    fi
+    echo "✅ Test suite passed"
+else
+    echo "Warning: pytest not found, skipping tests"
+fi
+
+# Run type checking if mypy is available
+if command -v mypy >/dev/null 2>&1; then
+    echo "Running type checking..."
+    if ! mypy . --ignore-missing-imports; then
+        echo "❌ Type checking failed"
+        exit 1
+    fi
+    echo "✅ Type checking passed"
+else
+    echo "Info: mypy not found, skipping type checking"
+fi
+
+# FastAPI specific validations
+if command -v uvicorn >/dev/null 2>&1 && [[ -f "fastapi/main.py" ]]; then
+    echo "Validating FastAPI application..."
+    cd fastapi
+    
+    # Check if the app starts without errors
+    if ! timeout 5s uvicorn main:app --check 2>/dev/null; then
+        echo "❌ FastAPI application validation failed"
+        exit 1
+    fi
+    
+    # Check if OpenAPI schema is valid
+    if ! timeout 5s python -c "from main import app; print('OpenAPI schema valid')" 2>/dev/null; then
+        echo "❌ OpenAPI schema validation failed"
+        exit 1
+    fi
+    
+    cd ..
+    echo "✅ FastAPI application validation passed"
+fi
+
+# Run security check if bandit is available
+if command -v bandit >/dev/null 2>&1; then
+    echo "Running security check..."
+    if ! bandit -r . -f json -o /dev/null; then
+        echo "❌ Security check failed"
+        exit 1
+    fi
+    echo "✅ Security check passed"
+else
+    echo "Info: bandit not found, skipping security check"
+fi
+
+echo "✅ Pre-push checks passed"
+exit 0

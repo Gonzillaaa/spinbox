@@ -1,0 +1,133 @@
+#!/bin/bash
+# Pre-commit hook for Full-stack projects (FastAPI + Next.js)
+# Runs both Python and Node.js checks
+
+set -e
+
+echo "Running pre-commit checks for Full-stack project..."
+
+# Check if we're in a full-stack project
+has_python=false
+has_nodejs=false
+
+if [[ -f "requirements.txt" ]] || [[ -d "fastapi" ]]; then
+    has_python=true
+fi
+
+if [[ -f "package.json" ]] || [[ -d "nextjs" ]]; then
+    has_nodejs=true
+fi
+
+if [[ "$has_python" == "false" ]] && [[ "$has_nodejs" == "false" ]]; then
+    echo "Warning: No Python or Node.js project detected"
+    exit 0
+fi
+
+# Get list of files to check
+python_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.py$" || true)
+js_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.(js|ts|jsx|tsx)$" || true)
+
+if [[ -z "$python_files" ]] && [[ -z "$js_files" ]]; then
+    echo "No Python or JavaScript/TypeScript files to check"
+    exit 0
+fi
+
+echo "Checking files:"
+[[ -n "$python_files" ]] && echo "  Python: $python_files"
+[[ -n "$js_files" ]] && echo "  JavaScript/TypeScript: $js_files"
+
+# Python checks
+if [[ "$has_python" == "true" ]] && [[ -n "$python_files" ]]; then
+    echo "🐍 Running Python checks..."
+    
+    # Activate virtual environment if available
+    if [[ -f "venv/bin/activate" ]]; then
+        source venv/bin/activate
+    elif [[ -f ".venv/bin/activate" ]]; then
+        source .venv/bin/activate
+    elif [[ -f "fastapi/venv/bin/activate" ]]; then
+        source fastapi/venv/bin/activate
+    fi
+    
+    # Run black formatting check
+    if command -v black >/dev/null 2>&1; then
+        echo "  Running black formatting check..."
+        if ! black --check --diff $python_files; then
+            echo "  ❌ Black formatting check failed"
+            echo "  Fix with: black $python_files"
+            exit 1
+        fi
+        echo "  ✅ Black formatting check passed"
+    else
+        echo "  Warning: black not found, skipping formatting check"
+    fi
+    
+    # Run quick Python tests
+    if command -v pytest >/dev/null 2>&1; then
+        echo "  Running quick Python tests..."
+        if ! timeout 5s pytest -x --tb=short -q; then
+            echo "  ❌ Quick Python tests failed"
+            exit 1
+        fi
+        echo "  ✅ Quick Python tests passed"
+    else
+        echo "  Warning: pytest not found, skipping tests"
+    fi
+fi
+
+# Node.js checks
+if [[ "$has_nodejs" == "true" ]] && [[ -n "$js_files" ]]; then
+    echo "🟨 Running Node.js checks..."
+    
+    # Check if we're in the nextjs directory
+    if [[ -d "nextjs" ]]; then
+        cd nextjs
+    fi
+    
+    # Check if node_modules exists
+    if [[ ! -d "node_modules" ]]; then
+        echo "  Warning: node_modules not found, run 'npm install' first"
+        [[ -d "nextjs" ]] && cd ..
+    else
+        # Run Prettier check
+        if command -v npx >/dev/null 2>&1; then
+            echo "  Running Prettier formatting check..."
+            if ! npx prettier --check $js_files; then
+                echo "  ❌ Prettier formatting check failed"
+                echo "  Fix with: npx prettier --write $js_files"
+                exit 1
+            fi
+            echo "  ✅ Prettier formatting check passed"
+        else
+            echo "  Warning: npx not found, skipping Prettier check"
+        fi
+        
+        # Run ESLint
+        if npm run lint >/dev/null 2>&1; then
+            echo "  Running ESLint check..."
+            if ! npm run lint; then
+                echo "  ❌ ESLint check failed"
+                exit 1
+            fi
+            echo "  ✅ ESLint check passed"
+        else
+            echo "  Warning: No lint script found in package.json"
+        fi
+        
+        # Run TypeScript check if tsconfig.json exists
+        if [[ -f "tsconfig.json" ]] && command -v npx >/dev/null 2>&1; then
+            echo "  Running TypeScript check..."
+            if ! npx tsc --noEmit; then
+                echo "  ❌ TypeScript check failed"
+                exit 1
+            fi
+            echo "  ✅ TypeScript check passed"
+        fi
+        
+        # Return to root directory
+        [[ -d "nextjs" ]] && cd ..
+    fi
+fi
+
+echo "✅ Pre-commit checks passed for full-stack project"
+exit 0

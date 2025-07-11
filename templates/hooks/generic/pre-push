@@ -1,0 +1,105 @@
+#!/bin/bash
+# Generic pre-push hook for unknown project types
+# Runs basic validation and security checks
+
+set -e
+
+echo "Running generic pre-push checks..."
+
+# Check if we're in a git repository
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo "❌ Not a git repository"
+    exit 1
+fi
+
+# Check for merge conflict markers
+echo "Checking for merge conflict markers..."
+if git grep -n "^<<<<<<< \|^=======$\|^>>>>>>> " -- . ':!*.md' ':!*.txt' 2>/dev/null; then
+    echo "❌ Merge conflict markers detected"
+    echo "Please resolve merge conflicts before pushing"
+    exit 1
+fi
+echo "✅ No merge conflict markers detected"
+
+# Check for TODO/FIXME comments in code files
+echo "Checking for TODO/FIXME comments..."
+todo_files=$(git ls-files | grep -E '\.(py|js|ts|jsx|tsx|java|cpp|c|h|hpp|cs|php|rb|go|rs|swift|kt)$' | xargs grep -l "TODO\|FIXME" 2>/dev/null || true)
+
+if [[ -n "$todo_files" ]]; then
+    echo "⚠️  TODO/FIXME comments found in:"
+    echo "$todo_files"
+    echo "Consider addressing these before pushing to production"
+    # Don't fail for TODO/FIXME, just warn
+fi
+
+# Check for debug statements
+echo "Checking for debug statements..."
+debug_patterns=(
+    "console\.log"
+    "print\("
+    "debugger"
+    "pdb\.set_trace"
+    "breakpoint\("
+    "console\.debug"
+    "console\.warn"
+    "console\.error"
+)
+
+debug_files=()
+for pattern in "${debug_patterns[@]}"; do
+    while IFS= read -r file; do
+        if [[ -n "$file" ]]; then
+            debug_files+=("$file")
+        fi
+    done < <(git ls-files | grep -E '\.(py|js|ts|jsx|tsx)$' | xargs grep -l "$pattern" 2>/dev/null || true)
+done
+
+if [[ ${#debug_files[@]} -gt 0 ]]; then
+    echo "⚠️  Debug statements found in:"
+    printf '%s\n' "${debug_files[@]}" | sort -u
+    echo "Consider removing debug statements before pushing"
+    # Don't fail for debug statements, just warn
+fi
+
+# Check for sensitive patterns in all files
+echo "Checking for sensitive information..."
+sensitive_patterns=(
+    "password\s*=\s*['\"][^'\"]{8,}['\"]"
+    "api_key\s*=\s*['\"][^'\"]{20,}['\"]"
+    "secret\s*=\s*['\"][^'\"]{16,}['\"]"
+    "token\s*=\s*['\"][^'\"]{16,}['\"]"
+    "BEGIN RSA PRIVATE KEY"
+    "BEGIN PRIVATE KEY"
+    "BEGIN OPENSSH PRIVATE KEY"
+)
+
+for pattern in "${sensitive_patterns[@]}"; do
+    if git grep -iE "$pattern" -- . ':!*.md' ':!*.txt' 2>/dev/null; then
+        echo "❌ Sensitive information detected"
+        echo "Pattern: $pattern"
+        echo "Please remove sensitive information and use environment variables"
+        exit 1
+    fi
+done
+echo "✅ No sensitive information detected"
+
+# Check git configuration
+echo "Checking git configuration..."
+if [[ -z "$(git config user.name)" ]] || [[ -z "$(git config user.email)" ]]; then
+    echo "❌ Git user configuration incomplete"
+    echo "Please set git user.name and user.email"
+    exit 1
+fi
+echo "✅ Git configuration is complete"
+
+# Check for empty commit messages
+echo "Checking commit messages..."
+commit_msg=$(git log --format=%s -n 1)
+if [[ -z "$commit_msg" ]] || [[ "$commit_msg" =~ ^[[:space:]]*$ ]]; then
+    echo "❌ Empty commit message detected"
+    exit 1
+fi
+echo "✅ Commit message is present"
+
+echo "✅ Generic pre-push checks passed"
+exit 0
