@@ -47,6 +47,12 @@ spinbox create <PROJECT_NAME> [OPTIONS]
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
 
+**Enhancement Flags:**
+| Option | Description |
+|--------|-------------|
+| `--with-deps` | Automatically install component dependencies |
+| `--with-examples` | Generate working code examples |
+
 **Version Configuration:**
 | Option | Description |
 |--------|-------------|
@@ -92,6 +98,15 @@ spinbox create webapp --python --node --postgresql --redis
 
 # API layer with caching
 spinbox create api --fastapi --redis
+
+# With dependency installation
+spinbox create api --fastapi --with-deps
+
+# With working examples
+spinbox create frontend --nextjs --with-examples
+
+# Full-stack with dependencies and examples
+spinbox create webapp --fastapi --nextjs --postgresql --with-deps --with-examples
 
 # Frontend with MongoDB
 spinbox create frontend-app --nextjs --mongodb
@@ -146,6 +161,12 @@ spinbox add [OPTIONS]
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
 
+**Enhancement Flags:**
+| Option | Description |
+|--------|-------------|
+| `--with-deps` | Automatically install component dependencies |
+| `--with-examples` | Generate working code examples |
+
 **Version Configuration:**
 | Option | Description |
 |--------|-------------|
@@ -170,6 +191,12 @@ spinbox add --postgresql --postgres-version 14
 
 # Add Next.js to FastAPI-only project
 spinbox add --nextjs --node-version 18
+
+# Add with dependencies and examples
+spinbox add --redis --with-deps --with-examples
+
+# Add multiple components with enhancements
+spinbox add --postgresql --redis --with-deps
 ```
 
 #### Behavior

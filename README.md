@@ -34,6 +34,8 @@ A **global CLI tool** for spinning up customizable prototyping environments with
 - **Modular Design**: Start minimal, add what you need
 - **Service Management**: Built-in Docker Compose orchestration
 - **Version Control**: Customize software versions globally or per-project
+- **Dependency Management**: Automatic dependency installation with `--with-deps`
+- **Code Examples**: Working code examples with `--with-examples`
 - **Easy Installation**: Homebrew integration for macOS
 - **Root-Level Deployment**: All project files created at repository root
 
@@ -101,6 +103,10 @@ spinbox create api --fastapi --redis          # API layer with caching
 
 # Customize versions
 spinbox create api --fastapi --redis --python-version 3.11
+
+# Add dependencies and examples
+spinbox create api --fastapi --with-deps --with-examples
+spinbox create fullstack --fastapi --nextjs --postgresql --with-deps --with-examples
 ```
 
 ### 4. Project Management
@@ -109,6 +115,9 @@ spinbox create api --fastapi --redis --python-version 3.11
 # Add components to existing projects
 cd myproject
 spinbox add --postgresql --redis
+
+# Add with dependencies and examples
+spinbox add --redis --with-deps --with-examples
 
 # Start project services
 spinbox start                    # Start all services in background
@@ -146,6 +155,25 @@ Components are organized by their **architectural role**:
 | MongoDB | `--mongodb` | Alternative Storage | MongoDB document database |
 | Redis | `--redis` | Caching Layer | Redis for caching and queues |
 | Chroma | `--chroma` | Vector Search | Chroma vector database for AI/ML |
+
+### 🎯 Enhancement Flags
+
+| Flag | Description | Usage |
+|------|-------------|-------|
+| `--with-deps` | Automatically install component dependencies | Uses `uv` for Python, `npm` for Node.js |
+| `--with-examples` | Generate working code examples | Creates functional boilerplate code |
+
+**Examples:**
+```bash
+# Add FastAPI with automatic dependency installation
+spinbox create api --fastapi --with-deps
+
+# Add Next.js with working examples
+spinbox create frontend --nextjs --with-examples
+
+# Full-stack project with dependencies and examples
+spinbox create webapp --fastapi --nextjs --postgresql --with-deps --with-examples
+```
 
 **Examples of combining components:**
 - `--postgresql --redis` - Primary storage + caching

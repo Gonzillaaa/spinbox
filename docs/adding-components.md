@@ -14,6 +14,10 @@ Spinbox supports adding components to existing projects seamlessly through the `
 - **Redis**: Redis for caching and queues
 - **Chroma**: Chroma vector database for embeddings
 
+### Enhancement Flags
+- **`--with-deps`**: Automatically install component dependencies using `uv` (Python) or `npm` (Node.js)
+- **`--with-examples`**: Generate working code examples for the components
+
 ## Using the CLI Command (Recommended)
 
 The `spinbox add` command is the recommended and supported method for adding components to existing projects.
@@ -39,6 +43,15 @@ spinbox add --backend --redis
 # Add components with version specifications
 spinbox add --database --postgres-version 14
 spinbox add --frontend --node-version 18
+
+# Add with automatic dependency installation
+spinbox add --fastapi --with-deps
+
+# Add with working code examples
+spinbox add --nextjs --with-examples
+
+# Add with both dependencies and examples
+spinbox add --postgresql --with-deps --with-examples
 ```
 
 ### Examples by Use Case
