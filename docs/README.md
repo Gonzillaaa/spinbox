@@ -1,40 +1,43 @@
 # Spinbox Documentation Index
 
-## 🚀 User Guides (Start Here!)
-- [`installation.md`](./installation.md) - Complete installation guide for all platforms
-- [`quick-start.md`](./quick-start.md) - 5-minute tutorial to get started
-- [`cli-reference.md`](./cli-reference.md) - Complete command-line interface reference
+## 🚀 User Documentation
 
-## 📚 Core Documentation  
-- [`adding-components.md`](./adding-components.md) - How to add components to projects
-- [`git-hooks.md`](./git-hooks.md) - Git hooks integration and quality assurance
-- [`chroma-usage.md`](./chroma-usage.md) - Chroma vector database usage guide
-- [`troubleshooting.md`](./troubleshooting.md) - Common issues and solutions
-- [`bare-bones-projects.md`](./bare-bones-projects.md) - Minimal project specifications
+**For end-users who want to install, configure, and use Spinbox:**
 
-## 🏗️ Implementation Documentation
-- [`global-cli-strategy.md`](./global-cli-strategy.md) - High-level vision and approach
-- [`global-cli-implementation.md`](./global-cli-implementation.md) - Detailed technical implementation
-- [`implementation-strategy.md`](./implementation-strategy.md) - Implementation strategy overview
+### Getting Started
+- **[Installation Guide](./user/installation.md)** - Complete installation guide for all platforms
+- **[Quick Start Tutorial](./user/quick-start.md)** - 5-minute tutorial to get started  
+- **[CLI Reference](./user/cli-reference.md)** - Complete command-line interface reference
 
-## 🎯 Quick Navigation
+### User Guides
+- **[Adding Components](./user/adding-components.md)** - How to add components to projects
+- **[Git Hooks Integration](./user/git-hooks.md)** - Git hooks integration and quality assurance
+- **[Chroma Database Usage](./user/chroma-usage.md)** - Chroma vector database usage guide
+- **[Troubleshooting](./user/troubleshooting.md)** - Common issues and solutions
 
-### New to Spinbox?
-1. **[Installation Guide](./installation.md)** - Set up Spinbox on your system
-2. **[Quick Start Tutorial](./quick-start.md)** - 5-minute walkthrough 
-3. **[CLI Reference](./cli-reference.md)** - Complete command documentation
+### Quick Navigation for Users
+- **New to Spinbox?** Start with [Installation](./user/installation.md) → [Quick Start](./user/quick-start.md) → [CLI Reference](./user/cli-reference.md)
+- **Need Help?** Check [Troubleshooting](./user/troubleshooting.md) or [Adding Components](./user/adding-components.md)
+- **Advanced Features?** See [Git Hooks](./user/git-hooks.md) or [Chroma Usage](./user/chroma-usage.md)
 
-### Common Tasks
-- **Creating Projects**: See [Quick Start Guide](./quick-start.md) for examples
-- **Adding Components**: Check [Adding Components Guide](./adding-components.md)
-- **Setting Up Git Hooks**: Follow [Git Hooks Guide](./git-hooks.md) for quality assurance
-- **Troubleshooting**: Visit [Troubleshooting Guide](./troubleshooting.md)
-- **Configuration**: Reference [CLI Reference - Config](./cli-reference.md#spinbox-config)
+## 🏗️ Developer Documentation
 
-### Advanced Usage
-- **Custom Profiles**: See [CLI Reference - Profiles](./cli-reference.md#templates)
-- **Component Development**: Check [Implementation Docs](./global-cli-implementation.md)
-- **Contributing**: Review implementation and strategy documents
+**For contributors, maintainers, and developers working on Spinbox:**
+
+### Implementation & Strategy
+- **[Global CLI Strategy](./dev/global-cli-strategy.md)** - High-level vision and approach
+- **[Global CLI Implementation](./dev/global-cli-implementation.md)** - Detailed technical implementation
+- **[Implementation Strategy](./dev/implementation-strategy.md)** - Implementation strategy overview
+
+### Development & Process
+- **[Development Backlog](./dev/backlog.md)** - Feature roadmap and implementation tracking
+- **[Bare-bones Projects](./dev/bare-bones-projects.md)** - Minimal project specifications
+- **[Release Process](./dev/release-process.md)** - Release procedures and versioning
+
+### Quick Navigation for Developers
+- **Contributing?** Start with [Implementation Strategy](./dev/implementation-strategy.md) → [Global CLI Implementation](./dev/global-cli-implementation.md)
+- **Planning?** Check [Development Backlog](./dev/backlog.md) or [Global CLI Strategy](./dev/global-cli-strategy.md)
+- **Releasing?** Follow [Release Process](./dev/release-process.md) guidelines
 
 ## 🎯 Profiles Quick Reference
 
