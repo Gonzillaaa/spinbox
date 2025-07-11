@@ -4,7 +4,7 @@
 
 # Spin up containerized prototyping environments in seconds! 
 
-A **global CLI tool** for spinning up customizable development environments with predefined profiles or custom component selection. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and comes with a modern development setup. Build your stack by selecting any combination of:
+A **global CLI tool** for spinning up customizable prototyping environments with predefined profiles or custom component selection. Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and comes with a modern prototyping setup. Build your stack by selecting any combination of:
 
 - FastAPI backend (Python 3.12+)
 - Next.js frontend (TypeScript)
@@ -21,14 +21,14 @@ A **global CLI tool** for spinning up customizable development environments with
 - **Custom Components**: Mix and match components as needed
 - **Project Management**: Add components, start services, check status
 
-### **Development Environment**
+### **Prototyping Environment**
 - **DevContainer-First**: Every project includes a DevContainer as the baseline
-- **Requirements.txt Templates**: Quick-start templates for different development needs
+- **Requirements.txt Templates**: Quick-start templates for different prototyping needs
 - **Modern Tech Stack**: Python 3.12+, UV package manager, Node.js 20+, TypeScript
 - **Enhanced Developer Experience**:
   - DevContainers for consistency across VS Code, Cursor, and other editors
   - Zsh with Powerlevel10k for a beautiful, functional terminal
-  - Pre-configured development tools and shortcuts
+  - Pre-configured prototyping tools and shortcuts
 
 ### **Component System**
 - **Modular Design**: Start minimal, add what you need
@@ -107,52 +107,50 @@ spinbox start --logs             # Start and show logs
 # Check project status
 spinbox status                   # Show project and configuration info
 
+# Update Spinbox
+spinbox update                   # Update to latest version
+spinbox update --check           # Check for updates
+
 # Manage global configuration
 spinbox config --list           # Show current configuration
 spinbox config --set PYTHON_VERSION=3.11
+
+# Uninstall Spinbox
+spinbox uninstall --config       # Remove Spinbox and configuration
 ```
 
 ## 📦 Available Components
 
-### Development Environment
-- `--python` - Python DevContainer with virtual environment
-- `--node` - Node.js DevContainer with TypeScript  
+Components are organized by their **architectural role**:
 
-### Application Layer
-- `--backend` - FastAPI backend (includes Python)
-- `--frontend` - Next.js frontend (includes Node.js)
+| Component | Flag | Architectural Role | Description |
+|-----------|------|-------------------|-------------|
+| **Prototyping Environment** |
+| Python | `--python` | DevContainer | Python DevContainer with virtual environment |
+| Node.js | `--node` | DevContainer | Node.js DevContainer with TypeScript |
+| **Application Layer** |
+| Backend | `--backend` | API Layer | FastAPI backend (includes Python) |
+| Frontend | `--frontend` | UI Layer | Next.js frontend (includes Node.js) |
+| **Storage Layer** |
+| PostgreSQL | `--database` | Primary Storage | PostgreSQL with PGVector extension |
+| MongoDB | `--mongodb` | Alternative Storage | MongoDB document database |
+| Redis | `--redis` | Caching Layer | Redis for caching and queues |
+| Chroma | `--chroma` | Vector Search | Chroma vector database for AI/ML |
 
-### Storage Layer
-- `--database` - PostgreSQL with PGVector (primary relational storage)
-- `--mongodb` - MongoDB (alternative document storage)
-
-### Performance & Specialized Layer
-- `--redis` - Redis (caching and queues)
-- `--chroma` - Chroma (vector search for AI/ML)
-
-### Component Categorization
-
-Components are organized by their **architectural role** rather than technical type:
-
-| Component | Flag | Architectural Role | Use With |
-|-----------|------|-------------------|----------|
-| PostgreSQL | `--database` | Primary storage | Most projects |
-| MongoDB | `--mongodb` | Alternative primary storage | Document-heavy projects |
-| Redis | `--redis` | Caching/queue layer | Performance optimization |
-| Chroma | `--chroma` | Vector search layer | AI/ML applications |
-
-**Examples of combining storage components:**
+**Examples of combining components:**
 - `--database --redis` - Primary storage + caching
 - `--mongodb --chroma` - Document storage + vector search
-- `--database --mongodb --redis` - Multiple storage strategies
+- `--backend --frontend --database` - Full-stack application
 
 ## 🎯 Predefined Profiles
 
-- **`web-app`** - Full-stack web application with backend, frontend, and database
-- **`api-only`** - Backend API with database and Redis caching
-- **`data-science`** - Python environment with ML/data science libraries
-- **`ai-llm`** - AI development environment with vector database
-- **`minimal`** - Basic development environment with essential tools
+| Profile | Description | Components |
+|---------|-------------|------------|
+| `web-app` | Full-stack web application | backend, frontend, database |
+| `api-only` | Backend API with caching | backend, database, redis |
+| `data-science` | ML/data science environment | python, database |
+| `ai-llm` | AI/LLM prototyping | python, database, chroma |
+| `minimal` | Basic prototyping environment | python |
 
 ## 🛠️ Development Workflow
 
@@ -177,90 +175,43 @@ Your editor will detect the DevContainer configuration and prompt to "Reopen in 
 
 ---
 
-## 🗂️ Structure
+## 🗂️ Project Structure
 
-### Global Installation Structure
+### After Project Creation
 ```
-/usr/local/bin/spinbox     # Global CLI command
-~/.spinbox/                # User configuration directory
-├── config/                # Configuration files
-└── cache/                 # Cache directory
-```
-
-### Source Repository Structure
-```
-spinbox/
-├── bin/spinbox            # CLI entry point
-├── install.sh             # Installation script
-├── lib/                   # Utility libraries
-├── generators/            # Component generators
-├── docs/                  # Documentation
-├── templates/             # Requirements.txt templates
-└── README.md              # This file
-```
-
-### After Setup (Permanent)
-```
-your-repo/
+your-project/
 ├── backend/               # FastAPI backend (if selected)
 ├── frontend/              # Next.js frontend (if selected)
 ├── database/              # PostgreSQL config (if selected)
 ├── mongodb/               # MongoDB config (if selected)
 ├── redis/                 # Redis config (if selected)
 ├── chroma_data/           # Chroma vector database data (if selected)
-├── .devcontainer/         # DevContainer config with Dockerfile (always created)
+├── .devcontainer/         # DevContainer config (always created)
 ├── docker-compose.yml     # Docker services (if components selected)
-├── venv/                  # Python virtual environment (created in DevContainer)
 ├── requirements.txt       # Python dependencies
 ├── package.json          # Node.js dependencies (if frontend)
 └── README.md             # Project documentation
 ```
 
-## 🧩 Components
+## 🧩 Component Details
 
-### FastAPI Backend
+**Backend (FastAPI)**
+- Python 3.12+ with type hints, UV package manager, SQLAlchemy ORM with async support
 
-- Python 3.12+ with type hints
-- UV package manager for dependencies
-- Virtual environment for isolation
-- SQLAlchemy ORM with async support
-- Alembic for migrations
-- Easy-to-extend structure
+**Frontend (Next.js)**
+- TypeScript, modern App Router, Tailwind CSS, ESLint
 
-### Next.js Frontend
+**Database (PostgreSQL)**
+- PGVector extension for vector embeddings, initialization scripts
 
-- TypeScript for type safety
-- Modern App Router
-- Tailwind CSS for styling
-- ESLint for code quality
-- Optimized for DevContainer development
+**MongoDB**
+- Document database with authentication, collections and indexes
 
-### PostgreSQL with PGVector
+**Redis**
+- Caching and queues with persistence enabled
 
-- Vector embedding support
-- Initialization scripts for schema setup
-- Proper volume configuration
-- PGVector extension pre-installed
-
-### MongoDB
-
-- Document database for flexible data storage
-- Initialization scripts for collections and indexes
-- Authentication enabled
-- Volume persistence configured
-
-### Redis
-
-- Configured for caching and queues
-- Persistence enabled
-- Optimized configuration
-
-### Chroma Vector Database
-
-- Lightweight vector database for embeddings
-- Persistent storage for vectors
-- Simple REST API for adding and searching documents
-- Built-in similarity search
+**Chroma**
+- Vector database for embeddings with persistent storage
 
 ## 📦 Requirements.txt Templates
 
@@ -277,10 +228,6 @@ Perfect for rapid prototyping - get started immediately with the right dependenc
 
 ## 🔄 Adding Components Later
 
-Already set up a project but need to add more components? No problem!
-
-### Using Global CLI (Recommended)
-
 ```bash
 # In your existing project directory:
 spinbox add --database --redis        # Add primary storage + caching layer
@@ -288,97 +235,49 @@ spinbox add --mongodb --chroma        # Add alternative storage + vector search
 spinbox add --backend --frontend      # Add API layer + web interface
 ```
 
-**Note**: The `spinbox add` command is fully implemented and ready to use.
-
-### Manual Addition
-
-Follow our detailed guides in the [docs/adding-components.md](./docs/adding-components.md) file.
+See [docs/adding-components.md](./docs/adding-components.md) for detailed guides.
 
 ## ⚙️ Configuration
 
 ### Software Version Configuration
-
-Spinbox supports configurable software versions for consistent development environments. Use the global CLI to manage configuration:
 
 ```bash
 # Set default versions globally
 spinbox config --set PYTHON_VERSION=3.11
 spinbox config --set NODE_VERSION=18
 spinbox config --set POSTGRES_VERSION=14
-spinbox config --set REDIS_VERSION=6
 
-# Or edit the configuration file directly
-# Located at ~/.spinbox/config/global.conf
+# View current configuration
+spinbox config --list
 ```
 
-**Default versions** (used when no configuration exists):
-- Python: `3.12`
-- Node.js: `20`
-- PostgreSQL: `15`
-- Redis: `7`
+**Default versions**: Python 3.12, Node.js 20, PostgreSQL 15, Redis 7
 
-All Docker images, requirements templates, and generated configurations will use your specified versions. The setup script shows which versions are being used:
+### DevContainers & Docker Compose
 
-```
-[+] Using configuration: Python 3.11, Node 18, PostgreSQL 14, Redis 6
-```
-
-### DevContainers
-
-Your DevContainer configuration is automatically generated based on selected components and works with VS Code, Cursor, and other compatible editors. It includes:
-
-- Appropriate extensions
-- Container connections
-- Shared volumes
-- Development server ports
-
-### Docker Compose
-
-The Docker Compose file is custom-built for your selected components with:
-
-- Inter-service networking
-- Volume persistence
-- Environment variables
-- Port mappings
-
-### Zsh with Powerlevel10k
-
-Every container comes with:
-
-- Beautiful Powerlevel10k theme
-- Helpful aliases for common commands
-- Syntax highlighting
-- Autosuggestions
+- **DevContainer**: Automatically configured for VS Code, Cursor, and other editors
+- **Docker Compose**: Custom-built with networking, volumes, and environment variables
+- **Zsh with Powerlevel10k**: Beautiful terminal with helpful aliases and syntax highlighting
 
 ## 🛠️ Advanced Usage
 
 ### Custom Components
 
-Spinbox uses a modular generator system for creating components. You can extend the system by:
-
-- **Adding new generators**: Create new component generators in the `generators/` directory
-- **Modifying existing generators**: Update component logic in existing generator scripts
-- **Creating custom profiles**: Add new profiles to the `templates/profiles/` directory
-- **Customizing requirements**: Add new requirements templates to `templates/requirements/`
-
-Each generator is a self-contained script that handles component creation, configuration, and integration with the project structure.
+Spinbox uses a modular generator system. You can extend it by:
+- Adding new generators in the `generators/` directory
+- Creating custom profiles in `templates/profiles/`
+- Customizing requirements in `templates/requirements/`
 
 ### Local Development
 
-Development is designed to happen inside DevContainers for consistency. The virtual environment is automatically created and activated inside the container. However, if you need to work outside containers:
+**Recommended**: Open in DevContainer for consistency
+- Virtual environment is auto-activated
+- All dependencies pre-installed
+- Editor extensions configured
 
-1. **Open in DevContainer** (Recommended):
-   - Your editor will prompt to reopen in container
-   - Virtual environment is auto-activated
-   - All dependencies are pre-installed
-
-2. **Local development** (if needed):
-   - Virtual environment must be created manually: `python3 -m venv venv`
-   - Activate with: `source venv/bin/activate`
-
-### Development Environment
-
-All development environment files are created at the root level of your project directory. The global CLI tool manages project creation and component addition without requiring temporary directories or cleanup.
+**Alternative**: Manual setup outside container
+- Create virtual environment: `python3 -m venv venv`
+- Activate: `source venv/bin/activate`
 
 ## 🔍 Troubleshooting
 
@@ -386,10 +285,13 @@ See [docs/troubleshooting.md](./docs/troubleshooting.md) for solutions to common
 
 ## 📚 Documentation
 
+- [Quick Start Guide](./docs/quick-start.md)
+- [CLI Reference](./docs/cli-reference.md)
 - [Adding Components](./docs/adding-components.md)
-- [Chroma Vector Database Usage](./docs/chroma-usage.md)
+- [Installation Guide](./docs/installation.md)
 - [Troubleshooting](./docs/troubleshooting.md)
-- [Performance Optimization](./docs/performance.md)
+
+See [docs/README.md](./docs/README.md) for complete documentation index.
 
 ## 🤝 Contributing
 
