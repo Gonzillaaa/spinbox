@@ -21,29 +21,12 @@ A **global CLI tool** for spinning up customizable prototyping boxes with predef
   <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
 </p>
 
-Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and comes with a modern prototyping setup. Build your stack by selecting any combination of:
+Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors), and comes with a modern prototyping setup. Choose from **10 modular components** organized by architectural role:
 
-**Application Frameworks**
-
-- FastAPI backend framework (Python 3.12+)
-- Next.js frontend framework (TypeScript)
-
-**Workflow Frameworks**
-
-- Data Science workflow (Jupyter, pandas, scikit-learn, ML libraries)
-- AI/ML workflow (OpenAI, Anthropic, LangChain, LlamaIndex, ChromaDB)
-
-**Infrastructure Services**
-
-- PostgreSQL database with PGVector
-- MongoDB document database
-- Redis for caching and queues
-- Chroma vector database for embeddings
-
-**Foundation Environments**
-
-- Python DevContainer with virtual environment
-- Node.js DevContainer with TypeScript
+- **Application Frameworks** (2): FastAPI, Next.js
+- **Workflow Frameworks** (2): Data Science, AI/ML  
+- **Infrastructure Services** (4): PostgreSQL, MongoDB, Redis, Chroma
+- **Foundation Environments** (2): Python, Node.js
 
 ## 🚀 Features
 
@@ -98,232 +81,92 @@ Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors),
 
 ## 🏁 Quick Start
 
-### 1. Install Spinbox (One-time)
-
-#### Option A: Quick Install (Recommended)
+### 1. Install Spinbox
 
 ```bash
-# Install Spinbox with curl
+# Quick install (recommended)
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
-```
 
-```bash
 # Or with Homebrew
 brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
 ```
 
-#### Option B: Manual Install
-
-```bash
-# Clone and install
-git clone https://github.com/Gonzillaaa/spinbox.git
-cd spinbox
-chmod +x install.sh
-./install.sh
-```
-
-### 2. Create Projects with Predefined Profiles
+### 2. Create Your First Project
 
 ```bash
 # Use predefined profiles for common scenarios
-spinbox create myapp --profile web-app        # Full-stack web application
-spinbox create api-server --profile api-only  # FastAPI API with PostgreSQL
+spinbox create myapp --profile web-app        # Full-stack web app
+spinbox create api --profile api-only         # High-performance API
 spinbox create ml-project --profile data-science  # Data science environment
 spinbox create ai-project --profile ai-llm    # AI/LLM development
 
-# List available profiles
-spinbox profiles
-
-# Show profile details
-spinbox profiles web-app
+# Or build custom projects
+spinbox create myproject --python --postgresql --with-examples
 ```
 
-### 3. Custom Component Selection
+### 3. Start Development
 
 ```bash
-# Build custom projects by selecting components
-spinbox create myproject --python             # Simple Python project
-spinbox create webapp --python --node --postgresql  # Custom full-stack
-spinbox create api --fastapi --redis          # API layer with caching
-
-# Customize versions
-spinbox create api --fastapi --redis --python-version 3.11
-
-# Add dependencies and examples
-spinbox create api --fastapi --with-deps --with-examples
-spinbox create fullstack --fastapi --nextjs --postgresql --with-deps --with-examples
-```
-
-### 4. Project Management
-
-```bash
-# Add components to existing projects
 cd myproject
-spinbox add --postgresql --redis
-spinbox add --data-science --with-examples
-spinbox add --ai-ml --chroma --with-deps
-
-# Add with dependencies and examples
-spinbox add --redis --with-deps --with-examples
-
-# Start project services
-spinbox start                    # Start all services in background
-spinbox start --logs             # Start and show logs
-
-# Check project status
-spinbox status                   # Show project and configuration info
-
-# Update Spinbox
-spinbox update                   # Update to latest version
-spinbox update --check           # Check for updates
-
-# Manage global configuration
-spinbox config --list           # Show current configuration
-spinbox config --set PYTHON_VERSION=3.11
-
-# Uninstall Spinbox
-spinbox uninstall --config       # Remove Spinbox and configuration
+code .              # Open in VS Code (click "Reopen in Container")
+spinbox start       # Start services in background
 ```
 
-## 📦 Available Components
+**Complete Guide:** See [Quick Start Tutorial](./docs/quick-start.md) for detailed walkthrough and [CLI Reference](./docs/cli-reference.md) for all commands.
 
-Components are organized by their **architectural role**:
+## 📋 Command Reference
 
-| Component                                                  | Flag             | Architectural Role | Description                                         |
-| ---------------------------------------------------------- | ---------------- | ------------------ | --------------------------------------------------- |
-| **Application Frameworks** (Build user interfaces)         |
-| FastAPI                                                    | `--fastapi`      | Backend Framework  | FastAPI backend with SQLAlchemy (includes Python)   |
-| Next.js                                                    | `--nextjs`       | Frontend Framework | Next.js frontend with TypeScript (includes Node.js) |
-| **Workflow Frameworks** (Specialized work methodologies)   |
-| Data Science                                               | `--data-science` | Data Workflow      | Jupyter, pandas, scikit-learn, ML libraries         |
-| AI/ML                                                      | `--ai-ml`        | AI Workflow        | OpenAI, Anthropic, LangChain, LlamaIndex, ChromaDB |
-| **Infrastructure Services** (Data storage & core services) |
-| PostgreSQL                                                 | `--postgresql`   | Primary Storage    | PostgreSQL with PGVector extension                  |
-| MongoDB                                                    | `--mongodb`      | Document Storage   | MongoDB document database                           |
-| Redis                                                      | `--redis`        | Caching Layer      | Redis for caching and queues                        |
-| Chroma                                                     | `--chroma`       | Vector Search      | Chroma vector database for AI/ML                    |
-| **Foundation Environments** (Base containers)              |
-| Python                                                     | `--python`       | DevContainer       | Python DevContainer with virtual environment        |
-| Node.js                                                    | `--node`         | DevContainer       | Node.js DevContainer with TypeScript                |
+**Project Management:**
+- `spinbox create <name> --profile <profile>` - Create new projects with predefined profiles
+- `spinbox add --<component>` - Add components to existing projects  
+- `spinbox start` - Start project services with Docker Compose
+- `spinbox status` - Show project and configuration status
 
-### 🎯 Enhancement Flags
+**Configuration & Information:**
+- `spinbox config --set <key>=<value>` - Configure global settings
+- `spinbox profiles` - List available predefined profiles
+- `spinbox update` - Update Spinbox to latest version
+- `spinbox hooks add all` - Install git hooks for quality assurance
 
-| Flag              | Description                                  | Usage                                   |
-| ----------------- | -------------------------------------------- | --------------------------------------- |
-| `--with-deps`     | Automatically install component dependencies | Uses `uv` for Python, `npm` for Node.js |
-| `--with-examples` | Generate starter project templates          | Creates functional boilerplate code     |
+**Complete Reference:** See [CLI Reference](./docs/cli-reference.md) for detailed options and examples.
 
-**Examples:**
+## 🏗️ Architecture Benefits
 
-```bash
-# Application frameworks (build user interfaces)
-spinbox create api --fastapi --with-deps
-spinbox create frontend --nextjs --with-examples
+**5-Tier Component System:**
+- **Application Frameworks** (2) - FastAPI, Next.js for user interfaces
+- **Workflow Frameworks** (2) - Data Science, AI/ML for specialized methodologies  
+- **Infrastructure Services** (4) - PostgreSQL, MongoDB, Redis, Chroma for data storage
+- **Platform Services** (0) - Reserved for future platform integrations
+- **Foundation Environments** (2) - Python, Node.js base containers
 
-# Workflow frameworks (specialized methodologies)
-spinbox create analysis --data-science --with-deps --with-examples
-spinbox create ai-project --ai-ml --with-deps --with-examples
+**Key Advantages:**
+- **Modular Design** - Mix and match components as needed
+- **DevContainer-First** - Consistent development environments
+- **Docker Compose** - Orchestrated multi-service applications
+- **Modern Stack** - Latest versions with best practices built-in
 
-# Combined projects
-spinbox create webapp --fastapi --nextjs --postgresql --with-deps --with-examples
-```
+## 📦 Component Architecture
 
-**Examples of combining components:**
+**Enhancement Flags:**
+- `--with-deps` - Automatically install component dependencies
+- `--with-examples` - Generate starter project templates
 
-- `--postgresql --redis` - Primary storage + caching
-- `--mongodb --chroma` - Document storage + vector search
+**Common Combinations:**
 - `--fastapi --nextjs --postgresql` - Full-stack web application
-- `--data-science --postgresql` - Data analysis workflow with database
-- `--ai-ml --chroma` - AI/ML workflow with vector database
+- `--data-science --postgresql` - Data analysis with database storage
+- `--ai-ml --chroma` - AI/ML workflow with vector search
 
 ## 🎯 Predefined Profiles
 
-Choose from 5 carefully curated profiles that provide complete development environments for common use cases:
+| Profile | What's Included | Perfect For | Command |
+|---------|----------------|-------------|---------|
+| **web-app** | FastAPI + Next.js + PostgreSQL | Full-stack web applications | `spinbox create myapp --profile web-app` |
+| **api-only** | FastAPI + PostgreSQL + Redis | High-performance API backends | `spinbox create api --profile api-only` |
+| **data-science** | Jupyter + pandas + scikit-learn + PostgreSQL | Data analysis & ML workflows | `spinbox create analysis --profile data-science` |
+| **ai-llm** | OpenAI + LangChain + LlamaIndex + ChromaDB | AI/LLM applications | `spinbox create ai-proj --profile ai-llm` |
+| **minimal** | Python DevContainer + essential tools | Simple scripts & prototypes | `spinbox create basic --profile minimal` |
 
-### 🌐 **web-app** - Full-Stack Web Application
-**Perfect for:** Building complete web applications with frontend, backend, and database
-
-**What you get:**
-- **FastAPI backend** - Modern Python API with automatic OpenAPI docs
-- **Next.js frontend** - React-based frontend with TypeScript and Tailwind CSS
-- **PostgreSQL database** - Relational database with PGVector for embeddings
-- **Full integration** - Pre-configured Docker services and networking
-
-**Use cases:** E-commerce sites, SaaS applications, content management systems, dashboards
-
-```bash
-spinbox create myapp --profile web-app
-```
-
-### 🚀 **api-only** - High-Performance API Backend
-**Perfect for:** Building scalable APIs with caching and performance optimization
-
-**What you get:**
-- **FastAPI backend** - High-performance async API with automatic validation
-- **PostgreSQL database** - Primary data storage with advanced querying
-- **Redis caching** - Fast in-memory caching and session management
-- **Performance focused** - Optimized for API throughput and response times
-
-**Use cases:** Microservices, mobile app backends, third-party integrations, API gateways
-
-```bash
-spinbox create api-server --profile api-only
-```
-
-### 📊 **data-science** - Data Analysis & Machine Learning
-**Perfect for:** Data analysis, research, and machine learning workflows
-
-**What you get:**
-- **Jupyter Lab** - Interactive notebooks with rich data visualization
-- **Scientific libraries** - pandas, scikit-learn, matplotlib, seaborn
-- **PostgreSQL database** - Structured data storage and analysis
-- **Ready-to-use scripts** - Data processing, model training, and visualization utilities
-
-**Use cases:** Data exploration, statistical analysis, ML model development, research projects
-
-```bash
-spinbox create analysis --profile data-science
-```
-
-### 🤖 **ai-llm** - AI/LLM Development Environment
-**Perfect for:** Building AI applications, chatbots, and LLM-powered tools
-
-**What you get:**
-- **LLM integration** - OpenAI, Anthropic, and local model support
-- **Agent frameworks** - LangChain and LlamaIndex for RAG applications
-- **Vector database** - ChromaDB for semantic search and embeddings
-- **AI workflows** - Pre-built agents, prompt templates, and example notebooks
-
-**Use cases:** Chatbots, document Q&A, content generation, AI agents, RAG applications
-
-```bash
-spinbox create ai-project --profile ai-llm
-```
-
-### 🐍 **minimal** - Lightweight Python Environment
-**Perfect for:** Simple scripts, prototypes, and learning Python
-
-**What you get:**
-- **Python DevContainer** - Clean Python environment with modern tooling
-- **Essential tools** - UV package manager, pytest, black formatter
-- **No services** - Lightweight setup with no database or external dependencies
-- **Quick setup** - Fastest way to start coding in Python
-
-**Use cases:** Python scripts, algorithms, CLI tools, learning projects, quick prototypes
-
-```bash
-spinbox create basic --profile minimal
-```
-
-### 📋 **Profile Comparison**
-
-| Profile | Best For | Complexity | Services | Setup Time |
-|---------|----------|------------|----------|------------|
-| **web-app** | Full-stack applications | High | 3 services | ~2 minutes |
-| **api-only** | Backend APIs | Medium | 2 services | ~90 seconds |
-| **data-science** | Data analysis | Medium | 1 service | ~60 seconds |
-| **ai-llm** | AI applications | Medium | 1 service | ~60 seconds |
-| **minimal** | Simple scripts | Low | 0 services | ~30 seconds |
+**Profile Details:** See [CLI Reference](./docs/cli-reference.md#available-profiles) for comprehensive descriptions and use cases.
 
 ## 🛠️ Development Workflow
 
@@ -388,22 +231,27 @@ your-project/
 
 ## 🧩 Component Details
 
-**Application Frameworks:**
+**Application Frameworks (Build user interfaces):**
 
 - **FastAPI** - Python 3.12+ with type hints, UV package manager, SQLAlchemy ORM with async support
 - **Next.js** - TypeScript, modern App Router, Tailwind CSS, ESLint
 
-**Workflow Frameworks:**
+**Workflow Frameworks (Specialized work methodologies):**
 
 - **Data Science** - Jupyter Lab, pandas, scikit-learn, matplotlib, ready-to-use Python scripts
 - **AI/ML** - OpenAI/Anthropic clients, LangChain/LlamaIndex agents, ChromaDB vector store, transformers, prompt templates
 
-**Infrastructure Services:**
+**Infrastructure Services (Data storage & core services):**
 
 - **PostgreSQL** - PGVector extension for vector embeddings, initialization scripts
 - **MongoDB** - Document database with authentication, collections and indexes
 - **Redis** - Caching and queues with persistence enabled
 - **Chroma** - Vector database for embeddings with persistent storage
+
+**Foundation Environments (Base containers):**
+
+- **Python** - Python DevContainer with virtual environment, UV package manager, modern tooling
+- **Node.js** - Node.js DevContainer with TypeScript, npm/yarn support, development tools
 
 ## 📦 Requirements.txt Templates
 
@@ -431,73 +279,33 @@ See [docs/adding-components.md](./docs/adding-components.md) for detailed guides
 
 ## 🔧 Git Hooks Integration
 
-Spinbox provides project-aware git hooks for automated quality assurance:
+Automated quality assurance with project-aware git hooks:
 
 ```bash
-# Install git hooks for your project
-spinbox hooks add all
-
-# Install with example configurations
-spinbox hooks add all --with-examples
-
-# Manage hooks
-spinbox hooks list                    # List installed hooks
-spinbox hooks remove all             # Remove hooks
+spinbox hooks add all                 # Install all recommended hooks
+spinbox hooks add all --with-examples # Include example configurations
 ```
 
-**What hooks provide:**
+**Features:** Pre-commit formatting, pre-push testing, project-aware detection, quality gates
 
-- **Pre-commit**: Fast formatting and lint checks (< 5 seconds)
-- **Pre-push**: Comprehensive tests and security validation
-- **Project-aware**: Automatically detects Python, Node.js, FastAPI, Next.js projects
-- **Quality gates**: Prevents commits/pushes with formatting or test failures
-
-See [docs/git-hooks.md](./docs/git-hooks.md) for complete documentation.
+**Details:** See [Git Hooks Guide](./docs/git-hooks.md) for complete documentation.
 
 ## ⚙️ Configuration
 
-### Software Version Configuration
-
-```bash
-# Set default versions globally
-spinbox config --set PYTHON_VERSION=3.11
-spinbox config --set NODE_VERSION=18
-spinbox config --set POSTGRES_VERSION=14
-
-# View current configuration
-spinbox config --list
-```
-
 **Default versions**: Python 3.12, Node.js 20, PostgreSQL 15, Redis 7
 
-### DevContainers & Docker Compose
+```bash
+spinbox config --set PYTHON_VERSION=3.11  # Customize versions
+spinbox config --list                     # View current settings
+```
 
-- **DevContainer**: Automatically configured for VS Code, Cursor, and other editors
-- **Docker Compose**: Custom-built with networking, volumes, and environment variables
-- **Zsh with Powerlevel10k**: Beautiful terminal with helpful aliases and syntax highlighting
+**DevContainer Features**: VS Code/Cursor integration, Docker Compose orchestration, Zsh with Powerlevel10k
 
 ## 🛠️ Advanced Usage
 
-### Custom Components
+**Custom Components**: Extend Spinbox by adding generators in `generators/`, creating custom profiles in `templates/profiles/`, or customizing requirements in `templates/requirements/`
 
-Spinbox uses a modular generator system. You can extend it by:
-
-- Adding new generators in the `generators/` directory
-- Creating custom profiles in `templates/profiles/`
-- Customizing requirements in `templates/requirements/`
-
-### Local Development
-
-**Recommended**: Open in DevContainer for consistency
-
-- Virtual environment is auto-activated
-- All dependencies pre-installed
-- Editor extensions configured
-
-**Alternative**: Manual setup outside container
-
-- Create virtual environment: `python3 -m venv venv`
-- Activate: `source venv/bin/activate`
+**Local Development**: Use DevContainer for consistency (recommended) or manual setup with `python3 -m venv venv && source venv/bin/activate`
 
 ## 🔍 Troubleshooting
 

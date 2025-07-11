@@ -40,13 +40,13 @@
 
 ### 🎯 **Predefined Profiles - Choose Your Stack**
 
-| Profile | Use Case | What's Included | Perfect For |
-|---------|----------|-----------------|-------------|
-| **web-app** | Full-stack web applications | FastAPI + Next.js + PostgreSQL | E-commerce, SaaS, dashboards, content management |
-| **api-only** | High-performance APIs | FastAPI + PostgreSQL + Redis | Microservices, mobile backends, API gateways |
-| **data-science** | Data analysis & ML | Jupyter + pandas + scikit-learn + PostgreSQL + Python utilities | Research, data exploration, ML development |
-| **ai-llm** | AI/LLM applications | OpenAI + LangChain + LlamaIndex + ChromaDB + prompt templates | Chatbots, RAG apps, AI agents, document Q&A |
-| **minimal** | Simple Python projects | Python DevContainer + essential tools | Scripts, prototypes, learning, CLI tools |
+| Profile | What's Included | Perfect For |
+|---------|-----------------|-------------|
+| **web-app** | FastAPI + Next.js + PostgreSQL | Full-stack web applications |
+| **api-only** | FastAPI + PostgreSQL + Redis | High-performance API backends |
+| **data-science** | Jupyter + pandas + scikit-learn + PostgreSQL | Data analysis & ML workflows |
+| **ai-llm** | OpenAI + LangChain + LlamaIndex + ChromaDB | AI/LLM applications |
+| **minimal** | Python DevContainer + essential tools | Simple scripts & prototypes |
 
 **Quick Commands:**
 ```bash
