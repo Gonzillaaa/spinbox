@@ -671,4 +671,4 @@ For business-critical issues:
 - VS Code Enterprise Support
 - Professional consulting services
 
-Remember to check the [performance optimization guide](./performance.md) for additional tips on improving system performance.
+Remember to check the [CLI Reference](./cli-reference.md) for additional configuration options and optimization tips.

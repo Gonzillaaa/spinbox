@@ -384,8 +384,8 @@ echo "=== Verification Complete ==="
 
 **Documentation:**
 - Main README: [GitHub Repository](https://github.com/Gonzillaaa/spinbox)
-- Troubleshooting: [docs/troubleshooting.md](./troubleshooting.md)
-- Quick Start: [docs/quick-start.md](./quick-start.md)
+- Troubleshooting: [troubleshooting.md](./troubleshooting.md)
+- Quick Start: [quick-start.md](./quick-start.md)
 
 **Community:**
 - Issues: [GitHub Issues](https://github.com/Gonzillaaa/spinbox/issues)
@@ -501,7 +501,7 @@ rm -rf ~/.spinbox
 
 After successful installation:
 
-1. **Read Quick Start Guide**: [docs/quick-start.md](./quick-start.md)
+1. **Read Quick Start Guide**: [quick-start.md](./quick-start.md)
 2. **Explore Profiles**: `spinbox profiles`
 3. **Create First Project**: `spinbox create myproject --profile web-app`
 4. **Configure Preferences**: `spinbox config --setup`

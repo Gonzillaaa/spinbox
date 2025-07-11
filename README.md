@@ -112,7 +112,7 @@ code .              # Open in VS Code (click "Reopen in Container")
 spinbox start       # Start services in background
 ```
 
-**Complete Guide:** See [Quick Start Tutorial](./docs/quick-start.md) for detailed walkthrough and [CLI Reference](./docs/cli-reference.md) for all commands.
+**Complete Guide:** See [Quick Start Tutorial](./docs/user/quick-start.md) for detailed walkthrough and [CLI Reference](./docs/user/cli-reference.md) for all commands.
 
 ## 📋 Command Reference
 
@@ -128,7 +128,7 @@ spinbox start       # Start services in background
 - `spinbox update` - Update Spinbox to latest version
 - `spinbox hooks add all` - Install git hooks for quality assurance
 
-**Complete Reference:** See [CLI Reference](./docs/cli-reference.md) for detailed options and examples.
+**Complete Reference:** See [CLI Reference](./docs/user/cli-reference.md) for detailed options and examples.
 
 ## 🏗️ Architecture Benefits
 
@@ -166,7 +166,7 @@ spinbox start       # Start services in background
 | **ai-llm** | OpenAI + LangChain + LlamaIndex + ChromaDB | AI/LLM applications | `spinbox create ai-proj --profile ai-llm` |
 | **minimal** | Python DevContainer + essential tools | Simple scripts & prototypes | `spinbox create basic --profile minimal` |
 
-**Profile Details:** See [CLI Reference](./docs/cli-reference.md#available-profiles) for comprehensive descriptions and use cases.
+**Profile Details:** See [CLI Reference](./docs/user/cli-reference.md#available-profiles) for comprehensive descriptions and use cases.
 
 ## 🛠️ Development Workflow
 
@@ -275,7 +275,7 @@ spinbox add --mongodb --chroma        # Add alternative storage + vector search
 spinbox add --fastapi --nextjs      # Add API layer + web interface
 ```
 
-See [docs/adding-components.md](./docs/adding-components.md) for detailed guides.
+See [docs/user/adding-components.md](./docs/user/adding-components.md) for detailed guides.
 
 ## 🔧 Git Hooks Integration
 
@@ -288,7 +288,7 @@ spinbox hooks add all --with-examples # Include example configurations
 
 **Features:** Pre-commit formatting, pre-push testing, project-aware detection, quality gates
 
-**Details:** See [Git Hooks Guide](./docs/git-hooks.md) for complete documentation.
+**Details:** See [Git Hooks Guide](./docs/user/git-hooks.md) for complete documentation.
 
 ## ⚙️ Configuration
 
@@ -309,16 +309,23 @@ spinbox config --list                     # View current settings
 
 ## 🔍 Troubleshooting
 
-See [docs/troubleshooting.md](./docs/troubleshooting.md) for solutions to common issues.
+See [docs/user/troubleshooting.md](./docs/user/troubleshooting.md) for solutions to common issues.
 
 ## 📚 Documentation
 
-- [Quick Start Guide](./docs/quick-start.md)
-- [CLI Reference](./docs/cli-reference.md)
-- [Adding Components](./docs/adding-components.md)
-- [Git Hooks Integration](./docs/git-hooks.md)
-- [Installation Guide](./docs/installation.md)
-- [Troubleshooting](./docs/troubleshooting.md)
+**User Documentation:**
+- [Quick Start Guide](./docs/user/quick-start.md)
+- [CLI Reference](./docs/user/cli-reference.md)
+- [Adding Components](./docs/user/adding-components.md)
+- [Git Hooks Integration](./docs/user/git-hooks.md)
+- [Installation Guide](./docs/user/installation.md)
+- [Troubleshooting](./docs/user/troubleshooting.md)
+
+**Developer Documentation:**
+- [Implementation Strategy](./docs/dev/implementation-strategy.md)
+- [Global CLI Strategy](./docs/dev/global-cli-strategy.md)
+- [Development Backlog](./docs/dev/backlog.md)
+- [Release Process](./docs/dev/release-process.md)
 
 See [docs/README.md](./docs/README.md) for complete documentation index.
 
