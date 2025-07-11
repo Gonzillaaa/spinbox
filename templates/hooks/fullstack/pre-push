@@ -1,0 +1,172 @@
+#!/bin/bash
+# Pre-push hook for Full-stack projects (FastAPI + Next.js)
+# Runs comprehensive tests and build validation
+
+set -e
+
+echo "Running pre-push checks for Full-stack project..."
+
+# Check if we're in a full-stack project
+has_python=false
+has_nodejs=false
+
+if [[ -f "requirements.txt" ]] || [[ -d "fastapi" ]]; then
+    has_python=true
+fi
+
+if [[ -f "package.json" ]] || [[ -d "nextjs" ]]; then
+    has_nodejs=true
+fi
+
+if [[ "$has_python" == "false" ]] && [[ "$has_nodejs" == "false" ]]; then
+    echo "Warning: No Python or Node.js project detected"
+    exit 0
+fi
+
+# Python checks
+if [[ "$has_python" == "true" ]]; then
+    echo "🐍 Running Python checks..."
+    
+    # Activate virtual environment if available
+    if [[ -f "venv/bin/activate" ]]; then
+        source venv/bin/activate
+    elif [[ -f ".venv/bin/activate" ]]; then
+        source .venv/bin/activate
+    elif [[ -f "fastapi/venv/bin/activate" ]]; then
+        source fastapi/venv/bin/activate
+    fi
+    
+    # Run full Python test suite
+    if command -v pytest >/dev/null 2>&1; then
+        echo "  Running full Python test suite..."
+        if ! pytest --tb=short; then
+            echo "  ❌ Python test suite failed"
+            exit 1
+        fi
+        echo "  ✅ Python test suite passed"
+    else
+        echo "  Warning: pytest not found, skipping tests"
+    fi
+    
+    # Run type checking if mypy is available
+    if command -v mypy >/dev/null 2>&1; then
+        echo "  Running type checking..."
+        if ! mypy . --ignore-missing-imports; then
+            echo "  ❌ Type checking failed"
+            exit 1
+        fi
+        echo "  ✅ Type checking passed"
+    else
+        echo "  Info: mypy not found, skipping type checking"
+    fi
+    
+    # FastAPI specific validations
+    if [[ -d "fastapi" ]] && command -v uvicorn >/dev/null 2>&1; then
+        echo "  Validating FastAPI application..."
+        cd fastapi
+        
+        # Check if the app starts without errors
+        if ! timeout 5s uvicorn main:app --check 2>/dev/null; then
+            echo "  ❌ FastAPI application validation failed"
+            exit 1
+        fi
+        
+        cd ..
+        echo "  ✅ FastAPI application validation passed"
+    fi
+    
+    # Run security check if bandit is available
+    if command -v bandit >/dev/null 2>&1; then
+        echo "  Running security check..."
+        if ! bandit -r . -f json -o /dev/null; then
+            echo "  ❌ Security check failed"
+            exit 1
+        fi
+        echo "  ✅ Security check passed"
+    else
+        echo "  Info: bandit not found, skipping security check"
+    fi
+fi
+
+# Node.js checks
+if [[ "$has_nodejs" == "true" ]]; then
+    echo "🟨 Running Node.js checks..."
+    
+    # Check if we're in the nextjs directory
+    if [[ -d "nextjs" ]]; then
+        cd nextjs
+    fi
+    
+    # Check if node_modules exists
+    if [[ ! -d "node_modules" ]]; then
+        echo "  Warning: node_modules not found, run 'npm install' first"
+        [[ -d "nextjs" ]] && cd ..
+    else
+        # Run full test suite
+        if npm run test >/dev/null 2>&1; then
+            echo "  Running full Node.js test suite..."
+            if ! npm run test; then
+                echo "  ❌ Node.js test suite failed"
+                exit 1
+            fi
+            echo "  ✅ Node.js test suite passed"
+        else
+            echo "  Warning: No test script found in package.json"
+        fi
+        
+        # Run build
+        if npm run build >/dev/null 2>&1; then
+            echo "  Running Node.js build..."
+            if ! npm run build; then
+                echo "  ❌ Node.js build failed"
+                exit 1
+            fi
+            echo "  ✅ Node.js build passed"
+        else
+            echo "  Warning: No build script found in package.json"
+        fi
+        
+        # Run TypeScript type checking
+        if [[ -f "tsconfig.json" ]] && command -v npx >/dev/null 2>&1; then
+            echo "  Running TypeScript type checking..."
+            if ! npx tsc --noEmit; then
+                echo "  ❌ TypeScript type checking failed"
+                exit 1
+            fi
+            echo "  ✅ TypeScript type checking passed"
+        fi
+        
+        # Run security audit
+        if command -v npm >/dev/null 2>&1; then
+            echo "  Running npm security audit..."
+            if ! npm audit --audit-level=moderate; then
+                echo "  ❌ Security audit failed"
+                exit 1
+            fi
+            echo "  ✅ Security audit passed"
+        fi
+        
+        # Return to root directory
+        [[ -d "nextjs" ]] && cd ..
+    fi
+fi
+
+# Integration tests (if available)
+if [[ -f "docker-compose.yml" ]]; then
+    echo "🔗 Running integration tests..."
+    
+    # Check if docker-compose is available
+    if command -v docker-compose >/dev/null 2>&1; then
+        echo "  Checking docker-compose configuration..."
+        if ! docker-compose config >/dev/null 2>&1; then
+            echo "  ❌ Docker-compose configuration is invalid"
+            exit 1
+        fi
+        echo "  ✅ Docker-compose configuration is valid"
+    else
+        echo "  Info: docker-compose not found, skipping integration tests"
+    fi
+fi
+
+echo "✅ Pre-push checks passed for full-stack project"
+exit 0

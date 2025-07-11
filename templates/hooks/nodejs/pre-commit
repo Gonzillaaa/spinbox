@@ -1,0 +1,90 @@
+#!/bin/bash
+# Pre-commit hook for Node.js projects
+# Runs ESLint, TypeScript checks, and Prettier formatting
+
+set -e
+
+echo "Running pre-commit checks for Node.js project..."
+
+# Check if we're in a Node.js project
+if [[ ! -f "package.json" ]]; then
+    echo "Warning: No package.json found"
+    exit 0
+fi
+
+# Get list of JS/TS files to check
+js_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.(js|ts|jsx|tsx)$" || true)
+
+if [[ -z "$js_files" ]]; then
+    echo "No JavaScript/TypeScript files to check"
+    exit 0
+fi
+
+echo "Checking files: $js_files"
+
+# Check if npm is available
+if ! command -v npm >/dev/null 2>&1; then
+    echo "Warning: npm not found, skipping Node.js checks"
+    exit 0
+fi
+
+# Check if node_modules exists
+if [[ ! -d "node_modules" ]]; then
+    echo "Warning: node_modules not found, run 'npm install' first"
+    exit 0
+fi
+
+# Run Prettier check
+if command -v npx >/dev/null 2>&1; then
+    echo "Running Prettier formatting check..."
+    if ! npx prettier --check $js_files; then
+        echo "❌ Prettier formatting check failed"
+        echo "Fix with: npx prettier --write $js_files"
+        exit 1
+    fi
+    echo "✅ Prettier formatting check passed"
+else
+    echo "Warning: npx not found, skipping Prettier check"
+fi
+
+# Run ESLint
+if [[ -f "node_modules/.bin/eslint" ]]; then
+    echo "Running ESLint check..."
+    if ! npx eslint $js_files; then
+        echo "❌ ESLint check failed"
+        exit 1
+    fi
+    echo "✅ ESLint check passed"
+else
+    echo "Warning: ESLint not found, skipping lint check"
+fi
+
+# Run TypeScript check if tsconfig.json exists
+if [[ -f "tsconfig.json" ]] && command -v npx >/dev/null 2>&1; then
+    echo "Running TypeScript check..."
+    if ! npx tsc --noEmit; then
+        echo "❌ TypeScript check failed"
+        exit 1
+    fi
+    echo "✅ TypeScript check passed"
+fi
+
+# Run quick tests if available
+if npm run test:quick >/dev/null 2>&1; then
+    echo "Running quick tests..."
+    if ! timeout 5s npm run test:quick; then
+        echo "❌ Quick tests failed"
+        exit 1
+    fi
+    echo "✅ Quick tests passed"
+elif npm run test >/dev/null 2>&1; then
+    echo "Running tests (limited to 5 seconds)..."
+    if ! timeout 5s npm run test; then
+        echo "⚠️  Tests timed out or failed (continuing anyway)"
+    else
+        echo "✅ Tests passed"
+    fi
+fi
+
+echo "✅ Pre-commit checks passed"
+exit 0

@@ -1,0 +1,73 @@
+#!/bin/bash
+# Pre-commit hook for FastAPI projects
+# Runs black formatting and basic pytest checks
+
+set -e
+
+echo "Running pre-commit checks for FastAPI project..."
+
+# Check if we're in a FastAPI project
+if [[ ! -d "fastapi" ]] && ! grep -q "fastapi" requirements.txt 2>/dev/null; then
+    echo "Warning: No FastAPI project detected"
+    exit 0
+fi
+
+# Get list of Python files to check
+python_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.py$" || true)
+
+if [[ -z "$python_files" ]]; then
+    echo "No Python files to check"
+    exit 0
+fi
+
+echo "Checking Python files: $python_files"
+
+# Activate virtual environment if available
+if [[ -f "venv/bin/activate" ]]; then
+    source venv/bin/activate
+elif [[ -f ".venv/bin/activate" ]]; then
+    source .venv/bin/activate
+elif [[ -f "fastapi/venv/bin/activate" ]]; then
+    source fastapi/venv/bin/activate
+fi
+
+# Check if black is available
+if command -v black >/dev/null 2>&1; then
+    echo "Running black formatting check..."
+    if ! black --check --diff $python_files; then
+        echo "❌ Black formatting check failed"
+        echo "Fix with: black $python_files"
+        exit 1
+    fi
+    echo "✅ Black formatting check passed"
+else
+    echo "Warning: black not found, skipping formatting check"
+fi
+
+# FastAPI specific checks
+if command -v pytest >/dev/null 2>&1; then
+    echo "Running FastAPI quick tests..."
+    # Run only fast tests (under 5 seconds)
+    if ! timeout 5s pytest -x --tb=short -q; then
+        echo "❌ Quick tests failed"
+        exit 1
+    fi
+    echo "✅ Quick tests passed"
+else
+    echo "Warning: pytest not found, skipping tests"
+fi
+
+# Check if FastAPI server starts without errors
+if command -v uvicorn >/dev/null 2>&1 && [[ -f "fastapi/main.py" ]]; then
+    echo "Checking FastAPI server startup..."
+    cd fastapi
+    if ! timeout 3s uvicorn main:app --check 2>/dev/null; then
+        echo "❌ FastAPI server startup check failed"
+        exit 1
+    fi
+    cd ..
+    echo "✅ FastAPI server startup check passed"
+fi
+
+echo "✅ Pre-commit checks passed"
+exit 0

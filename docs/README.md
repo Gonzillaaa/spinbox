@@ -7,6 +7,7 @@
 
 ## 📚 Core Documentation  
 - [`adding-components.md`](./adding-components.md) - How to add components to projects
+- [`git-hooks.md`](./git-hooks.md) - Git hooks integration and quality assurance
 - [`chroma-usage.md`](./chroma-usage.md) - Chroma vector database usage guide
 - [`troubleshooting.md`](./troubleshooting.md) - Common issues and solutions
 - [`bare-bones-projects.md`](./bare-bones-projects.md) - Minimal project specifications
@@ -26,6 +27,7 @@
 ### Common Tasks
 - **Creating Projects**: See [Quick Start Guide](./quick-start.md) for examples
 - **Adding Components**: Check [Adding Components Guide](./adding-components.md)
+- **Setting Up Git Hooks**: Follow [Git Hooks Guide](./git-hooks.md) for quality assurance
 - **Troubleshooting**: Visit [Troubleshooting Guide](./troubleshooting.md)
 - **Configuration**: Reference [CLI Reference - Config](./cli-reference.md#spinbox-config)
 

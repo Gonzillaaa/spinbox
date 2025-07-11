@@ -1,0 +1,82 @@
+#!/bin/bash
+# Pre-push hook for Node.js projects
+# Runs full test suite and build validation
+
+set -e
+
+echo "Running pre-push checks for Node.js project..."
+
+# Check if we're in a Node.js project
+if [[ ! -f "package.json" ]]; then
+    echo "Warning: No package.json found"
+    exit 0
+fi
+
+# Check if npm is available
+if ! command -v npm >/dev/null 2>&1; then
+    echo "Warning: npm not found, skipping Node.js checks"
+    exit 0
+fi
+
+# Check if node_modules exists
+if [[ ! -d "node_modules" ]]; then
+    echo "Warning: node_modules not found, run 'npm install' first"
+    exit 0
+fi
+
+# Run full test suite
+if npm run test >/dev/null 2>&1; then
+    echo "Running full test suite..."
+    if ! npm run test; then
+        echo "❌ Test suite failed"
+        exit 1
+    fi
+    echo "✅ Test suite passed"
+else
+    echo "Warning: No test script found in package.json"
+fi
+
+# Run build if available
+if npm run build >/dev/null 2>&1; then
+    echo "Running build..."
+    if ! npm run build; then
+        echo "❌ Build failed"
+        exit 1
+    fi
+    echo "✅ Build passed"
+else
+    echo "Info: No build script found in package.json"
+fi
+
+# Run type checking if TypeScript is configured
+if [[ -f "tsconfig.json" ]] && command -v npx >/dev/null 2>&1; then
+    echo "Running TypeScript type checking..."
+    if ! npx tsc --noEmit; then
+        echo "❌ TypeScript type checking failed"
+        exit 1
+    fi
+    echo "✅ TypeScript type checking passed"
+fi
+
+# Run security audit
+if command -v npm >/dev/null 2>&1; then
+    echo "Running npm security audit..."
+    if ! npm audit --audit-level=moderate; then
+        echo "❌ Security audit failed"
+        exit 1
+    fi
+    echo "✅ Security audit passed"
+fi
+
+# Run lint check
+if npm run lint >/dev/null 2>&1; then
+    echo "Running lint check..."
+    if ! npm run lint; then
+        echo "❌ Lint check failed"
+        exit 1
+    fi
+    echo "✅ Lint check passed"
+fi
+
+echo "✅ Pre-push checks passed"
+exit 0

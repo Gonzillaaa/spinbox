@@ -252,6 +252,102 @@ spinbox start --no-detach
 - Provides status feedback and error handling
 - Can show logs if requested
 
+### `spinbox hooks`
+
+Manage git hooks for automated quality assurance and code formatting.
+
+#### Syntax
+```bash
+spinbox hooks <ACTION> [OPTIONS]
+```
+
+#### Actions
+| Action | Description |
+|--------|-------------|
+| `add` | Install git hooks |
+| `list` | List installed hooks |
+| `remove` | Remove git hooks |
+
+#### Hook Types
+| Type | Description |
+|------|-------------|
+| `pre-commit` | Format and lint checks before commit |
+| `pre-push` | Testing and build validation before push |
+| `all` | Install all recommended hooks |
+
+#### Options
+| Option | Description |
+|--------|-------------|
+| `--with-examples` | Include example configurations |
+| `--dry-run` | Show what would be done without making changes |
+| `--verbose` | Enable verbose output |
+
+#### Examples
+
+**Install hooks:**
+```bash
+# Install pre-commit hooks
+spinbox hooks add pre-commit
+
+# Install all recommended hooks
+spinbox hooks add all
+
+# Install hooks with example configurations
+spinbox hooks add pre-commit --with-examples
+```
+
+**Manage hooks:**
+```bash
+# List installed hooks
+spinbox hooks list
+
+# Remove specific hook
+spinbox hooks remove pre-commit
+
+# Remove all hooks
+spinbox hooks remove all
+```
+
+**Preview operations:**
+```bash
+# Preview hook installation
+spinbox hooks add all --dry-run
+
+# Preview hook removal
+spinbox hooks remove all --dry-run
+```
+
+#### Behavior
+- **Project-aware**: Automatically detects project type and installs appropriate hooks
+- **Tool validation**: Checks for required tools (black, pytest, eslint, etc.)
+- **Fast execution**: Pre-commit hooks target <5 seconds execution time
+- **Comprehensive testing**: Pre-push hooks run full test suites
+- **Security scanning**: Includes security checks for supported project types
+- **Example configurations**: Generates sample config files when requested
+
+#### Hook Details
+
+**Pre-commit hooks:**
+- **Python projects**: black formatting, quick pytest tests
+- **Node.js projects**: ESLint, TypeScript check, Prettier formatting
+- **FastAPI projects**: API validation, black formatting, quick tests
+- **Next.js projects**: Next.js lint, TypeScript check, build validation
+- **Full-stack projects**: Combined Python and Node.js checks
+
+**Pre-push hooks:**
+- **Python projects**: Full test suite, type checking, security scanning
+- **Node.js projects**: Full test suite, build validation, security audit
+- **FastAPI projects**: API validation, full tests, security scanning
+- **Next.js projects**: Full build, test suite, security audit
+- **Full-stack projects**: Comprehensive testing and validation
+
+#### Notes
+- Hooks are only installed in git repositories
+- Project type is automatically detected
+- Missing tools are reported with installation suggestions
+- Hooks can be disabled by removing them from `.git/hooks/`
+- Example configurations are created in project root when requested
+
 ### `spinbox update`
 
 Update Spinbox to the latest version or a specific version.
