@@ -354,7 +354,14 @@ Every container comes with:
 
 ### Custom Components
 
-The project setup script can be extended to support additional components. Modify `project-setup.sh` to add your own component templates and configuration logic.
+Spinbox uses a modular generator system for creating components. You can extend the system by:
+
+- **Adding new generators**: Create new component generators in the `generators/` directory
+- **Modifying existing generators**: Update component logic in existing generator scripts
+- **Creating custom profiles**: Add new profiles to the `templates/profiles/` directory
+- **Customizing requirements**: Add new requirements templates to `templates/requirements/`
+
+Each generator is a self-contained script that handles component creation, configuration, and integration with the project structure.
 
 ### Local Development
 
@@ -369,15 +376,9 @@ Development is designed to happen inside DevContainers for consistency. The virt
    - Virtual environment must be created manually: `python3 -m venv venv`
    - Activate with: `source venv/bin/activate`
 
-### Cleanup After Setup
+### Development Environment
 
-Once your project is set up, the `spinbox/` directory serves no purpose:
-
-```bash
-rm -rf spinbox/
-```
-
-All your development environment files are now at the root level and will continue working normally.
+All development environment files are created at the root level of your project directory. The global CLI tool manages project creation and component addition without requiring temporary directories or cleanup.
 
 ## 🔍 Troubleshooting
 

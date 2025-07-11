@@ -428,6 +428,6 @@ database = false
 
 ## Migration from Current System
 
-Current minimal project creation in `project-setup.sh` will be enhanced to support both Python and Node.js bare-bones projects while maintaining the same interactive experience users expect.
+The current minimal project creation system supports both Python and Node.js bare-bones projects through the global CLI tool with the same interactive experience users expect.
 
 The key difference is that instead of cloning a template repository, users will have a global tool that can create these minimal projects anywhere on their system with a single command.

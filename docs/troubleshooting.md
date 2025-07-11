@@ -494,8 +494,8 @@ DevContainers are the primary development environment for this project. All Pyth
 2. **Reset configuration:**
    ```bash
    # Reset to defaults
-   rm -rf .config
-   ./macos-setup.sh
+   rm -rf ~/.spinbox/config/
+   spinbox config --reset
    ```
 
 3. **Check syntax:**
