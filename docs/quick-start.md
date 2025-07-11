@@ -40,37 +40,19 @@ spinbox status --components
 
 **Option A: Use a predefined profile (recommended)**
 
-Choose from 5 curated profiles for common development scenarios:
-
 ```bash
-# 🌐 Full-stack web application (FastAPI + Next.js + PostgreSQL)
-# Perfect for: E-commerce, SaaS, dashboards, content management
-spinbox create myapp --profile web-app
-
-# 🚀 High-performance API backend (FastAPI + PostgreSQL + Redis)  
-# Perfect for: Microservices, mobile backends, API gateways
-spinbox create api-server --profile api-only
-
-# 📊 Data science environment (Jupyter + pandas + scikit-learn + PostgreSQL)
-# Perfect for: Research, data exploration, ML model development
-spinbox create ml-project --profile data-science
-
-# 🤖 AI/LLM development (OpenAI + LangChain + LlamaIndex + ChromaDB)
-# Perfect for: Chatbots, RAG applications, AI agents, document Q&A
-spinbox create ai-project --profile ai-llm
-
-# 🐍 Minimal Python environment (Python DevContainer + essential tools)
-# Perfect for: Scripts, prototypes, learning projects, CLI tools
-spinbox create basic --profile minimal
+# Choose from 5 curated profiles:
+spinbox create myapp --profile web-app        # Full-stack web application
+spinbox create api-server --profile api-only  # High-performance API backend
+spinbox create ml-project --profile data-science  # Data science environment
+spinbox create ai-project --profile ai-llm    # AI/LLM development
+spinbox create basic --profile minimal        # Minimal Python environment
 ```
 
 **Option B: Custom component selection**
 ```bash
-# Simple Python project
-spinbox create myproject --python
-
-# Full-stack with specific components
-spinbox create webapp --python --node --database --redis
+spinbox create myproject --python             # Simple Python project
+spinbox create webapp --python --node --postgresql --redis  # Custom full-stack
 ```
 
 ### Step 4: Start Development (30 seconds)
