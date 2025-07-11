@@ -31,7 +31,7 @@ Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors),
 **Workflow Frameworks**
 
 - Data Science workflow (Jupyter, pandas, scikit-learn, ML libraries)
-- AI/ML workflow (OpenAI, Anthropic, LangChain, ChromaDB, transformers)
+- AI/ML workflow (OpenAI, Anthropic, LangChain, LlamaIndex, ChromaDB)
 
 **Infrastructure Services**
 
@@ -54,7 +54,7 @@ Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors),
   - **web-app**: FastAPI backend + Next.js frontend + PostgreSQL (full-stack web app)
   - **api-only**: FastAPI backend + PostgreSQL + Redis (API with caching)
   - **data-science**: Data Science workflow + PostgreSQL (data analysis with storage)
-  - **ai-llm**: AI/ML workflow + Chroma (OpenAI/Anthropic + LangChain + vector search)
+  - **ai-llm**: AI/ML workflow + Chroma (OpenAI/Anthropic + LangChain/LlamaIndex + vector search)
   - **minimal**: Python DevContainer only (basic prototyping)
 - **Custom Components**: Mix and match components as needed
 - **Project Management**: Add components, start services, check status
@@ -196,7 +196,7 @@ Components are organized by their **architectural role**:
 | Next.js                                                    | `--nextjs`       | Frontend Framework | Next.js frontend with TypeScript (includes Node.js) |
 | **Workflow Frameworks** (Specialized work methodologies)   |
 | Data Science                                               | `--data-science` | Data Workflow      | Jupyter, pandas, scikit-learn, ML libraries         |
-| AI/ML                                                      | `--ai-ml`        | AI Workflow        | OpenAI, Anthropic, LangChain, ChromaDB, transformers |
+| AI/ML                                                      | `--ai-ml`        | AI Workflow        | OpenAI, Anthropic, LangChain, LlamaIndex, ChromaDB |
 | **Infrastructure Services** (Data storage & core services) |
 | PostgreSQL                                                 | `--postgresql`   | Primary Storage    | PostgreSQL with PGVector extension                  |
 | MongoDB                                                    | `--mongodb`      | Document Storage   | MongoDB document database                           |
@@ -317,7 +317,7 @@ your-project/
 **Workflow Frameworks:**
 
 - **Data Science** - Jupyter Lab, pandas, scikit-learn, matplotlib, automated analysis scripts
-- **AI/ML** - OpenAI/Anthropic clients, LangChain agents, ChromaDB vector store, transformers, prompt management
+- **AI/ML** - OpenAI/Anthropic clients, LangChain/LlamaIndex agents, ChromaDB vector store, transformers, prompt management
 
 **Infrastructure Services:**
 

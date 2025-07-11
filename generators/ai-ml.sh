@@ -187,7 +187,7 @@ crewai>=0.1.0
 # LLM utilities
 guidance>=0.1.0
 transformers>=4.35.0
-torch>=2.0.0
+# torch>=2.0.0  # Optional: Heavy dependency, uncomment if needed for model training
 
 # Data processing
 pandas>=2.1.0
@@ -216,6 +216,10 @@ python-dateutil>=2.8.0
 pydantic>=2.4.0
 fastapi>=0.103.0
 uvicorn>=0.23.0
+
+# Optional heavy dependencies (uncomment if needed):
+# torch>=2.0.0  # PyTorch - Heavy dependency for model training/inference
+# tensorflow>=2.13.0  # TensorFlow - Alternative to PyTorch
 EOF
 
     # Add optional dependencies based on selected components

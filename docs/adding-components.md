@@ -14,7 +14,7 @@ Spinbox supports adding components to existing projects seamlessly through the `
 
 **Workflow Frameworks** (Specialized methodologies):
 - **Data Science**: Data analysis workflow (Jupyter, pandas, scikit-learn)
-- **AI/ML**: AI/ML workflow (OpenAI, Anthropic, LangChain, ChromaDB, transformers)
+- **AI/ML**: AI/ML workflow (OpenAI, Anthropic, LangChain, LlamaIndex, ChromaDB)
 
 **Infrastructure Services** (Data storage & core services):
 - **PostgreSQL**: Database with PGVector extension

@@ -47,7 +47,7 @@ spinbox create <PROJECT_NAME> [OPTIONS]
 | Option | Description |
 |--------|-------------|
 | `--data-science` | Add Data Science workflow (Jupyter, pandas, scikit-learn) |
-| `--ai-ml` | Add AI/ML workflow (OpenAI, Anthropic, LangChain, ChromaDB) |
+| `--ai-ml` | Add AI/ML workflow (OpenAI, Anthropic, LangChain, LlamaIndex, ChromaDB) |
 
 *Infrastructure Services (Data storage & core services):*
 | Option | Description |
@@ -191,7 +191,7 @@ spinbox add [OPTIONS]
 | Option | Description |
 |--------|-------------|
 | `--data-science` | Add Data Science workflow (Jupyter, pandas, scikit-learn) |
-| `--ai-ml` | Add AI/ML workflow (OpenAI, Anthropic, LangChain, ChromaDB) |
+| `--ai-ml` | Add AI/ML workflow (OpenAI, Anthropic, LangChain, LlamaIndex, ChromaDB) |
 
 *Infrastructure Services:*
 | Option | Description |
