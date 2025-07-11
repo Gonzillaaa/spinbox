@@ -6,6 +6,8 @@
 source "$(dirname "${BASH_SOURCE[0]}")/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/version-config.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/dependency-manager.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/examples-generator.sh"
 
 # Project generation variables
 PROJECT_PATH=""
@@ -548,6 +550,25 @@ function generate_component_files() {
             print_warning "FastAPI generator not found, using fallback"
             generate_basic_backend "$project_dir"
         fi
+    fi
+    
+    # Generate dependencies and examples for all components
+    if [[ -n "${COMPONENTS:-}" ]]; then
+        # Initialize Python project with uv if needed
+        if [[ "$USE_PYTHON" == true ]]; then
+            init_python_project_with_uv "$project_dir"
+        fi
+        
+        # Initialize Node.js project with npm if needed
+        if [[ "$USE_NODE" == true ]]; then
+            init_nodejs_project_with_npm "$project_dir"
+        fi
+        
+        # Add dependencies for all components
+        add_dependencies_for_components "$project_dir" "$COMPONENTS"
+        
+        # Generate examples for all components
+        generate_examples_for_components "$project_dir" "$COMPONENTS"
     fi
     
     if [[ "$USE_NEXTJS" == true ]]; then
