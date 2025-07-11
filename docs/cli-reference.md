@@ -67,7 +67,7 @@ spinbox create <PROJECT_NAME> [OPTIONS]
 | Option | Description |
 |--------|-------------|
 | `--with-deps` | Automatically install component dependencies |
-| `--with-examples` | Generate working code examples |
+| `--with-examples` | Generate starter project templates |
 
 **Version Configuration:**
 | Option | Description |
@@ -205,7 +205,7 @@ spinbox add [OPTIONS]
 | Option | Description |
 |--------|-------------|
 | `--with-deps` | Automatically install component dependencies |
-| `--with-examples` | Generate working code examples |
+| `--with-examples` | Generate starter project templates |
 
 **Version Configuration:**
 | Option | Description |

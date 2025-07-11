@@ -28,7 +28,7 @@ Spinbox supports adding components to existing projects seamlessly through the `
 
 ### Enhancement Flags
 - **`--with-deps`**: Automatically install component dependencies using `uv` (Python) or `npm` (Node.js)
-- **`--with-examples`**: Generate working code examples for the components
+- **`--with-examples`**: Generate starter project templates for the components
 
 ## Using the CLI Command (Recommended)
 
@@ -65,7 +65,7 @@ spinbox add --nextjs --node-version 18
 spinbox add --fastapi --with-deps
 spinbox add --data-science --with-deps
 
-# Add with working code examples
+# Add with starter project templates
 spinbox add --nextjs --with-examples
 
 # Add with both dependencies and examples

@@ -1350,7 +1350,7 @@ function generate_fastapi_examples() {
 
 #### **Clear Option Separation** ✅ **IMPLEMENTED**
 - `--with-deps` → Adds packages to requirements.txt/package.json
-- `--with-examples` → Adds working code examples
+- `--with-examples` → Adds starter project templates
 - Can be used independently or together
 
 #### **Usage Examples** ✅ **WORKING**

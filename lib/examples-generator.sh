@@ -1,6 +1,6 @@
 #!/bin/bash
 # Examples Generator for Spinbox
-# Generates working code examples for components
+# Generates starter project templates for components
 
 # Generate basic FastAPI example
 function generate_fastapi_example() {

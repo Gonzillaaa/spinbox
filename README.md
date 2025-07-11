@@ -75,7 +75,7 @@ Uses Docker, DevContainers (compatible with VS Code, Cursor, and other editors),
 - **Service Management**: Built-in Docker Compose orchestration
 - **Version Control**: Customize software versions globally or per-project
 - **Dependency Management**: Automatic dependency installation with `--with-deps`
-- **Code Examples**: Working code examples with `--with-examples`
+- **Starter Project Templates**: Functional starter code with `--with-examples`
 - **Git Hooks Integration**: Automated quality assurance with `spinbox hooks`
 - **Easy Installation**: Homebrew integration for macOS
 - **Root-Level Deployment**: All project files created at repository root
@@ -209,7 +209,7 @@ Components are organized by their **architectural role**:
 | Flag              | Description                                  | Usage                                   |
 | ----------------- | -------------------------------------------- | --------------------------------------- |
 | `--with-deps`     | Automatically install component dependencies | Uses `uv` for Python, `npm` for Node.js |
-| `--with-examples` | Generate working code examples               | Creates functional boilerplate code     |
+| `--with-examples` | Generate starter project templates          | Creates functional boilerplate code     |
 
 **Examples:**
 

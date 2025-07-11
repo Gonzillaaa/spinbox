@@ -129,7 +129,7 @@ OPTIONS:
     --node                 Create Node.js DevContainer environment
     
     --with-deps            Add component dependencies to requirements.txt/package.json
-    --with-examples        Add working code examples for components
+    --with-examples        Add starter project templates for components
     
     --python-version VER   Python version (default: 3.12)
     --node-version VER     Node.js version (default: 20)
@@ -188,7 +188,7 @@ OPTIONS:
     --chroma               Add Chroma vector database
     
     --with-deps            Add component dependencies to requirements.txt/package.json
-    --with-examples        Add working code examples for components
+    --with-examples        Add starter project templates for components
     
     --python-version VER   Python version (default: current or 3.12)
     --node-version VER     Node.js version (default: current or 20)
