@@ -310,8 +310,13 @@ EOF
 }
 EOF
 
-    # Environment files
-    cat > "$nextjs_dir/.env.local.example" << 'EOF'
+    # Environment files - use security template
+    local env_template="$PROJECT_ROOT/templates/security/nextjs.env.example"
+    if [[ -f "$env_template" ]]; then
+        cp "$env_template" "$nextjs_dir/.env.local.example"
+    else
+        # Fallback to basic template
+        cat > "$nextjs_dir/.env.local.example" << 'EOF'
 # API Configuration
 NEXT_PUBLIC_API_URL=http://localhost:8000
 BACKEND_URL=http://backend:8000
@@ -319,9 +324,16 @@ BACKEND_URL=http://backend:8000
 # App Configuration
 NEXT_PUBLIC_APP_NAME="Next.js App"
 EOF
+    fi
 
     if [[ ! -f "$nextjs_dir/.env.local" ]]; then
         cp "$nextjs_dir/.env.local.example" "$nextjs_dir/.env.local"
+    fi
+
+    # Copy Next.js .gitignore
+    local gitignore_template="$PROJECT_ROOT/templates/security/nextjs.gitignore"
+    if [[ -f "$gitignore_template" ]]; then
+        cp "$gitignore_template" "$nextjs_dir/.gitignore"
     fi
 
     print_debug "Generated configuration files"

@@ -514,7 +514,13 @@ EOF
 function generate_postgresql_env_files() {
     local postgresql_dir="$1"
     
-    cat > "$postgresql_dir/.env.example" << 'EOF'
+    # Use security template for .env.example
+    local template_file="$PROJECT_ROOT/templates/security/postgresql.env.example"
+    if [[ -f "$template_file" ]]; then
+        cp "$template_file" "$postgresql_dir/.env.example"
+    else
+        # Fallback to basic template
+        cat > "$postgresql_dir/.env.example" << 'EOF'
 # PostgreSQL Database Configuration
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
@@ -530,6 +536,7 @@ POSTGRES_SHARED_BUFFERS=128MB
 BACKUP_RETENTION_DAYS=7
 BACKUP_SCHEDULE="0 2 * * *"  # Daily at 2 AM
 EOF
+    fi
 
     # Create actual .env if it doesn't exist
     if [[ ! -f "$postgresql_dir/.env" ]]; then

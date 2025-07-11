@@ -609,7 +609,13 @@ EOF
 function generate_fastapi_env_files() {
     local fastapi_dir="$1"
     
-    cat > "$fastapi_dir/.env.example" << 'EOF'
+    # Use security template for .env.example
+    local template_file="$PROJECT_ROOT/templates/security/fastapi.env.example"
+    if [[ -f "$template_file" ]]; then
+        cp "$template_file" "$fastapi_dir/.env.example"
+    else
+        # Fallback to basic template
+        cat > "$fastapi_dir/.env.example" << 'EOF'
 # Database
 POSTGRES_SERVER=localhost
 POSTGRES_USER=postgres
@@ -629,13 +635,27 @@ SECRET_KEY=your-secret-key-here
 # CORS
 BACKEND_CORS_ORIGINS=http://localhost:3000,http://localhost:8080
 EOF
+    fi
 
     # Create actual .env if it doesn't exist
     if [[ ! -f "$fastapi_dir/.env" ]]; then
         cp "$fastapi_dir/.env.example" "$fastapi_dir/.env"
     fi
 
-    print_debug "Generated environment files"
+    # Copy virtual environment setup script
+    local setup_venv_template="$PROJECT_ROOT/templates/security/setup_venv.sh"
+    if [[ -f "$setup_venv_template" ]]; then
+        cp "$setup_venv_template" "$fastapi_dir/setup_venv.sh"
+        chmod +x "$fastapi_dir/setup_venv.sh"
+    fi
+
+    # Copy Python .gitignore
+    local gitignore_template="$PROJECT_ROOT/templates/security/python.gitignore"
+    if [[ -f "$gitignore_template" ]]; then
+        cp "$gitignore_template" "$fastapi_dir/.gitignore"
+    fi
+
+    print_debug "Generated environment files with security templates"
 }
 
 # Main function to create backend component

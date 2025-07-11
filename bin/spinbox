@@ -152,7 +152,7 @@ USAGE:
     spinbox add [OPTIONS]
 
 OPTIONS:
-    --backend              Add FastAPI backend component
+    --fastapi              Add FastAPI backend component
     --frontend             Add Next.js frontend component
     --database             Add PostgreSQL database with PGVector
     --mongodb              Add MongoDB document database
@@ -170,7 +170,7 @@ OPTIONS:
 
 EXAMPLES:
     spinbox add --postgresql           Add PostgreSQL to current project
-    spinbox add --backend --redis      Add FastAPI backend with Redis
+    spinbox add --fastapi --redis      Add FastAPI backend with Redis
     spinbox add --chroma               Add vector database for AI projects
 
 NOTES:
@@ -548,7 +548,7 @@ function parse_create_args() {
                 show_create_help
                 exit 0
                 ;;
-            --python|--node|--backend|--frontend|--database|--mongodb|--redis|--chroma)
+            --python|--node|--fastapi|--nextjs|--postgresql|--mongodb|--redis|--chroma)
                 # Component flags - will be handled by project generator
                 COMPONENTS+=" $1"
                 shift
@@ -599,7 +599,7 @@ function parse_add_args() {
                 show_add_help
                 exit 0
                 ;;
-            --backend|--frontend|--database|--mongodb|--redis|--chroma)
+            --fastapi|--nextjs|--postgresql|--mongodb|--redis|--chroma)
                 # Component flags - will be handled by project generator
                 COMPONENTS+=" $1"
                 shift
@@ -1142,7 +1142,7 @@ function show_project_status() {
         
         # Check components
         local components=()
-        [[ -d "backend" ]] && components+=("backend")
+        [[ -d "fastapi" ]] && components+=("fastapi")
         [[ -d "frontend" ]] && components+=("frontend")
         [[ -f "docker-compose.yml" ]] && grep -q "postgres" docker-compose.yml && components+=("database")
         [[ -f "docker-compose.yml" ]] && grep -q "redis" docker-compose.yml && components+=("redis")
@@ -1308,7 +1308,7 @@ function show_components_status() {
     print_info "Available Components:"
     echo "  --python       Python DevContainer with virtual environment"
     echo "  --node         Node.js DevContainer with package management"
-    echo "  --backend      FastAPI backend with SQLAlchemy"
+    echo "  --fastapi      FastAPI backend with SQLAlchemy"
     echo "  --frontend     Next.js frontend with TypeScript"
     echo "  --database     PostgreSQL with PGVector extension"
     echo "  --mongodb      MongoDB document database"

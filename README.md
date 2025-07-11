@@ -37,6 +37,16 @@ A **global CLI tool** for spinning up customizable prototyping environments with
 - **Easy Installation**: Homebrew integration for macOS
 - **Root-Level Deployment**: All project files created at repository root
 
+## 🛡️ Security Features
+
+- **Environment Isolation**: Each project runs in its own Docker container
+- **Virtual Environment Setup**: Automatic Python venv creation with `setup_venv.sh`
+- **Secret Management**: Comprehensive .env templates with security guidelines
+- **Version Control**: Automatic .gitignore generation (prevents .env commits)
+- **Configuration Management**: Environment-specific config files
+- **Clean Separation**: Development tools separate from production
+- **Security Best Practices**: Built-in reminders and secure defaults
+
 ## 📋 Prerequisites
 
 - Docker Desktop
@@ -172,6 +182,19 @@ docker-compose up -d
 ```
 
 Your editor will detect the DevContainer configuration and prompt to "Reopen in Container".
+
+### 3. Security Setup
+
+**Python Projects:**
+```bash
+cd fastapi
+./setup_venv.sh  # Sets up virtual environment with security best practices
+```
+
+**Environment Variables:**
+- Review and update `.env` files with your actual credentials
+- Never commit `.env` files to version control (already in .gitignore)
+- Use strong passwords and secure API keys
 
 ---
 
