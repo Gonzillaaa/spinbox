@@ -89,7 +89,7 @@ RUN apt-get update && apt-get install -y \
 # Install UV for fast package management
 RUN pip install uv
 
-# Install development tools
+# Install prototyping tools
 RUN pip install black isort pylint pytest
 
 # Set up shell
@@ -110,7 +110,7 @@ CMD ["zsh"]
 
 ### Requirements Template Selection
 Interactive selection from existing templates:
-- **minimal.txt**: Basic development tools
+- **minimal.txt**: Basic prototyping tools
 - **data-science.txt**: pandas, numpy, jupyter, scikit-learn
 - **ai-llm.txt**: openai, langchain, transformers
 - **web-scraping.txt**: beautifulsoup, selenium, requests

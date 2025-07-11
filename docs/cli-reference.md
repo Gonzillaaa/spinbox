@@ -1,10 +1,10 @@
 # Spinbox CLI Reference
 
-Complete command-line interface reference for Spinbox development environment tool.
+Complete command-line interface reference for Spinbox prototyping environment tool.
 
 ## Overview
 
-Spinbox provides a comprehensive CLI for creating and managing containerized development environments. This reference covers all commands, options, and usage patterns.
+Spinbox provides a comprehensive CLI for creating and managing containerized prototyping environments. This reference covers all commands, options, and usage patterns.
 
 ## Global Options
 
@@ -75,10 +75,10 @@ spinbox create api-server --profile api-only
 # Data science environment
 spinbox create ml-project --profile data-science
 
-# AI/LLM development environment
+# AI/LLM prototyping environment
 spinbox create ai-project --profile ai-llm
 
-# Minimal development environment
+# Minimal prototyping environment
 spinbox create basic-env --profile minimal
 ```
 
@@ -523,7 +523,7 @@ spinbox profiles --show api-only
 | `api-only` | Backend API with database | backend, database, redis |
 | `data-science` | Data science environment | python, database |
 | `ai-llm` | AI/LLM development | python, database, chroma |
-| `minimal` | Basic development environment | python |
+| `minimal` | Basic prototyping environment | python |
 
 #### Profile Details
 
@@ -638,7 +638,7 @@ Available Python requirements templates:
 
 | Template | Description | Key Libraries |
 |----------|-------------|---------------|
-| `minimal` | Basic development tools | uv, pytest, black, requests |
+| `minimal` | Basic prototyping tools | uv, pytest, black, requests |
 | `data-science` | ML/data science libraries | pandas, numpy, matplotlib, jupyter |
 | `ai-llm` | AI/LLM development | openai, anthropic, langchain, tiktoken |
 | `web-scraping` | Web scraping tools | beautifulsoup4, selenium, scrapy |

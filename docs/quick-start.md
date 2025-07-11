@@ -1,6 +1,6 @@
 # Spinbox Quick Start Guide
 
-Get up and running with Spinbox in 5 minutes! This guide will walk you through installing Spinbox and creating your first development environment.
+Get up and running with Spinbox in 5 minutes! This guide will walk you through installing Spinbox and creating your first prototyping environment.
 
 ## 🚀 5-Minute Tutorial
 
@@ -82,10 +82,10 @@ spinbox start
 ```
 
 **🎉 You're ready to develop!** Your project now has:
-- DevContainer for consistent development environment
+- DevContainer for consistent prototyping environment
 - All selected components configured and ready
 - Docker Compose for service orchestration
-- Modern development tools pre-installed
+- Modern prototyping tools pre-installed
 
 ## Common First Projects
 
@@ -131,7 +131,7 @@ code .
 - PostgreSQL database
 - Redis for caching and queues
 - DevContainer with Python 3.12+
-- Pre-configured development environment
+- Pre-configured prototyping environment
 
 ### Data Science Project
 
@@ -151,7 +151,7 @@ code .
 
 ### AI/LLM Development
 
-**Create an AI development environment:**
+**Create an AI prototyping environment:**
 ```bash
 spinbox create ai-project --profile ai-llm
 cd ai-project
@@ -163,7 +163,7 @@ code .
 - OpenAI, Anthropic, LangChain, LlamaIndex
 - Chroma vector database for embeddings
 - PostgreSQL for data persistence
-- DevContainer optimized for AI development
+- DevContainer optimized for AI prototyping
 
 ## Essential Commands
 
@@ -240,7 +240,7 @@ spinbox start
 - Edit code in the DevContainer
 - Services run in the background
 - Database and other services are automatically configured
-- All development tools are pre-installed
+- All prototyping tools are pre-installed
 
 ### 5. Manage Services
 ```bash
@@ -265,7 +265,7 @@ Profiles are pre-configured combinations that solve common development scenarios
 - **api-only**: Backend API development
 - **data-science**: ML/data science projects
 - **ai-llm**: AI and LLM development
-- **minimal**: Basic development environment
+- **minimal**: Basic prototyping environment
 
 ### 2. Use DevContainers
 Every Spinbox project includes a DevContainer configuration:
@@ -405,6 +405,6 @@ spinbox config --setup
 
 ---
 
-**You're all set!** Start building amazing projects with Spinbox. The development environment is ready in seconds, not hours.
+**You're all set!** Start building amazing projects with Spinbox. The prototyping environment is ready in seconds, not hours.
 
 **Pro tip**: Try `spinbox create demo --profile web-app` to see a complete full-stack setup in action!

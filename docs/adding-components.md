@@ -342,7 +342,7 @@ spinbox add --database --mongodb     # Relational + Document storage
 # Performance-optimized API
 spinbox add --backend --redis --database
 
-# AI/ML development environment  
+# AI/ML prototyping environment  
 spinbox add --backend --database --chroma
 
 # Full-stack with multiple storage layers
@@ -361,4 +361,4 @@ spinbox add --backend --frontend --python-version 3.10 --node-version 18
 
 ---
 
-**Next Steps**: After adding components, see the [Quick Start Guide](./quick-start.md) for development workflow examples and the [CLI Reference](./cli-reference.md) for complete command documentation.
+**Next Steps**: After adding components, see the [Quick Start Guide](./quick-start.md) for prototyping workflow examples and the [CLI Reference](./cli-reference.md) for complete command documentation.

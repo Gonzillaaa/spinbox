@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the implementation strategy for building Spinbox as a modern, globally installable CLI tool. The focus is on creating a clean, efficient, and user-friendly development environment generator.
+This document outlines the implementation strategy for building Spinbox as a modern, globally installable CLI tool. The focus is on creating a clean, efficient, and user-friendly prototyping environment generator.
 
 ## Implementation Approach
 

@@ -4,7 +4,7 @@ Complete guide for installing Spinbox on different platforms and environments.
 
 ## Overview
 
-Spinbox is a global CLI tool that creates containerized development environments with predefined profiles or custom component selection. This guide covers all installation methods and troubleshooting.
+Spinbox is a global CLI tool that creates containerized prototyping environments with predefined profiles or custom component selection. This guide covers all installation methods and troubleshooting.
 
 ## Prerequisites
 
@@ -547,4 +547,4 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh |
 
 ---
 
-**Installation complete!** Start creating development environments with `spinbox create myproject --profile web-app`.
+**Installation complete!** Start creating prototyping environments with `spinbox create myproject --profile web-app`.
