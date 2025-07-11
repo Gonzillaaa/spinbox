@@ -337,7 +337,7 @@ If you encounter issues:
 2. **Review logs**: `docker-compose logs [service-name]`
 3. **Validate configuration**: `spinbox config --list`
 4. **Compare with fresh project**: Create a new project with the same components
-5. **Consult troubleshooting guide**: [docs/troubleshooting.md](./troubleshooting.md)
+5. **Consult troubleshooting guide**: [troubleshooting.md](./troubleshooting.md)
 
 ## Best Practices
 

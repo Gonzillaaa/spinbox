@@ -335,12 +335,12 @@ code .
 ## Next Steps
 
 ### Explore Documentation
-- **Installation Guide**: [docs/installation.md](./installation.md)
-- **CLI Reference**: [docs/cli-reference.md](./cli-reference.md)
-- **Troubleshooting**: [docs/troubleshooting.md](./troubleshooting.md)
+- **Installation Guide**: [installation.md](./installation.md)
+- **CLI Reference**: [cli-reference.md](./cli-reference.md)
+- **Troubleshooting**: [troubleshooting.md](./troubleshooting.md)
 
 ### Learn More About Components
-- **Adding Components**: [docs/adding-components.md](./adding-components.md)
+- **Adding Components**: [adding-components.md](./adding-components.md)
 - **Backend Development**: Check `backend/README.md` in generated projects
 - **Frontend Development**: Check `frontend/README.md` in generated projects
 
