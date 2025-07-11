@@ -38,13 +38,24 @@
 
 ## 🎯 Profiles Quick Reference
 
-| Profile | Use Case | Components | Command |
-|---------|----------|------------|---------|
-| `web-app` | Full-stack web application | FastAPI + Next.js + PostgreSQL | `spinbox create myapp --profile web-app` |
-| `api-only` | Backend API development | FastAPI + PostgreSQL + Redis | `spinbox create api --profile api-only` |
-| `data-science` | Data analysis workflow | Data Science + PostgreSQL | `spinbox create ml-proj --profile data-science` |
-| `ai-llm` | AI/LLM workflow | AI/ML + Chroma | `spinbox create ai-proj --profile ai-llm` |
-| `minimal` | Basic development | Python DevContainer | `spinbox create basic --profile minimal` |
+### 🎯 **Predefined Profiles - Choose Your Stack**
+
+| Profile | Use Case | What's Included | Perfect For |
+|---------|----------|-----------------|-------------|
+| **web-app** | Full-stack web applications | FastAPI + Next.js + PostgreSQL | E-commerce, SaaS, dashboards, content management |
+| **api-only** | High-performance APIs | FastAPI + PostgreSQL + Redis | Microservices, mobile backends, API gateways |
+| **data-science** | Data analysis & ML | Jupyter + pandas + scikit-learn + PostgreSQL | Research, data exploration, ML development |
+| **ai-llm** | AI/LLM applications | OpenAI + LangChain + LlamaIndex + ChromaDB | Chatbots, RAG apps, AI agents, document Q&A |
+| **minimal** | Simple Python projects | Python DevContainer + essential tools | Scripts, prototypes, learning, CLI tools |
+
+**Quick Commands:**
+```bash
+spinbox create myapp --profile web-app        # Full-stack application
+spinbox create api --profile api-only         # High-performance API
+spinbox create analysis --profile data-science # Data analysis project
+spinbox create ai-proj --profile ai-llm       # AI/LLM application
+spinbox create basic --profile minimal        # Simple Python project
+```
 
 ## 🔧 Components Quick Reference
 

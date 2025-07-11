@@ -686,13 +686,21 @@ spinbox profiles --show api-only
 
 #### Available Profiles
 
-| Profile | Description | Components |
-|---------|-------------|------------|
-| `web-app` | Full-stack web application | fastapi, nextjs, postgresql |
-| `api-only` | FastAPI API with PostgreSQL | fastapi, postgresql, redis |
-| `data-science` | Data science workflow | data-science, postgresql |
-| `ai-llm` | AI/LLM development | ai-ml, chroma |
-| `minimal` | Basic prototyping environment | python |
+| Profile | Description | Components | Best For |
+|---------|-------------|------------|----------|
+| **web-app** | Full-stack web application with frontend, backend, and database | fastapi, nextjs, postgresql | E-commerce, SaaS, dashboards, content management systems |
+| **api-only** | High-performance API backend with caching and database | fastapi, postgresql, redis | Microservices, mobile backends, API gateways, third-party integrations |
+| **data-science** | Data analysis environment with Jupyter and ML libraries | data-science, postgresql | Research, data exploration, statistical analysis, ML model development |
+| **ai-llm** | AI/LLM development with agents and vector database | ai-ml, chroma | Chatbots, RAG applications, AI agents, document Q&A systems |
+| **minimal** | Lightweight Python environment for simple projects | python | Scripts, prototypes, learning projects, CLI tools |
+
+**Profile Features:**
+
+- **web-app**: FastAPI + Next.js + PostgreSQL + Docker networking + full-stack integration
+- **api-only**: FastAPI + PostgreSQL + Redis + performance optimization + caching strategies  
+- **data-science**: Jupyter Lab + pandas + scikit-learn + matplotlib + PostgreSQL + analysis scripts
+- **ai-llm**: OpenAI + Anthropic + LangChain + LlamaIndex + ChromaDB + AI workflows
+- **minimal**: Python DevContainer + UV + pytest + black + essential tools only
 
 #### Profile Details
 

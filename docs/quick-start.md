@@ -39,18 +39,29 @@ spinbox status --components
 ### Step 3: Create Your First Project (2 minutes)
 
 **Option A: Use a predefined profile (recommended)**
+
+Choose from 5 curated profiles for common development scenarios:
+
 ```bash
-# Full-stack web application
+# 🌐 Full-stack web application (FastAPI + Next.js + PostgreSQL)
+# Perfect for: E-commerce, SaaS, dashboards, content management
 spinbox create myapp --profile web-app
 
-# Backend API with database
+# 🚀 High-performance API backend (FastAPI + PostgreSQL + Redis)  
+# Perfect for: Microservices, mobile backends, API gateways
 spinbox create api-server --profile api-only
 
-# Data science environment
+# 📊 Data science environment (Jupyter + pandas + scikit-learn + PostgreSQL)
+# Perfect for: Research, data exploration, ML model development
 spinbox create ml-project --profile data-science
 
-# AI/LLM development
+# 🤖 AI/LLM development (OpenAI + LangChain + LlamaIndex + ChromaDB)
+# Perfect for: Chatbots, RAG applications, AI agents, document Q&A
 spinbox create ai-project --profile ai-llm
+
+# 🐍 Minimal Python environment (Python DevContainer + essential tools)
+# Perfect for: Scripts, prototypes, learning projects, CLI tools
+spinbox create basic --profile minimal
 ```
 
 **Option B: Custom component selection**

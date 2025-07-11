@@ -238,13 +238,92 @@ spinbox create webapp --fastapi --nextjs --postgresql --with-deps --with-example
 
 ## 🎯 Predefined Profiles
 
-| Profile        | Description                   | Components                  |
-| -------------- | ----------------------------- | --------------------------- |
-| `web-app`      | Full-stack web application    | fastapi, nextjs, postgresql |
-| `api-only`     | FastAPI API with caching      | fastapi, postgresql, redis  |
-| `data-science` | Data science workflow         | data-science, postgresql    |
-| `ai-llm`       | AI/LLM workflow               | ai-ml, chroma               |
-| `minimal`      | Basic prototyping environment | python                      |
+Choose from 5 carefully curated profiles that provide complete development environments for common use cases:
+
+### 🌐 **web-app** - Full-Stack Web Application
+**Perfect for:** Building complete web applications with frontend, backend, and database
+
+**What you get:**
+- **FastAPI backend** - Modern Python API with automatic OpenAPI docs
+- **Next.js frontend** - React-based frontend with TypeScript and Tailwind CSS
+- **PostgreSQL database** - Relational database with PGVector for embeddings
+- **Full integration** - Pre-configured Docker services and networking
+
+**Use cases:** E-commerce sites, SaaS applications, content management systems, dashboards
+
+```bash
+spinbox create myapp --profile web-app
+```
+
+### 🚀 **api-only** - High-Performance API Backend
+**Perfect for:** Building scalable APIs with caching and performance optimization
+
+**What you get:**
+- **FastAPI backend** - High-performance async API with automatic validation
+- **PostgreSQL database** - Primary data storage with advanced querying
+- **Redis caching** - Fast in-memory caching and session management
+- **Performance focused** - Optimized for API throughput and response times
+
+**Use cases:** Microservices, mobile app backends, third-party integrations, API gateways
+
+```bash
+spinbox create api-server --profile api-only
+```
+
+### 📊 **data-science** - Data Analysis & Machine Learning
+**Perfect for:** Data analysis, research, and machine learning workflows
+
+**What you get:**
+- **Jupyter Lab** - Interactive notebooks with rich data visualization
+- **Scientific libraries** - pandas, scikit-learn, matplotlib, seaborn
+- **PostgreSQL database** - Structured data storage and analysis
+- **Analysis tools** - Pre-configured data pipeline and visualization scripts
+
+**Use cases:** Data exploration, statistical analysis, ML model development, research projects
+
+```bash
+spinbox create analysis --profile data-science
+```
+
+### 🤖 **ai-llm** - AI/LLM Development Environment
+**Perfect for:** Building AI applications, chatbots, and LLM-powered tools
+
+**What you get:**
+- **LLM integration** - OpenAI, Anthropic, and local model support
+- **Agent frameworks** - LangChain and LlamaIndex for RAG applications
+- **Vector database** - ChromaDB for semantic search and embeddings
+- **AI workflows** - Pre-built templates for common AI patterns
+
+**Use cases:** Chatbots, document Q&A, content generation, AI agents, RAG applications
+
+```bash
+spinbox create ai-project --profile ai-llm
+```
+
+### 🐍 **minimal** - Lightweight Python Environment
+**Perfect for:** Simple scripts, prototypes, and learning Python
+
+**What you get:**
+- **Python DevContainer** - Clean Python environment with modern tooling
+- **Essential tools** - UV package manager, pytest, black formatter
+- **No services** - Lightweight setup with no database or external dependencies
+- **Quick setup** - Fastest way to start coding in Python
+
+**Use cases:** Python scripts, algorithms, CLI tools, learning projects, quick prototypes
+
+```bash
+spinbox create basic --profile minimal
+```
+
+### 📋 **Profile Comparison**
+
+| Profile | Best For | Complexity | Services | Setup Time |
+|---------|----------|------------|----------|------------|
+| **web-app** | Full-stack applications | High | 3 services | ~2 minutes |
+| **api-only** | Backend APIs | Medium | 2 services | ~90 seconds |
+| **data-science** | Data analysis | Medium | 1 service | ~60 seconds |
+| **ai-llm** | AI applications | Medium | 1 service | ~60 seconds |
+| **minimal** | Simple scripts | Low | 0 services | ~30 seconds |
 
 ## 🛠️ Development Workflow
 
