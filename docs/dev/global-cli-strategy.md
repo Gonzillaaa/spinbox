@@ -13,7 +13,7 @@ git clone https://github.com/Gonzillaaa/spinbox.git
 cd spinbox
 
 # Install Spinbox globally (one-time)
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
+sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
 
 # Navigate to project location
 cd ../my-project/
@@ -192,12 +192,13 @@ spinbox config reset
 ### 1. Homebrew Formula (Recommended)
 ```bash
 # Direct formula installation (no tap required)
-brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
+# Homebrew requires a local tap now
+# See installation docs for setup instructions
 ```
 
 ### 2. Manual Installation
 ```bash
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
+sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
 ```
 
 ### 3. Future: Official Homebrew Core (Goal)

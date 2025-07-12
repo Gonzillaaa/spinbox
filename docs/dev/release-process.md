@@ -135,7 +135,7 @@ spinbox update
 
 For new installations:
 \`\`\`bash
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
+sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
 \`\`\`
 
 ## Known Issues

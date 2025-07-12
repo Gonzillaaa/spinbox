@@ -8,14 +8,14 @@ Get up and running with Spinbox in 5 minutes! This guide will walk you through i
 
 **Choose your installation method:**
 
-**Option A: Homebrew (macOS)**
+**Option A: User Installation (Recommended - No sudo required)**
 ```bash
-brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
 ```
 
-**Option B: Install Script (all platforms)**
+**Option B: System Installation (Requires sudo)**
 ```bash
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
+sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
 ```
 
 **Verify installation:**

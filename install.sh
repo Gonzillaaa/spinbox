@@ -43,9 +43,13 @@ check_prerequisites() {
         exit 1
     fi
     
-    # Check if install directory is writable
-    if [ ! -w "$(dirname "$INSTALL_DIR")" ]; then
-        print_error "Cannot write to $INSTALL_DIR. Please run with sudo or choose a different install location."
+    # Check if we can write to install directory
+    if [ ! -w "$INSTALL_DIR" ] && [ ! -w "$(dirname "$INSTALL_DIR")" ]; then
+        print_error "Cannot write to $INSTALL_DIR. Please run with sudo:"
+        print_error "  sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)"
+        print_error ""
+        print_error "Or use the user installation script (no sudo required):"
+        print_error "  curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash"
         exit 1
     fi
     
