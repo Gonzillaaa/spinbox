@@ -25,9 +25,19 @@ Before installing Spinbox, ensure you have:
 
 ## Installation Methods
 
+Choose the method that best fits your environment and preferences:
+
+| Method | Sudo Required | Location | Best For |
+|--------|---------------|----------|----------|
+| Homebrew | No | `/opt/homebrew/bin` | macOS users with Homebrew |
+| System Script | Yes | `/usr/local/bin` | System-wide installations |
+| User Script | No | `~/.local/bin` | No sudo access or user-only |
+| Manual | Varies | Custom | Developers and custom setups |
+
 ### Method 1: Homebrew (Recommended for macOS)
 
-**Direct Formula Installation:**
+**✅ Use when:** You have Homebrew and prefer package manager installations
+
 ```bash
 # Install directly from GitHub formula
 brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
@@ -36,14 +46,15 @@ brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/s
 **Verify Installation:**
 ```bash
 spinbox --version
-# Should output: Spinbox v1.0.0
+# Should output: Spinbox v0.1.0-beta.2
 ```
 
-### Method 2: Install Script (Cross-platform)
+### Method 2: System Installation Script (Requires sudo)
 
-**One-line Installation:**
+**✅ Use when:** You want system-wide installation and have sudo access
+
 ```bash
-# Download and run install script
+# One-line installation (requires sudo)
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
 ```
 
@@ -55,7 +66,30 @@ chmod +x install.sh
 ./install.sh
 ```
 
-### Method 3: Manual Installation
+### Method 3: User-Space Installation (No sudo required)
+
+**✅ Use when:** You don't have sudo access or prefer user-specific installation
+
+```bash
+# One-line user installation (no sudo required)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
+```
+
+**Manual User Installation:**
+```bash
+# Download and review before running
+curl -o install-user.sh https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh
+chmod +x install-user.sh
+./install-user.sh
+```
+
+**Note:** After user installation, ensure `~/.local/bin` is in your PATH:
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc  # or ~/.zshrc
+```
+
+### Method 4: Manual Installation
 
 **For developers or custom setups:**
 ```bash
