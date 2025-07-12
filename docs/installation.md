@@ -32,7 +32,7 @@ Choose the method that best fits your environment and preferences:
 | Homebrew | No | `/opt/homebrew/bin` | macOS users with Homebrew |
 | System Script | Yes | `/usr/local/bin` | System-wide installations |
 | User Script | No | `~/.local/bin` | No sudo access or user-only |
-| Manual | Varies | Custom | Developers and custom setups |
+| Manual | Choice | `/usr/local/bin` or `~/.local/bin` | Code review, development, custom setups |
 
 ### Method 1: Homebrew (Recommended for macOS)
 
@@ -91,20 +91,31 @@ source ~/.bashrc  # or ~/.zshrc
 
 ### Method 4: Manual Installation
 
-**For developers or custom setups:**
+**✅ Use when:** You want to inspect the code first or need custom installation
+
 ```bash
 # Clone repository
 git clone https://github.com/Gonzillaaa/spinbox.git
 cd spinbox
 
-# Make installer executable and run
+# Option A: System installation (requires sudo)
 chmod +x install.sh
 ./install.sh
+
+# Option B: User installation (no sudo required)
+chmod +x install-user.sh
+./install-user.sh
 
 # Optional: Clean up
 cd ..
 rm -rf spinbox
 ```
+
+**Benefits of manual installation:**
+- Review code before installation
+- Choose between system or user installation
+- Modify installation scripts if needed
+- Keep local copy for development
 
 ## Installation Details
 
