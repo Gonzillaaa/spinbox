@@ -8,6 +8,7 @@ REPO_URL="https://github.com/Gonzillaaa/spinbox.git"
 INSTALL_DIR="/usr/local/bin"
 CONFIG_DIR="$HOME/.spinbox"
 TEMP_DIR="/tmp/spinbox-install"
+SPINBOX_LIB_DIR="/usr/local/lib/spinbox"
 
 # Colors for output
 RED='\033[0;31m'
@@ -76,23 +77,30 @@ install_spinbox() {
     # Make spinbox executable
     chmod +x bin/spinbox
     
-    # Create symlink
-    print_status "Installing to $INSTALL_DIR..."
-    ln -sf "$TEMP_DIR/bin/spinbox" "$INSTALL_DIR/spinbox"
+    # Install libraries to system location
+    print_status "Installing libraries to $SPINBOX_LIB_DIR..."
+    mkdir -p "$SPINBOX_LIB_DIR"
+    cp -r lib "$SPINBOX_LIB_DIR/"
+    cp -r generators "$SPINBOX_LIB_DIR/"
+    if [ -d "templates" ]; then
+        cp -r templates "$SPINBOX_LIB_DIR/"
+    fi
     
-    # Create configuration directory
+    # Modify the binary to look in system lib directory
+    print_status "Installing to $INSTALL_DIR..."
+    sed -e 's|SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"|# System installation - libraries in /usr/local/lib/spinbox|' \
+        -e 's|SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"|SPINBOX_PROJECT_ROOT="/usr/local/lib/spinbox"|' \
+        bin/spinbox > "$INSTALL_DIR/spinbox"
+    chmod +x "$INSTALL_DIR/spinbox"
+    
+    # Create user configuration directory
     mkdir -p "$CONFIG_DIR"
     
-    # Copy templates and libraries
-    print_status "Setting up configuration..."
-    cp -r lib "$CONFIG_DIR/"
-    cp -r generators "$CONFIG_DIR/"
-    
-    # Make sure the symlink points to the correct location
-    if [ -L "$INSTALL_DIR/spinbox" ]; then
+    # Make sure the binary was installed correctly
+    if [ -x "$INSTALL_DIR/spinbox" ]; then
         print_status "Spinbox installed successfully!"
     else
-        print_error "Installation failed. Could not create symlink."
+        print_error "Installation failed. Could not install binary."
         exit 1
     fi
     

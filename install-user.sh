@@ -96,7 +96,10 @@ install_spinbox() {
     
     # Modify the binary to look in config directory for libs
     print_status "Installing to $INSTALL_DIR..."
-    sed 's|source "$SPINBOX_PROJECT_ROOT/lib/|source "$HOME/.spinbox/lib/|g' bin/spinbox > "$INSTALL_DIR/spinbox"
+    # Replace the project root detection logic for user installation
+    sed -e 's|SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"|# User installation - libraries in ~/.spinbox|' \
+        -e 's|SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"|SPINBOX_PROJECT_ROOT="$HOME/.spinbox"|' \
+        bin/spinbox > "$INSTALL_DIR/spinbox"
     chmod +x "$INSTALL_DIR/spinbox"
     
     # Make sure the binary was installed correctly

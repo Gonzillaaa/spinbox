@@ -57,32 +57,17 @@ A **global CLI tool** for spinning up customizable prototyping environments with
 
 ### 1. Install Spinbox (One-time)
 
-#### Option A: User Installation (Recommended - No sudo required)
+**User install (recommended):**
 ```bash
-# Install to ~/.local/bin (no sudo required)
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
 ```
 
-#### Option B: System Installation (Requires sudo)
+**System install (if you prefer):**
 ```bash
-# Install to /usr/local/bin (requires sudo)
 sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
 ```
 
-#### Option C: Manual Install
-```bash
-# Clone and install
-git clone https://github.com/Gonzillaaa/spinbox.git
-cd spinbox
-chmod +x install-user.sh
-./install-user.sh
-```
-
-**Note:** After user installation, ensure `~/.local/bin` is in your PATH:
-```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc  # or ~/.zshrc
-```
+Both methods work - choose what you prefer!
 
 ### 2. Create Projects with Predefined Profiles
 

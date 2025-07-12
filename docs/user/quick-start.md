@@ -6,14 +6,12 @@ Get up and running with Spinbox in 5 minutes! This guide will walk you through i
 
 ### Step 1: Install Spinbox (2 minutes)
 
-**Choose your installation method:**
-
-**Option A: User Installation (Recommended - No sudo required)**
+**User install (recommended):**
 ```bash
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
 ```
 
-**Option B: System Installation (Requires sudo)**
+**System install (if you prefer):**
 ```bash
 sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
 ```
