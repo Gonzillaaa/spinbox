@@ -40,7 +40,7 @@ The framework provides comprehensive coverage:
 
 **CLI Functionality:**
 - **Command Execution** - All CLI commands (help, version, create, config, profiles)
-- **Profile Validation** - All 5 predefined profiles (web-app, api-only, data-science, ai-llm, minimal)
+- **Profile Validation** - All 6 predefined profiles (web-app, api-only, data-science, ai-llm, python, node)
 - **Project Creation** - Dry-run validation of project creation workflows
 - **Error Cases** - Invalid inputs and failure scenario handling
 - **Component Generators** - Existence and structure validation
