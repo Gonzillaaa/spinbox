@@ -6,22 +6,23 @@ Get up and running with Spinbox in 5 minutes! This guide will walk you through i
 
 ### Step 1: Install Spinbox (2 minutes)
 
-**Choose your installation method:**
-
-**Option A: Homebrew (macOS)**
+**User install (recommended, automatic PATH setup):**
 ```bash
-brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
 ```
+- Installs to `~/.local/bin` (no sudo required)
+- Automatically adds to your PATH by detecting shell type
+- Restart terminal or run `source ~/.bashrc` if needed
 
-**Option B: Install Script (all platforms)**
+**System install (if you prefer):**
 ```bash
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
 ```
 
 **Verify installation:**
 ```bash
 spinbox --version
-# Should output: Spinbox v1.0.0
+# Should output: Spinbox v0.1.0-beta.2
 ```
 
 ### Step 2: Explore Available Options (30 seconds)

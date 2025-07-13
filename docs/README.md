@@ -1,38 +1,42 @@
 # Spinbox Documentation Index
 
-## 🚀 User Guides (Start Here!)
-- [`installation.md`](./installation.md) - Complete installation guide for all platforms
-- [`quick-start.md`](./quick-start.md) - 5-minute tutorial to get started
-- [`cli-reference.md`](./cli-reference.md) - Complete command-line interface reference
+## 🚀 User Documentation
+Essential guides for Spinbox users - start here for installation, tutorials, and daily usage.
 
-## 📚 Core Documentation  
-- [`adding-components.md`](./adding-components.md) - How to add components to projects
-- [`chroma-usage.md`](./chroma-usage.md) - Chroma vector database usage guide
-- [`troubleshooting.md`](./troubleshooting.md) - Common issues and solutions
-- [`bare-bones-projects.md`](./bare-bones-projects.md) - Minimal project specifications
+- [`user/installation.md`](./user/installation.md) - Complete installation guide for all platforms
+- [`user/quick-start.md`](./user/quick-start.md) - 5-minute tutorial to get started
+- [`user/cli-reference.md`](./user/cli-reference.md) - Complete command-line interface reference
+- [`user/troubleshooting.md`](./user/troubleshooting.md) - Common issues and solutions
 
-## 🏗️ Implementation Documentation
-- [`global-cli-strategy.md`](./global-cli-strategy.md) - High-level vision and approach
-- [`global-cli-implementation.md`](./global-cli-implementation.md) - Detailed technical implementation
-- [`implementation-strategy.md`](./implementation-strategy.md) - Implementation strategy overview
+## 🏗️ Development Documentation
+Technical documentation for contributors, component developers, and advanced users.
+
+- [`dev/global-cli-strategy.md`](./dev/global-cli-strategy.md) - High-level vision and approach
+- [`dev/global-cli-implementation.md`](./dev/global-cli-implementation.md) - Detailed technical implementation
+- [`dev/implementation-strategy.md`](./dev/implementation-strategy.md) - Implementation strategy overview
+- [`dev/adding-components.md`](./dev/adding-components.md) - How to add components to projects
+- [`dev/chroma-usage.md`](./dev/chroma-usage.md) - Chroma vector database usage guide
+- [`dev/bare-bones-projects.md`](./dev/bare-bones-projects.md) - Minimal project specifications
+- [`dev/release-process.md`](./dev/release-process.md) - Release and deployment process
+- [`dev/backlog.md`](./dev/backlog.md) - Development backlog and roadmap
 
 ## 🎯 Quick Navigation
 
 ### New to Spinbox?
-1. **[Installation Guide](./installation.md)** - Set up Spinbox on your system
-2. **[Quick Start Tutorial](./quick-start.md)** - 5-minute walkthrough 
-3. **[CLI Reference](./cli-reference.md)** - Complete command documentation
+1. **[Installation Guide](./user/installation.md)** - Set up Spinbox on your system
+2. **[Quick Start Tutorial](./user/quick-start.md)** - 5-minute walkthrough 
+3. **[CLI Reference](./user/cli-reference.md)** - Complete command documentation
 
 ### Common Tasks
-- **Creating Projects**: See [Quick Start Guide](./quick-start.md) for examples
-- **Adding Components**: Check [Adding Components Guide](./adding-components.md)
-- **Troubleshooting**: Visit [Troubleshooting Guide](./troubleshooting.md)
-- **Configuration**: Reference [CLI Reference - Config](./cli-reference.md#spinbox-config)
+- **Creating Projects**: See [Quick Start Guide](./user/quick-start.md) for examples
+- **Adding Components**: Check [Adding Components Guide](./dev/adding-components.md)
+- **Troubleshooting**: Visit [Troubleshooting Guide](./user/troubleshooting.md)
+- **Configuration**: Reference [CLI Reference - Config](./user/cli-reference.md#spinbox-config)
 
 ### Advanced Usage
-- **Custom Profiles**: See [CLI Reference - Profiles](./cli-reference.md#templates)
-- **Component Development**: Check [Implementation Docs](./global-cli-implementation.md)
-- **Contributing**: Review implementation and strategy documents
+- **Custom Profiles**: See [CLI Reference - Profiles](./user/cli-reference.md#templates)
+- **Component Development**: Check [Implementation Docs](./dev/global-cli-implementation.md)
+- **Contributing**: Review implementation and strategy documents in [`dev/`](./dev/)
 
 ## 🎯 Profiles Quick Reference
 

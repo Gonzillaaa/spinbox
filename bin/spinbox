@@ -1,5 +1,5 @@
 #!/bin/bash
-# Spinbox - Development Environment Scaffolding Tool
+# Spinbox - Prototyping Environment Scaffolding Tool
 # Main CLI entry point for the Spinbox toolkit
 
 set -euo pipefail
@@ -44,7 +44,7 @@ SKIP_CONFIRMATION=false
 # Display version information
 function show_version() {
     echo "Spinbox v$VERSION"
-    echo "Development Environment Scaffolding Tool"
+    echo "Prototyping Environment Scaffolding Tool"
     echo ""
     echo "Copyright (c) 2024 Spinbox Contributors"
     echo "Licensed under MIT License"
@@ -53,7 +53,7 @@ function show_version() {
 # Display main help
 function show_main_help() {
     cat << EOF
-Spinbox - Development Environment Scaffolding Tool
+Spinbox - Prototyping Environment Scaffolding Tool
 
 USAGE:
     spinbox <COMMAND> [OPTIONS] [ARGS]

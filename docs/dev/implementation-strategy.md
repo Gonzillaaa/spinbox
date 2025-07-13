@@ -131,7 +131,7 @@ spinbox help                         # Help system
 ### Installation Experience
 ```bash
 # Simple installation
-brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
+# Homebrew requires a local tap now - see installation docs
 
 # Immediate usage
 spinbox myproject

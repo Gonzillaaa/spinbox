@@ -23,25 +23,25 @@ Before installing Spinbox, ensure you have:
 | Linux | Ubuntu 18.04+ / Similar | Ubuntu 20.04+ |
 | Windows | WSL2 | WSL2 with Ubuntu |
 
-## Installation Methods
+## Installation
 
-Choose the method that best fits your environment and preferences:
+**Choose your preferred method:**
 
-| Method | Sudo Required | Location | Best For |
-|--------|---------------|----------|----------|
-| Homebrew | No | `/opt/homebrew/bin` | macOS users with Homebrew |
-| System Script | Yes | `/usr/local/bin` | System-wide installations |
-| User Script | No | `~/.local/bin` | No sudo access or user-only |
-| Manual | Choice | `/usr/local/bin` or `~/.local/bin` | Code review, development, custom setups |
-
-### Method 1: Homebrew (Recommended for macOS)
-
-**✅ Use when:** You have Homebrew and prefer package manager installations
-
+### User Installation (Recommended)
 ```bash
-# Install directly from GitHub formula
-brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
 ```
+- Installs to `~/.local/bin` (no sudo required)
+- **Automatic PATH setup** - detects your shell (.zshrc, .bashrc, etc.) and adds `~/.local/bin` to PATH
+- Asks permission in interactive mode, automatic in non-interactive mode (`curl | bash`)
+- No manual configuration needed
+
+### System Installation
+```bash
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
+```
+- Installs to `/usr/local/bin` (available system-wide)
+- Requires sudo permissions
 
 **Verify Installation:**
 ```bash
@@ -49,47 +49,7 @@ spinbox --version
 # Should output: Spinbox v0.1.0-beta.2
 ```
 
-### Method 2: System Installation Script (Requires sudo)
-
-**✅ Use when:** You want system-wide installation and have sudo access
-
-```bash
-# One-line installation (requires sudo)
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
-```
-
-**Manual Script Installation:**
-```bash
-# Download and review before running
-curl -o install.sh https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh
-chmod +x install.sh
-./install.sh
-```
-
-### Method 3: User-Space Installation (No sudo required)
-
-**✅ Use when:** You don't have sudo access or prefer user-specific installation
-
-```bash
-# One-line user installation (no sudo required)
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
-```
-
-**Manual User Installation:**
-```bash
-# Download and review before running
-curl -o install-user.sh https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh
-chmod +x install-user.sh
-./install-user.sh
-```
-
-**Note:** After user installation, ensure `~/.local/bin` is in your PATH:
-```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc  # or ~/.zshrc
-```
-
-### Method 4: Manual Installation
+### Alternative: Manual Installation
 
 **✅ Use when:** You want to inspect the code first or need custom installation
 
@@ -170,10 +130,10 @@ brew install --cask docker
 
 **Install Spinbox:**
 ```bash
-# Recommended method
-brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
+# Option A: User installation (recommended, automatic PATH setup)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
 
-# Alternative: Install script
+# Option B: System installation (requires sudo)
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
 ```
 
@@ -198,13 +158,14 @@ newgrp docker
 
 **Install Spinbox:**
 ```bash
-# Using install script
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
+# Option A: User installation (recommended, automatic PATH setup)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
 
-# Add to PATH if needed (usually automatic)
-echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+# Option B: System installation (requires sudo)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
 ```
+
+**Note:** The user installation automatically configures your shell profile. For system installation, ensure `/usr/local/bin` is in your PATH.
 
 ### Windows (WSL2) Installation
 
@@ -220,8 +181,8 @@ sudo apt update && sudo apt upgrade -y
 # Install prerequisites
 sudo apt install -y git curl bash
 
-# Install Spinbox
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | bash
+# Install Spinbox (user installation with automatic PATH setup)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
 ```
 
 ## Docker Desktop Setup
@@ -335,16 +296,24 @@ spinbox config --set AUTO_START_SERVICES=true
 
 **1. Command Not Found**
 ```bash
-# Check if binary exists
+# For user installations (~/.local/bin)
+ls -la ~/.local/bin/spinbox
+echo $PATH | grep -o ~/.local/bin
+
+# For system installations (/usr/local/bin)  
 ls -la /usr/local/bin/spinbox
+echo $PATH | grep -o /usr/local/bin
 
-# Check PATH
-echo $PATH
+# Add to PATH if needed (user installation)
+export PATH="$HOME/.local/bin:$PATH"
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 
-# Add to PATH if needed
+# Add to PATH if needed (system installation)
 export PATH="/usr/local/bin:$PATH"
 echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.bashrc
 ```
+
+**Note:** The user installation script should automatically handle PATH setup, but you may need to restart your terminal or run `source ~/.bashrc`.
 
 **2. Permission Denied**
 ```bash
@@ -488,15 +457,9 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/uninstall.sh
 
 ### Method 3: Homebrew Method
 
-For Homebrew installations:
-
 ```bash
-brew uninstall spinbox
-```
-
-**Note**: This only removes the binary. To remove configuration files:
-```bash
-rm -rf ~/.spinbox
+# Note: Homebrew formula not yet available
+# Use Method 1 or 2 above for uninstallation
 ```
 
 ### Method 4: Manual Removal
@@ -570,15 +533,9 @@ spinbox update --force --yes
 
 ### Homebrew Updates
 ```bash
-# Update Homebrew
-brew update
-
-# Upgrade Spinbox
-brew upgrade spinbox
-
-# Or reinstall latest version
-brew uninstall spinbox
-brew install https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/Formula/spinbox.rb
+# Note: Homebrew formula not yet available
+# Use built-in update command instead:
+spinbox update
 ```
 
 ### Manual Updates

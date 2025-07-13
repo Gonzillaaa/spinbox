@@ -96,7 +96,10 @@ install_spinbox() {
     
     # Modify the binary to look in config directory for libs
     print_status "Installing to $INSTALL_DIR..."
-    sed 's|source "$SPINBOX_PROJECT_ROOT/lib/|source "$HOME/.spinbox/lib/|g' bin/spinbox > "$INSTALL_DIR/spinbox"
+    # Replace the project root detection logic for user installation
+    sed -e 's|SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"|# User installation - libraries in ~/.spinbox|' \
+        -e 's|SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"|SPINBOX_PROJECT_ROOT="$HOME/.spinbox"|' \
+        bin/spinbox > "$INSTALL_DIR/spinbox"
     chmod +x "$INSTALL_DIR/spinbox"
     
     # Make sure the binary was installed correctly
@@ -110,21 +113,102 @@ install_spinbox() {
     print_status "Configuration directory created at $CONFIG_DIR"
 }
 
-# Check if ~/.local/bin is in PATH
-check_path() {
+# Add ~/.local/bin to PATH if needed
+check_and_add_path() {
     if [[ ":$PATH:" == *":$HOME/.local/bin:"* ]]; then
         print_status "~/.local/bin is already in your PATH"
-    else
-        print_warning "~/.local/bin is not in your PATH"
-        print_warning "Add this line to your shell profile (~/.bashrc, ~/.zshrc, etc.):"
-        echo ""
-        echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
-        echo ""
-        print_warning "Then reload your shell or run: source ~/.bashrc (or ~/.zshrc)"
-        echo ""
-        print_status "For this session, you can run:"
-        echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
+        return
     fi
+    
+    print_warning "~/.local/bin is not in your PATH"
+    
+    # Detect shell and profile file
+    local shell_profile=""
+    local shell_name="$(basename "$SHELL")"
+    
+    case "$shell_name" in
+        "zsh")
+            if [ -f "$HOME/.zshrc" ]; then
+                shell_profile="$HOME/.zshrc"
+            elif [ -f "$HOME/.zshenv" ]; then
+                shell_profile="$HOME/.zshenv"
+            fi
+            ;;
+        "bash")
+            if [ -f "$HOME/.bashrc" ]; then
+                shell_profile="$HOME/.bashrc"
+            elif [ -f "$HOME/.bash_profile" ]; then
+                shell_profile="$HOME/.bash_profile"
+            elif [ -f "$HOME/.profile" ]; then
+                shell_profile="$HOME/.profile"
+            fi
+            ;;
+        *)
+            # For other shells, try common profile files
+            if [ -f "$HOME/.profile" ]; then
+                shell_profile="$HOME/.profile"
+            fi
+            ;;
+    esac
+    
+    # Automatically add PATH or ask user permission
+    if [ -n "$shell_profile" ]; then
+        # Check if we're in interactive mode
+        if [ -t 0 ]; then
+            # Interactive mode - ask user
+            echo ""
+            echo "Would you like to automatically add ~/.local/bin to your PATH?"
+            echo "This will add the following line to $shell_profile:"
+            echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
+            echo ""
+            read -p "Add to PATH automatically? [Y/n]: " -r
+            
+            if [[ $REPLY =~ ^[Nn]$ ]]; then
+                print_warning "Skipping automatic PATH setup."
+                manual_path_instructions
+                return
+            fi
+        else
+            # Non-interactive mode (like curl | bash) - do it automatically
+            print_status "Adding ~/.local/bin to PATH automatically (non-interactive mode)"
+            print_status "This will add a line to $shell_profile"
+        fi
+        
+        # Check if the export already exists (but not effective due to shell restart needed)
+        if grep -q 'export PATH.*\.local/bin' "$shell_profile" 2>/dev/null; then
+            print_status "PATH export already exists in $shell_profile"
+            print_status "You may need to restart your shell or run: source $shell_profile"
+        else
+            # Add the PATH export
+            echo "" >> "$shell_profile"
+            echo "# Added by Spinbox installer" >> "$shell_profile"
+            echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$shell_profile"
+            print_status "Added ~/.local/bin to PATH in $shell_profile"
+            print_status "Restart your shell or run: source $shell_profile"
+        fi
+        
+        # Set PATH for current session
+        export PATH="$HOME/.local/bin:$PATH"
+        print_status "PATH updated for current session"
+    else
+        print_warning "Could not detect shell profile file."
+        manual_path_instructions
+    fi
+}
+
+# Show manual PATH instructions
+manual_path_instructions() {
+    print_warning "Please manually add this line to your shell profile:"
+    echo ""
+    echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
+    echo ""
+    print_warning "Common profile files:"
+    echo "  - Zsh: ~/.zshrc or ~/.zshenv"
+    echo "  - Bash: ~/.bashrc or ~/.bash_profile"
+    echo "  - Other: ~/.profile"
+    echo ""
+    print_status "For this session, you can run:"
+    echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
 }
 
 # Main installation function
@@ -136,14 +220,11 @@ main() {
     
     check_prerequisites
     install_spinbox
-    check_path
+    check_and_add_path
     
     echo ""
     echo "Installation complete!"
     echo "Try: spinbox --help"
-    echo ""
-    echo "If spinbox command is not found, make sure ~/.local/bin is in your PATH:"
-    echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
     echo ""
     echo "To uninstall Spinbox:"
     echo "  spinbox uninstall                # Remove binary only"

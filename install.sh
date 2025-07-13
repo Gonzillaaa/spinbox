@@ -8,6 +8,7 @@ REPO_URL="https://github.com/Gonzillaaa/spinbox.git"
 INSTALL_DIR="/usr/local/bin"
 CONFIG_DIR="$HOME/.spinbox"
 TEMP_DIR="/tmp/spinbox-install"
+SPINBOX_LIB_DIR="/usr/local/lib/spinbox"
 
 # Colors for output
 RED='\033[0;31m'
@@ -43,9 +44,13 @@ check_prerequisites() {
         exit 1
     fi
     
-    # Check if install directory is writable
-    if [ ! -w "$(dirname "$INSTALL_DIR")" ]; then
-        print_error "Cannot write to $INSTALL_DIR. Please run with sudo or choose a different install location."
+    # Check if we can write to install directory
+    if [ ! -w "$INSTALL_DIR" ] && [ ! -w "$(dirname "$INSTALL_DIR")" ]; then
+        print_error "Cannot write to $INSTALL_DIR. Please run with sudo:"
+        print_error "  sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)"
+        print_error ""
+        print_error "Or use the user installation script (no sudo required):"
+        print_error "  curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash"
         exit 1
     fi
     
@@ -72,27 +77,51 @@ install_spinbox() {
     # Make spinbox executable
     chmod +x bin/spinbox
     
-    # Create symlink
+    # Install libraries to system location
+    print_status "Installing libraries to $SPINBOX_LIB_DIR..."
+    sudo mkdir -p "$SPINBOX_LIB_DIR"
+    sudo cp -r lib "$SPINBOX_LIB_DIR/"
+    sudo cp -r generators "$SPINBOX_LIB_DIR/"
+    if [ -d "templates" ]; then
+        sudo cp -r templates "$SPINBOX_LIB_DIR/"
+    fi
+    
+    # Fix logging paths in utils.sh to use user directory
+    sudo sed -i.bak 's|readonly LOG_DIR="\$PROJECT_ROOT/\.logs"|readonly LOG_DIR="\$HOME/.spinbox/logs"|g' "$SPINBOX_LIB_DIR/lib/utils.sh"
+    sudo sed -i.bak 's|readonly BACKUP_DIR="\$PROJECT_ROOT/\.backups"|readonly BACKUP_DIR="\$HOME/.spinbox/backups"|g' "$SPINBOX_LIB_DIR/lib/utils.sh"
+    
+    # Modify the binary to look in system lib directory
     print_status "Installing to $INSTALL_DIR..."
-    ln -sf "$TEMP_DIR/bin/spinbox" "$INSTALL_DIR/spinbox"
+    sed -e 's|SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"|# System installation - libraries in /usr/local/lib/spinbox|' \
+        -e 's|SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"|SPINBOX_PROJECT_ROOT="/usr/local/lib/spinbox"|' \
+        -e 's|source "$SPINBOX_PROJECT_ROOT/lib/|source "/usr/local/lib/spinbox/lib/|g' \
+        bin/spinbox > "/tmp/spinbox"
+    sudo mv "/tmp/spinbox" "$INSTALL_DIR/spinbox"
+    sudo chmod +x "$INSTALL_DIR/spinbox"
     
-    # Create configuration directory
-    mkdir -p "$CONFIG_DIR"
+    # Create user configuration directory with proper ownership
+    if [[ -n "${SUDO_USER:-}" ]]; then
+        # Running with sudo - create directory as the actual user
+        sudo -u "$SUDO_USER" mkdir -p "$CONFIG_DIR"
+    else
+        # Running directly as user
+        mkdir -p "$CONFIG_DIR"
+    fi
     
-    # Copy templates and libraries
-    print_status "Setting up configuration..."
-    cp -r lib "$CONFIG_DIR/"
-    cp -r generators "$CONFIG_DIR/"
-    
-    # Make sure the symlink points to the correct location
-    if [ -L "$INSTALL_DIR/spinbox" ]; then
+    # Make sure the binary was installed correctly
+    if [ -x "$INSTALL_DIR/spinbox" ]; then
         print_status "Spinbox installed successfully!"
     else
-        print_error "Installation failed. Could not create symlink."
+        print_error "Installation failed. Could not install binary."
         exit 1
     fi
     
     print_status "Configuration directory created at $CONFIG_DIR"
+    
+    # Cleanup
+    cd /
+    rm -rf "$TEMP_DIR"
+    
     print_status "You can now use: spinbox <projectname>"
 }
 

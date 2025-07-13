@@ -37,7 +37,7 @@ test_cli_help() {
     echo -e "\n${YELLOW}=== CLI Help System Tests ===${NC}"
     
     test_assert \
-        "\"$CLI_PATH\" --help | grep -q 'Spinbox - Development Environment Scaffolding Tool'" \
+        "\"$CLI_PATH\" --help | grep -q 'Spinbox - Prototyping Environment Scaffolding Tool'" \
         "Main help displays correctly"
     
     test_assert \
