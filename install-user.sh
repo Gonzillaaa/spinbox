@@ -81,25 +81,22 @@ install_spinbox() {
     # Make spinbox executable
     chmod +x bin/spinbox
     
-    # Create configuration directory first
-    mkdir -p "$CONFIG_DIR"
+    # Create centralized source directory
+    mkdir -p "$CONFIG_DIR/source"
     
-    # Copy all needed directories to config
+    # Copy all needed directories to centralized source
     print_status "Setting up configuration..."
-    cp -r lib "$CONFIG_DIR/"
+    cp -r lib "$CONFIG_DIR/source/"
     if [ -d "generators" ]; then
-        cp -r generators "$CONFIG_DIR/"
+        cp -r generators "$CONFIG_DIR/source/"
     fi
     if [ -d "templates" ]; then
-        cp -r templates "$CONFIG_DIR/"
+        cp -r templates "$CONFIG_DIR/source/"
     fi
     
-    # Modify the binary to look in config directory for libs
+    # Install binary to user location (uses centralized source via detection)
     print_status "Installing to $INSTALL_DIR..."
-    # Replace the project root detection logic for user installation
-    sed -e 's|SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"|# User installation - libraries in ~/.spinbox|' \
-        -e 's|SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"|SPINBOX_PROJECT_ROOT="$HOME/.spinbox"|' \
-        bin/spinbox > "$INSTALL_DIR/spinbox"
+    cp bin/spinbox "$INSTALL_DIR/spinbox"
     chmod +x "$INSTALL_DIR/spinbox"
     
     # Make sure the binary was installed correctly
