@@ -22,7 +22,7 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh |
 **Verify installation:**
 ```bash
 spinbox --version
-# Should output: Spinbox v0.1.0-beta.2
+# Should output: Spinbox v0.1.0-beta.4
 ```
 
 ### Step 2: Explore Available Options (30 seconds)
