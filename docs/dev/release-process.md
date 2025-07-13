@@ -34,11 +34,13 @@ Spinbox follows [Semantic Versioning](https://semver.org/):
 ### 1. Version Preparation
 
 ```bash
-# Update version in main CLI script
-sed -i 's/readonly VERSION=".*"/readonly VERSION="0.1.0-beta.2"/' bin/spinbox
+# Create release branch
+git checkout main
+git pull origin main
+git checkout -b release/v0.1.0-beta.X
 
-# Update Homebrew formula (if needed)
-sed -i 's|v0.1.0-beta.1|v0.1.0-beta.2|' Formula/spinbox.rb
+# Update version in main CLI script
+sed -i 's/readonly VERSION=".*"/readonly VERSION="0.1.0-beta.X"/' bin/spinbox
 
 # Verify version
 ./bin/spinbox --version
@@ -56,18 +58,33 @@ sed -i 's|v0.1.0-beta.1|v0.1.0-beta.2|' Formula/spinbox.rb
 # Failed: 0
 ```
 
-### 3. Commit and Tag
+### 3. Release Notes and Commit
 
 ```bash
-# Commit version bump
-git add -A
-git commit -m "chore: bump version to v0.1.0-beta.2"
+# Create release notes
+cat > docs/releases/v0.1.0-beta.X.md << 'EOF'
+# Spinbox v0.1.0-beta.X
 
-# Push changes
-git push origin feature/cli-foundation
+Released: $(date +%Y-%m-%d)
+
+## 🆕 New Features
+- [Feature 1]: Description
+
+## 🐛 Bug Fixes  
+- [Fix 1]: Description
+
+[... rest of release notes template ...]
+EOF
+
+# Commit version bump and release notes
+git add -A
+git commit -m "chore: bump version to v0.1.0-beta.X"
+
+# Push release branch
+git push -u origin release/v0.1.0-beta.X
 
 # Create annotated tag
-git tag -a v0.1.0-beta.2 -m "Release v0.1.0-beta.2
+git tag -a v0.1.0-beta.X -m "Release v0.1.0-beta.X
 
 ## Changes in this release
 - [List key changes]
@@ -79,27 +96,42 @@ git tag -a v0.1.0-beta.2 -m "Release v0.1.0-beta.2
 - [Specific testing notes]"
 
 # Push tag
-git push origin v0.1.0-beta.2
+git push origin v0.1.0-beta.X
 ```
 
 ### 4. GitHub Release
 
 ```bash
 # Create release using GitHub CLI
-gh release create v0.1.0-beta.2 \
-  --title "🚀 Spinbox v0.1.0-beta.2 (Beta Release)" \
-  --notes-file release-notes.md \
+gh release create v0.1.0-beta.X \
+  --title "🚀 Spinbox v0.1.0-beta.X (Beta Release)" \
+  --notes-file docs/releases/v0.1.0-beta.X.md \
   --prerelease  # for beta releases
 ```
 
 ### 5. Post-Release Testing
 
 ```bash
+# Test installation scripts with new release
+bash scripts/test-local-install.sh
+bash scripts/test-global-install.sh
+
 # Test update functionality (if previous version exists)
 spinbox update --check
 spinbox update --dry-run
-spinbox update --version v0.1.0-beta.2
+spinbox update --version v0.1.0-beta.X
 ```
+
+## Release Notes Organization
+
+### Location
+- **Directory**: `docs/releases/`
+- **Naming**: `v{VERSION}.md` (e.g., `v0.1.0-beta.4.md`)
+- **Archive**: Keep all release notes for historical reference
+
+### Current Releases
+- **Latest**: v0.1.0-beta.4 (Bug fixes, update command improvements, test infrastructure)
+- **Previous**: v0.1.0-beta.2 (Foundation release)
 
 ## Release Notes Template
 
@@ -148,8 +180,8 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh |
 ### Creating Test Releases
 
 1. **Create Initial Release**: v0.1.0-beta.1
-2. **Create Newer Release**: v0.1.0-beta.2
-3. **Test Update Path**: v0.1.0-beta.1 → v0.1.0-beta.2
+2. **Create Newer Release**: v0.1.0-beta.4 (latest)
+3. **Test Update Path**: v0.1.0-beta.1 → v0.1.0-beta.4
 
 ### Update Testing Scenarios
 
