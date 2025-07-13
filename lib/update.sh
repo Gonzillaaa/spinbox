@@ -3,9 +3,19 @@
 
 # Detect installation method
 detect_installation_method() {
-    if command -v brew &> /dev/null && brew list spinbox &> /dev/null; then
+    local spinbox_path=$(which spinbox 2>/dev/null)
+    
+    # Check for Homebrew installation (future implementation)
+    if command -v brew &> /dev/null && brew list spinbox &> /dev/null 2>&1; then
         echo "homebrew"
-    elif [[ -L "$(which spinbox)" ]]; then
+    # Check for system installation 
+    elif [[ "$spinbox_path" == "/usr/local/bin/spinbox" ]] && [[ -d "/usr/local/lib/spinbox" ]]; then
+        echo "system"
+    # Check for user installation
+    elif [[ "$spinbox_path" == "$HOME/.local/bin/spinbox" ]] && [[ -d "$HOME/.spinbox" ]]; then
+        echo "user"
+    # Legacy manual installation (symlink)
+    elif [[ -L "$spinbox_path" ]]; then
         echo "manual"
     else
         echo "unknown"
@@ -228,7 +238,13 @@ perform_update() {
     # Handle manual installations
     if [[ "$installation_method" == "unknown" ]]; then
         print_error "Cannot detect installation method. Manual intervention required."
+        print_error "Supported installation methods: system (/usr/local/bin), user (~/.local/bin), manual (symlink)"
         return 1
+    fi
+    
+    # Handle system and user installations
+    if [[ "$installation_method" == "system" || "$installation_method" == "user" || "$installation_method" == "manual" ]]; then
+        print_info "Detected $installation_method installation."
     fi
     
     # Get version information
