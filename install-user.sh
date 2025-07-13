@@ -151,36 +151,45 @@ check_and_add_path() {
             ;;
     esac
     
-    # Ask user if they want to automatically add PATH
+    # Automatically add PATH or ask user permission
     if [ -n "$shell_profile" ]; then
-        echo ""
-        echo "Would you like to automatically add ~/.local/bin to your PATH?"
-        echo "This will add the following line to $shell_profile:"
-        echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
-        echo ""
-        read -p "Add to PATH automatically? [Y/n]: " -r
-        
-        if [[ $REPLY =~ ^[Nn]$ ]]; then
-            print_warning "Skipping automatic PATH setup."
-            manual_path_instructions
-        else
-            # Check if the export already exists (but not effective due to shell restart needed)
-            if grep -q 'export PATH.*\.local/bin' "$shell_profile" 2>/dev/null; then
-                print_status "PATH export already exists in $shell_profile"
-                print_status "You may need to restart your shell or run: source $shell_profile"
-            else
-                # Add the PATH export
-                echo "" >> "$shell_profile"
-                echo "# Added by Spinbox installer" >> "$shell_profile"
-                echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$shell_profile"
-                print_status "Added ~/.local/bin to PATH in $shell_profile"
-                print_status "Restart your shell or run: source $shell_profile"
-            fi
+        # Check if we're in interactive mode
+        if [ -t 0 ]; then
+            # Interactive mode - ask user
+            echo ""
+            echo "Would you like to automatically add ~/.local/bin to your PATH?"
+            echo "This will add the following line to $shell_profile:"
+            echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
+            echo ""
+            read -p "Add to PATH automatically? [Y/n]: " -r
             
-            # Set PATH for current session
-            export PATH="$HOME/.local/bin:$PATH"
-            print_status "PATH updated for current session"
+            if [[ $REPLY =~ ^[Nn]$ ]]; then
+                print_warning "Skipping automatic PATH setup."
+                manual_path_instructions
+                return
+            fi
+        else
+            # Non-interactive mode (like curl | bash) - do it automatically
+            print_status "Adding ~/.local/bin to PATH automatically (non-interactive mode)"
+            print_status "This will add a line to $shell_profile"
         fi
+        
+        # Check if the export already exists (but not effective due to shell restart needed)
+        if grep -q 'export PATH.*\.local/bin' "$shell_profile" 2>/dev/null; then
+            print_status "PATH export already exists in $shell_profile"
+            print_status "You may need to restart your shell or run: source $shell_profile"
+        else
+            # Add the PATH export
+            echo "" >> "$shell_profile"
+            echo "# Added by Spinbox installer" >> "$shell_profile"
+            echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$shell_profile"
+            print_status "Added ~/.local/bin to PATH in $shell_profile"
+            print_status "Restart your shell or run: source $shell_profile"
+        fi
+        
+        # Set PATH for current session
+        export PATH="$HOME/.local/bin:$PATH"
+        print_status "PATH updated for current session"
     else
         print_warning "Could not detect shell profile file."
         manual_path_instructions
@@ -216,9 +225,6 @@ main() {
     echo ""
     echo "Installation complete!"
     echo "Try: spinbox --help"
-    echo ""
-    echo "If spinbox command is not found, make sure ~/.local/bin is in your PATH:"
-    echo "export PATH=\"\$HOME/.local/bin:\$PATH\""
     echo ""
     echo "To uninstall Spinbox:"
     echo "  spinbox uninstall                # Remove binary only"
