@@ -86,6 +86,10 @@ install_spinbox() {
         sudo cp -r templates "$SPINBOX_LIB_DIR/"
     fi
     
+    # Fix logging paths in utils.sh to use user directory
+    sudo sed -i.bak 's|readonly LOG_DIR="$PROJECT_ROOT/.logs"|readonly LOG_DIR="$HOME/.spinbox/logs"|' "$SPINBOX_LIB_DIR/lib/utils.sh"
+    sudo sed -i.bak 's|readonly BACKUP_DIR="$PROJECT_ROOT/.backups"|readonly BACKUP_DIR="$HOME/.spinbox/backups"|' "$SPINBOX_LIB_DIR/lib/utils.sh" || true
+    
     # Modify the binary to look in system lib directory
     print_status "Installing to $INSTALL_DIR..."
     sed -e 's|SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"|# System installation - libraries in /usr/local/lib/spinbox|' \
