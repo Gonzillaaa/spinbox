@@ -99,8 +99,16 @@ install_spinbox() {
     sudo mv "/tmp/spinbox" "$INSTALL_DIR/spinbox"
     sudo chmod +x "$INSTALL_DIR/spinbox"
     
-    # Create user configuration directory
+    # Create user configuration directory with proper ownership
     mkdir -p "$CONFIG_DIR"
+    
+    # Ensure user owns their config directory (important for system installation)
+    if [[ "$EUID" -eq 0 ]]; then
+        # Running as root, need to fix ownership
+        if [[ -n "${SUDO_USER:-}" ]]; then
+            chown -R "$SUDO_USER:$(id -gn "$SUDO_USER")" "$CONFIG_DIR"
+        fi
+    fi
     
     # Make sure the binary was installed correctly
     if [ -x "$INSTALL_DIR/spinbox" ]; then
