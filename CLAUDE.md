@@ -164,9 +164,11 @@ feat: implement entire CLI foundation (too broad)
 #### Implementation Workflow
 1. **Create feature branch** for the phase you're working on
 2. **Make atomic commits** for each logical change during implementation
-3. **Push regularly** to keep remote branch updated
-4. **Create pull request** when phase/feature group is complete
-5. **Reference documentation** in commit messages and PR descriptions
+3. **Run tests before ANY pull request** - All tests must pass before PR creation
+4. **Fix any test failures immediately** - Never create separate branches for test fixes
+5. **Push regularly** to keep remote branch updated
+6. **Create pull request only after tests pass** - Never create PRs with failing tests
+7. **Reference documentation** in commit messages and PR descriptions
 
 ### File Deletion Policy
 
@@ -217,6 +219,8 @@ Each generator should follow this structure:
 5. **Integration**: Ensure components work together
 
 ### Testing CLI Changes
+- **ALWAYS RUN TESTS BEFORE CREATING PULL REQUESTS** - Tests must pass before any PR creation
+- **Fix test failures immediately** - Never create separate branches just for test fixes
 - Always test with `--dry-run` first
 - Test help systems: `spinbox command --help`
 - Test error conditions and edge cases
@@ -297,6 +301,7 @@ spinbox <command> --examples      # Usage examples
 
 ### Critical Reminders
 - **ALWAYS READ /docs/README.md for documentation and project guidance**
+- **ALWAYS RUN TESTS BEFORE CREATING PULL REQUESTS** - Never create PRs with failing tests
 - **Primary Rule**: Always choose the simplest possible implementation that works
 - **User strongly values simplicity above all else** - When in doubt, err on the side of the simpler solution
 
