@@ -88,7 +88,7 @@ test_project_creation() {
     
     # Test full-stack project creation
     test_assert \
-        "\"$CLI_PATH\" create test-fullstack --backend --frontend --database --dry-run | grep -q 'Project test-fullstack created successfully'" \
+        "\"$CLI_PATH\" create test-fullstack --fastapi --nextjs --postgresql --dry-run | grep -q 'Project test-fullstack created successfully'" \
         "Full-stack project creation (dry-run)"
     
     # Test with version overrides (TODO: implement CLI flag parsing for versions)
@@ -132,16 +132,16 @@ test_component_generators() {
         "Minimal Node generator exists and is executable"
     
     test_assert \
-        "[[ -f 'generators/backend.sh' && -r 'generators/backend.sh' ]]" \
-        "Backend generator exists and is readable"
+        "[[ -f 'generators/fastapi.sh' && -r 'generators/fastapi.sh' ]]" \
+        "FastAPI generator exists and is readable"
     
     test_assert \
-        "[[ -f 'generators/frontend.sh' && -r 'generators/frontend.sh' ]]" \
-        "Frontend generator exists and is readable"
+        "[[ -f 'generators/nextjs.sh' && -r 'generators/nextjs.sh' ]]" \
+        "Next.js generator exists and is readable"
     
     test_assert \
-        "[[ -f 'generators/database.sh' && -r 'generators/database.sh' ]]" \
-        "Database generator exists and is readable"
+        "[[ -f 'generators/postgresql.sh' && -r 'generators/postgresql.sh' ]]" \
+        "PostgreSQL generator exists and is readable"
 }
 
 # Integration Tests
