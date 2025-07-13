@@ -1,4 +1,4 @@
-# Spinbox v0.1.0-beta.3
+# Spinbox v0.1.0-beta.4
 
 ## 🆕 New Features
 - **Test Infrastructure**: Added comprehensive installation test scripts for both user and system installations
