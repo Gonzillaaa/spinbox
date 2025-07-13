@@ -108,6 +108,9 @@ Error: ENOENT: no such file or directory, open '/path/file'
 - **Create feature branches IMMEDIATELY**: As soon as you start working on ANY task, create a feature branch BEFORE making any changes (e.g., `git checkout -b feature/your-feature-name`)
 - **Branch naming convention**: Use descriptive names like `feature/user-space-installation`, `fix/homebrew-formula`, `docs/installation-guide`
 - **IMPORTANT**: Only create pull requests AFTER you have fully tested and verified that everything is working correctly. Never create a PR with untested or broken code.
+- **ASK BEFORE CREATING PR**: Always ask the user if they are satisfied with the work before creating a pull request. Show what was done and confirm they want to proceed with the PR.
+- **NEVER MERGE PRs**: Claude should NEVER merge pull requests. Only create them and let the user handle the review and merge process.
+- **DON'T DELETE BRANCHES**: Never delete remote branches after creating PRs - this will close unmerged PRs. Wait for the user to handle branch cleanup after merge.
 
 #### Commit Practices
 - **Keep commits atomic**: Each commit should represent one logical change or fix
@@ -168,8 +171,11 @@ feat: implement entire CLI foundation (too broad)
 3. **Run tests before ANY pull request** - All tests must pass before PR creation
 4. **Fix any test failures immediately** - Never create separate branches for test fixes
 5. **Push regularly** to keep remote branch updated
-6. **Create pull request only after tests pass** - Never create PRs with failing tests
-7. **Reference documentation** in commit messages and PR descriptions
+6. **Verify work is complete and tested** - Ensure all tasks are done and working
+7. **Ask user for PR approval** - Show completed work and ask if they want to create a PR
+8. **Create pull request only after approval** - Never create PRs without user confirmation
+9. **Reference documentation** in commit messages and PR descriptions
+10. **Let user handle merge** - Never merge PRs, only create them
 
 ### File Deletion Policy
 
