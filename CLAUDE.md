@@ -105,8 +105,9 @@ Error: ENOENT: no such file or directory, open '/path/file'
 - **ALWAYS check current branch**: Before making any changes, run `git branch` to confirm which branch you're on
 - **Ask if in doubt**: If uncertain about the current branch or where changes should go, ask the user for clarification
 - **ALWAYS work on feature branches**: Never work directly on main branch to avoid losing work and maintain clean history
-- **Create feature branches immediately**: Before making any new features or bigger changes, create a feature branch (e.g., `git checkout -b feature/your-feature-name`)
+- **Create feature branches IMMEDIATELY**: As soon as you start working on ANY task, create a feature branch BEFORE making any changes (e.g., `git checkout -b feature/your-feature-name`)
 - **Branch naming convention**: Use descriptive names like `feature/user-space-installation`, `fix/homebrew-formula`, `docs/installation-guide`
+- **IMPORTANT**: Only create pull requests AFTER you have fully tested and verified that everything is working correctly. Never create a PR with untested or broken code.
 
 #### Commit Practices
 - **Keep commits atomic**: Each commit should represent one logical change or fix
