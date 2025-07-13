@@ -16,7 +16,7 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user
 
 **System install (if you prefer):**
 ```bash
-sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
 ```
 
 **Verify installation:**

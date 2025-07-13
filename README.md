@@ -34,7 +34,7 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user
 **Option B: System install:**
 ```bash
 # Install to /usr/local/bin (requires sudo)
-sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
 ```
 
 **Note:** The user installation automatically adds `~/.local/bin` to your PATH by detecting your shell and updating the appropriate profile file (.zshrc, .bashrc, etc.). Just restart your terminal or run `source ~/.bashrc` after installation.

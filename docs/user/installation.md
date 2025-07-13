@@ -38,7 +38,7 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user
 
 ### System Installation
 ```bash
-sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
 ```
 - Installs to `/usr/local/bin` (available system-wide)
 - Requires sudo permissions

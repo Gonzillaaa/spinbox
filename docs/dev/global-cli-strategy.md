@@ -13,7 +13,7 @@ git clone https://github.com/Gonzillaaa/spinbox.git
 cd spinbox
 
 # Install Spinbox globally (one-time)
-sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
 
 # Navigate to project location
 cd ../my-project/
@@ -198,7 +198,7 @@ spinbox config reset
 
 ### 2. Manual Installation
 ```bash
-sudo bash <(curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh)
+curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
 ```
 
 ### 3. Future: Official Homebrew Core (Goal)
