@@ -40,27 +40,61 @@ compare_versions() {
     version1=$(echo "$version1" | sed 's/^v//')
     version2=$(echo "$version2" | sed 's/^v//')
     
-    # Split versions into components
-    IFS='.' read -ra v1_parts <<< "$version1"
-    IFS='.' read -ra v2_parts <<< "$version2"
+    # Extract main version and pre-release parts
+    local v1_main="${version1%%-*}"
+    local v2_main="${version2%%-*}"
+    local v1_pre="${version1#*-}"
+    local v2_pre="${version2#*-}"
     
-    # Pad arrays to same length
+    # If no pre-release, set to empty
+    [[ "$v1_pre" == "$version1" ]] && v1_pre=""
+    [[ "$v2_pre" == "$version2" ]] && v2_pre=""
+    
+    # Split main versions into components
+    IFS='.' read -ra v1_parts <<< "$v1_main"
+    IFS='.' read -ra v2_parts <<< "$v2_main"
+    
+    # Compare main version components
     local max_len=${#v1_parts[@]}
     if [[ ${#v2_parts[@]} -gt $max_len ]]; then
         max_len=${#v2_parts[@]}
     fi
     
-    # Compare each component
     for ((i=0; i<max_len; i++)); do
         local v1_part=${v1_parts[i]:-0}
         local v2_part=${v2_parts[i]:-0}
         
-        if [[ $v1_part -gt $v2_part ]]; then
-            return 1
-        elif [[ $v1_part -lt $v2_part ]]; then
-            return 2
+        # Ensure numeric comparison
+        if [[ "$v1_part" =~ ^[0-9]+$ ]] && [[ "$v2_part" =~ ^[0-9]+$ ]]; then
+            if [[ $v1_part -gt $v2_part ]]; then
+                return 1
+            elif [[ $v1_part -lt $v2_part ]]; then
+                return 2
+            fi
+        else
+            # Fall back to string comparison if not numeric
+            if [[ "$v1_part" > "$v2_part" ]]; then
+                return 1
+            elif [[ "$v1_part" < "$v2_part" ]]; then
+                return 2
+            fi
         fi
     done
+    
+    # Main versions are equal, compare pre-release
+    # No pre-release > pre-release (1.0.0 > 1.0.0-beta)
+    if [[ -z "$v1_pre" ]] && [[ -n "$v2_pre" ]]; then
+        return 1
+    elif [[ -n "$v1_pre" ]] && [[ -z "$v2_pre" ]]; then
+        return 2
+    elif [[ -n "$v1_pre" ]] && [[ -n "$v2_pre" ]]; then
+        # Both have pre-release, compare them
+        if [[ "$v1_pre" > "$v2_pre" ]]; then
+            return 1
+        elif [[ "$v1_pre" < "$v2_pre" ]]; then
+            return 2
+        fi
+    fi
     
     return 0
 }
@@ -110,7 +144,7 @@ show_version_info() {
     
     case $comparison_result in
         0)
-            print_success "You are running the latest version."
+            print_info "You are running the latest version."
             ;;
         1)
             print_warning "You are running a newer version than the latest release."
