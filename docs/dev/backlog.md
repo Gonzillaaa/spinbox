@@ -2,6 +2,17 @@
 
 This document outlines the roadmap for Spinbox extensions, focusing on simplicity and practical value.
 
+## 📝 Missing Advanced Generators (from Phase 2)
+
+The following advanced component generators are mentioned in documentation but not yet implemented:
+
+- **mongodb.sh** - MongoDB database generator (mentioned in global-cli-implementation.md)
+- **redis.sh** - Redis cache/queue generator (mentioned in global-cli-implementation.md)  
+- **chroma.sh** - Chroma vector database generator (mentioned in global-cli-implementation.md)
+- **database.sh** - Generic database generator (mentioned in global-cli-implementation.md)
+
+Note: PostgreSQL.sh exists and works, but the other database generators need implementation.
+
 ## 🎯 Core Philosophy
 
 **Keep Everything Simple**
