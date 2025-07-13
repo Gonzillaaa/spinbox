@@ -547,7 +547,7 @@ spinbox --version
 #### Output
 ```
 Spinbox v1.0.0
-Development Environment Scaffolding Tool
+Prototyping Environment Scaffolding Tool
 
 Copyright (c) 2024 Spinbox Contributors
 Licensed under MIT License
