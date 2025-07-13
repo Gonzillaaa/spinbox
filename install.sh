@@ -79,19 +79,21 @@ install_spinbox() {
     
     # Install libraries to system location
     print_status "Installing libraries to $SPINBOX_LIB_DIR..."
-    mkdir -p "$SPINBOX_LIB_DIR"
-    cp -r lib "$SPINBOX_LIB_DIR/"
-    cp -r generators "$SPINBOX_LIB_DIR/"
+    sudo mkdir -p "$SPINBOX_LIB_DIR"
+    sudo cp -r lib "$SPINBOX_LIB_DIR/"
+    sudo cp -r generators "$SPINBOX_LIB_DIR/"
     if [ -d "templates" ]; then
-        cp -r templates "$SPINBOX_LIB_DIR/"
+        sudo cp -r templates "$SPINBOX_LIB_DIR/"
     fi
     
     # Modify the binary to look in system lib directory
     print_status "Installing to $INSTALL_DIR..."
     sed -e 's|SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"|# System installation - libraries in /usr/local/lib/spinbox|' \
         -e 's|SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"|SPINBOX_PROJECT_ROOT="/usr/local/lib/spinbox"|' \
-        bin/spinbox > "$INSTALL_DIR/spinbox"
-    chmod +x "$INSTALL_DIR/spinbox"
+        -e 's|source "$SPINBOX_PROJECT_ROOT/lib/|source "/usr/local/lib/spinbox/lib/|g' \
+        bin/spinbox > "/tmp/spinbox"
+    sudo mv "/tmp/spinbox" "$INSTALL_DIR/spinbox"
+    sudo chmod +x "$INSTALL_DIR/spinbox"
     
     # Create user configuration directory
     mkdir -p "$CONFIG_DIR"
@@ -105,6 +107,11 @@ install_spinbox() {
     fi
     
     print_status "Configuration directory created at $CONFIG_DIR"
+    
+    # Cleanup
+    cd /
+    rm -rf "$TEMP_DIR"
+    
     print_status "You can now use: spinbox <projectname>"
 }
 
