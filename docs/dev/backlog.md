@@ -20,13 +20,15 @@ Note: PostgreSQL.sh exists and works, but the other database generators need imp
 - **Homebrew Formula Integration** ✅ **FORMULA READY** - Formula exists (`Formula/spinbox.rb`) but tap repository `gonzillaaa/homebrew-spinbox` doesn't exist
   - **Issue**: `brew tap gonzillaaa/spinbox` fails with "Repository not found"
   - **Current State**: Formula file exists with v0.1.0-beta.2 configuration and proper install paths
+  - **Update Command Issue**: `lib/update.sh` currently has placeholder Homebrew detection that will need to be updated when Homebrew is implemented
   - **Implementation needed**:
     1. Create separate `gonzillaaa/homebrew-spinbox` GitHub repository
     2. Move `Formula/spinbox.rb` to new repository structure
     3. Set up GitHub Actions workflow to auto-update formula SHA256 on new releases
     4. Test complete installation flow: `brew tap gonzillaaa/spinbox && brew install spinbox`
     5. Verify formula paths work correctly with Homebrew's libexec structure
-    6. Update README.md to include Homebrew installation option once working
+    6. Update `lib/update.sh` detection and update logic for Homebrew installations
+    7. Update README.md to include Homebrew installation option once working
 
 ### ✅ Completed Installation Improvements
 
