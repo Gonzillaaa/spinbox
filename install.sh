@@ -87,8 +87,8 @@ install_spinbox() {
     fi
     
     # Fix logging paths in utils.sh to use user directory
-    sudo sed -i.bak 's|readonly LOG_DIR="$PROJECT_ROOT/.logs"|readonly LOG_DIR="$HOME/.spinbox/logs"|' "$SPINBOX_LIB_DIR/lib/utils.sh"
-    sudo sed -i.bak 's|readonly BACKUP_DIR="$PROJECT_ROOT/.backups"|readonly BACKUP_DIR="$HOME/.spinbox/backups"|' "$SPINBOX_LIB_DIR/lib/utils.sh" || true
+    sudo sed -i.bak 's|readonly LOG_DIR="\$PROJECT_ROOT/\.logs"|readonly LOG_DIR="\$HOME/.spinbox/logs"|g' "$SPINBOX_LIB_DIR/lib/utils.sh"
+    sudo sed -i.bak 's|readonly BACKUP_DIR="\$PROJECT_ROOT/\.backups"|readonly BACKUP_DIR="\$HOME/.spinbox/backups"|g' "$SPINBOX_LIB_DIR/lib/utils.sh"
     
     # Modify the binary to look in system lib directory
     print_status "Installing to $INSTALL_DIR..."
@@ -100,14 +100,12 @@ install_spinbox() {
     sudo chmod +x "$INSTALL_DIR/spinbox"
     
     # Create user configuration directory with proper ownership
-    mkdir -p "$CONFIG_DIR"
-    
-    # Ensure user owns their config directory (important for system installation)
-    if [[ "$EUID" -eq 0 ]]; then
-        # Running as root, need to fix ownership
-        if [[ -n "${SUDO_USER:-}" ]]; then
-            chown -R "$SUDO_USER:$(id -gn "$SUDO_USER")" "$CONFIG_DIR"
-        fi
+    if [[ -n "${SUDO_USER:-}" ]]; then
+        # Running with sudo - create directory as the actual user
+        sudo -u "$SUDO_USER" mkdir -p "$CONFIG_DIR"
+    else
+        # Running directly as user
+        mkdir -p "$CONFIG_DIR"
     fi
     
     # Make sure the binary was installed correctly
