@@ -8,7 +8,6 @@ REPO_URL="https://github.com/Gonzillaaa/spinbox.git"
 INSTALL_DIR="/usr/local/bin"
 CONFIG_DIR="$HOME/.spinbox"
 TEMP_DIR="/tmp/spinbox-install"
-SPINBOX_LIB_DIR="/usr/local/lib/spinbox"
 
 # Colors for output
 RED='\033[0;31m'
@@ -77,26 +76,29 @@ install_spinbox() {
     # Make spinbox executable
     chmod +x bin/spinbox
     
-    # Install libraries to system location
-    print_status "Installing libraries to $SPINBOX_LIB_DIR..."
-    sudo mkdir -p "$SPINBOX_LIB_DIR"
-    sudo cp -r lib "$SPINBOX_LIB_DIR/"
-    sudo cp -r generators "$SPINBOX_LIB_DIR/"
-    if [ -d "templates" ]; then
-        sudo cp -r templates "$SPINBOX_LIB_DIR/"
+    # Install libraries to centralized user location
+    print_status "Installing libraries to $CONFIG_DIR/source..."
+    if [[ -n "${SUDO_USER:-}" ]]; then
+        # Running with sudo - create directory as the actual user
+        sudo -u "$SUDO_USER" mkdir -p "$CONFIG_DIR/source"
+        sudo -u "$SUDO_USER" cp -r lib "$CONFIG_DIR/source/"
+        sudo -u "$SUDO_USER" cp -r generators "$CONFIG_DIR/source/"
+        if [ -d "templates" ]; then
+            sudo -u "$SUDO_USER" cp -r templates "$CONFIG_DIR/source/"
+        fi
+    else
+        # Running directly as user
+        mkdir -p "$CONFIG_DIR/source"
+        cp -r lib "$CONFIG_DIR/source/"
+        cp -r generators "$CONFIG_DIR/source/"
+        if [ -d "templates" ]; then
+            cp -r templates "$CONFIG_DIR/source/"
+        fi
     fi
     
-    # Fix logging paths in utils.sh to use user directory
-    sudo sed -i.bak 's|readonly LOG_DIR="\$PROJECT_ROOT/\.logs"|readonly LOG_DIR="\$HOME/.spinbox/logs"|g' "$SPINBOX_LIB_DIR/lib/utils.sh"
-    sudo sed -i.bak 's|readonly BACKUP_DIR="\$PROJECT_ROOT/\.backups"|readonly BACKUP_DIR="\$HOME/.spinbox/backups"|g' "$SPINBOX_LIB_DIR/lib/utils.sh"
-    
-    # Modify the binary to look in system lib directory
+    # Install binary to system location (uses centralized source via detection)
     print_status "Installing to $INSTALL_DIR..."
-    sed -e 's|SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"|# System installation - libraries in /usr/local/lib/spinbox|' \
-        -e 's|SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"|SPINBOX_PROJECT_ROOT="/usr/local/lib/spinbox"|' \
-        -e 's|source "$SPINBOX_PROJECT_ROOT/lib/|source "/usr/local/lib/spinbox/lib/|g' \
-        bin/spinbox > "/tmp/spinbox"
-    sudo mv "/tmp/spinbox" "$INSTALL_DIR/spinbox"
+    sudo cp bin/spinbox "$INSTALL_DIR/spinbox"
     sudo chmod +x "$INSTALL_DIR/spinbox"
     
     # Create user configuration directory with proper ownership
