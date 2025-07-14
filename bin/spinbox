@@ -31,6 +31,9 @@ readonly VERSION="0.1.0-beta.4"
 # Initialize logging
 init_logging "$SCRIPT_NAME"
 
+# Initialize configuration
+init_config
+
 # Global variables
 COMMAND=""
 SUBCOMMAND=""
@@ -980,6 +983,9 @@ function execute_command() {
             
             # Export CLI override variables for version configuration
             export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION
+            
+            # Export updated version variables after applying overrides
+            export PYTHON_VERSION NODE_VERSION POSTGRES_VERSION REDIS_VERSION
             source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             create_project
             ;;
@@ -992,6 +998,9 @@ function execute_command() {
             
             # Export CLI override variables for version configuration
             export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION
+            
+            # Export updated version variables after applying overrides
+            export PYTHON_VERSION NODE_VERSION POSTGRES_VERSION REDIS_VERSION
             source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             add_components
             ;;

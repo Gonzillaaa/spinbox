@@ -1,0 +1,19 @@
+{
+    "name": "test-redis-version-4572",
+    "dockerFile": "Dockerfile",
+    "forwardPorts": [6379],
+    "postCreateCommand": "bash .devcontainer/setup.sh",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/zsh"
+            },
+            "extensions": ["ms-vscode-remote.remote-containers"]
+        }
+    },
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+    ],
+    "workspaceFolder": "/workspace",
+    "shutdownAction": "stopContainer"
+}
