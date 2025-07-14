@@ -1,15 +1,17 @@
 # Chroma Vector Database Usage
 
-Chroma is a lightweight vector database that's perfect for storing and searching document embeddings. When you select Chroma during project setup, it's automatically integrated into your FastAPI backend.
+Chroma is a lightweight vector database that's perfect for storing and searching document embeddings. When you add Chroma to your project with `spinbox add --chroma`, it's automatically integrated with your FastAPI backend.
 
 ## Features
 
-- **Persistent Storage**: Vector data is stored in the `chroma_data/` directory
-- **REST API**: Simple HTTP endpoints for adding and searching documents
+- **Persistent Storage**: Vector data is stored in the `chroma_data/` directory  
+- **Python Integration**: Direct Python API for adding and searching documents
 - **Similarity Search**: Find documents similar to a query text
 - **Metadata Support**: Store additional information with each document
 
-## API Endpoints
+> **Note**: This documentation describes the available Chroma features. The specific API endpoints shown below represent example implementations that can be built with the Chroma dependency included in FastAPI projects.
+
+## Example API Endpoints
 
 ### Add Document
 ```http
@@ -212,6 +214,15 @@ collections = chroma_client.list_collections()
 for col in collections:
     print(f"Collection: {col.name}")
 ```
+
+## Implementation Status
+
+When you add Chroma to a Spinbox project with `spinbox add --chroma`, the following is automatically configured:
+- Chroma Python dependency in requirements.txt
+- Basic project structure with `chroma_data/` directory
+- `.gitignore` entries for the vector database files
+
+The API endpoints shown above are examples of what you can build with the included Chroma dependency. They represent common patterns for vector database integration with FastAPI.
 
 ## References
 

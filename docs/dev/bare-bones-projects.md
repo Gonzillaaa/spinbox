@@ -2,15 +2,15 @@
 
 ## Overview
 
-Spinbox will support minimal project creation options for developers who want to start with just the essentials. These bare-bones projects maintain the DevContainer-first philosophy while providing the lightest possible setup.
+Spinbox supports minimal project creation options for developers who want to start with just the essentials. These bare-bones projects maintain the DevContainer-first philosophy while providing the lightest possible setup.
 
 ## Bare-bones Python Project
 
-### Command Usage
+### Command Usage ✅ **IMPLEMENTED**
 ```bash
-spinbox myproject --minimal
-# or
-spinbox myproject --python
+spinbox create myproject --python
+# or use predefined profile
+spinbox create myproject --profile minimal
 ```
 
 ### What Gets Created
@@ -155,11 +155,11 @@ def test_import():
 
 ## Bare-bones Node/JavaScript Project
 
-### Command Usage
+### Command Usage ✅ **IMPLEMENTED**
 ```bash
-spinbox myproject --node
-# or
-spinbox myproject --javascript
+spinbox create myproject --node
+# or use predefined profile
+spinbox create myproject --profile minimal
 ```
 
 ### What Gets Created
@@ -362,15 +362,15 @@ describe('Main function', () => {
 });
 ```
 
-## Interactive Component Selection
+## Interactive Component Selection ✅ **IMPLEMENTED**
 
-Both bare-bones projects will still support adding components later:
+Both bare-bones projects support adding components later:
 
 ```bash
 # In a bare-bones project directory
-spinbox add backend    # Add FastAPI backend
-spinbox add frontend   # Add Next.js frontend
-spinbox add database   # Add PostgreSQL database
+spinbox add --fastapi       # Add FastAPI backend
+spinbox add --frontend      # Add Next.js frontend
+spinbox add --postgresql    # Add PostgreSQL database
 ```
 
 ## Configuration Options
@@ -426,8 +426,8 @@ database = false
 - **Isolated environments**: Each project is completely separate
 - **Easy cleanup**: Simple to delete and start over
 
-## Migration from Current System
+## Implementation Status ✅ **COMPLETE**
 
-The current minimal project creation system supports both Python and Node.js bare-bones projects through the global CLI tool with the same interactive experience users expect.
+The minimal project creation system fully supports both Python and Node.js bare-bones projects through the global CLI tool with an intuitive experience.
 
-The key difference is that instead of cloning a template repository, users will have a global tool that can create these minimal projects anywhere on their system with a single command.
+**Current Reality**: Users have a global tool that can create these minimal projects anywhere on their system with a single command, exactly as envisioned. No template repository cloning needed.

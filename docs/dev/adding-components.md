@@ -7,12 +7,12 @@ This guide explains how to add new components to an existing Spinbox project usi
 Spinbox supports adding components to existing projects seamlessly through the `spinbox add` command. You can add any component that's available during project creation:
 
 ### Available Components
-- **Backend**: FastAPI backend with Python 3.12+
-- **Frontend**: Next.js frontend with TypeScript
-- **Database**: PostgreSQL with PGVector extension
-- **MongoDB**: MongoDB document database
-- **Redis**: Redis for caching and queues
-- **Chroma**: Chroma vector database for embeddings
+- **FastAPI**: FastAPI backend with Python 3.12+ (--fastapi)
+- **Frontend**: Next.js frontend with TypeScript (--frontend)
+- **PostgreSQL**: PostgreSQL database with PGVector extension (--postgresql)
+- **MongoDB**: MongoDB document database (--mongodb)
+- **Redis**: Redis for caching and queues (--redis)
+- **Chroma**: Chroma vector database for embeddings (--chroma)
 
 ## Using the CLI Command (Recommended)
 
@@ -31,13 +31,13 @@ The `spinbox add` command is the recommended and supported method for adding com
 cd myproject
 
 # Add a single component
-spinbox add --database
+spinbox add --postgresql
 
 # Add multiple components
-spinbox add --backend --redis
+spinbox add --fastapi --redis
 
 # Add components with version specifications
-spinbox add --database --postgres-version 14
+spinbox add --postgresql --postgres-version 14
 spinbox add --frontend --node-version 18
 ```
 
@@ -47,7 +47,7 @@ spinbox add --frontend --node-version 18
 
 ```bash
 # Add primary database storage
-spinbox add --database
+spinbox add --postgresql
 
 # Add caching layer
 spinbox add --redis
@@ -59,32 +59,32 @@ spinbox add --mongodb
 spinbox add --chroma
 
 # Add multiple storage layers
-spinbox add --database --redis --chroma
+spinbox add --postgresql --redis --chroma
 ```
 
 #### Adding Application Layers
 
 ```bash
 # Add API backend to existing project
-spinbox add --backend
+spinbox add --fastapi
 
 # Add web frontend
 spinbox add --frontend
 
 # Add full web application stack
-spinbox add --backend --frontend --database
+spinbox add --fastapi --frontend --postgresql
 ```
 
 #### Version-Specific Additions
 
 ```bash
 # Add components with specific versions
-spinbox add --database --postgres-version 15
-spinbox add --backend --python-version 3.11
+spinbox add --postgresql --postgres-version 15
+spinbox add --fastapi --python-version 3.11
 spinbox add --frontend --node-version 20
 
 # Multiple components with versions
-spinbox add --backend --redis --python-version 3.12 --redis-version 7
+spinbox add --fastapi --redis --python-version 3.12 --redis-version 7
 ```
 
 ## What Happens When You Add Components
@@ -134,24 +134,24 @@ your-project/
 Components are designed to work together seamlessly:
 
 **Storage Components**:
-- **PostgreSQL** (`--database`): Primary relational storage
+- **PostgreSQL** (`--postgresql`): Primary relational storage
 - **MongoDB** (`--mongodb`): Alternative document storage
 - **Redis** (`--redis`): Caching and queue layer
 - **Chroma** (`--chroma`): Vector search layer
 
 **Application Components**:
-- **Backend** (`--backend`): API layer with database connections
+- **FastAPI** (`--fastapi`): API layer with database connections
 - **Frontend** (`--frontend`): Web interface with API integration
 
 ### Inter-Service Communication
 
 When components are added together, they're automatically configured for communication:
 
-- **Frontend ↔ Backend**: API calls on port 8000
-- **Backend ↔ Database**: PostgreSQL connection on port 5432
-- **Backend ↔ Redis**: Caching connection on port 6379
-- **Backend ↔ MongoDB**: Document storage connection on port 27017
-- **Backend ↔ Chroma**: Embedded vector database (no separate service)
+- **Frontend ↔ FastAPI**: API calls on port 8000
+- **FastAPI ↔ PostgreSQL**: Database connection on port 5432
+- **FastAPI ↔ Redis**: Caching connection on port 6379
+- **FastAPI ↔ MongoDB**: Document storage connection on port 27017
+- **FastAPI ↔ Chroma**: Embedded vector database (no separate service)
 
 ## Development Workflow
 
@@ -337,26 +337,26 @@ git commit -m "Add backend API and Redis caching"
 
 ```bash
 # Multi-database setup
-spinbox add --database --mongodb     # Relational + Document storage
+spinbox add --postgresql --mongodb     # Relational + Document storage
 
 # Performance-optimized API
-spinbox add --backend --redis --database
+spinbox add --fastapi --redis --postgresql
 
 # AI/ML prototyping environment  
-spinbox add --backend --database --chroma
+spinbox add --fastapi --postgresql --chroma
 
 # Full-stack with multiple storage layers
-spinbox add --backend --frontend --database --redis --chroma
+spinbox add --fastapi --frontend --postgresql --redis --chroma
 ```
 
 ### Configuration Overrides
 
 ```bash
 # Override default versions per component
-spinbox add --database --postgres-version 13 --redis --redis-version 6
+spinbox add --postgresql --postgres-version 13 --redis --redis-version 6
 
 # Multiple version overrides
-spinbox add --backend --frontend --python-version 3.10 --node-version 18
+spinbox add --fastapi --frontend --python-version 3.10 --node-version 18
 ```
 
 ---
