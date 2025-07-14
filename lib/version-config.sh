@@ -154,57 +154,65 @@ function get_all_effective_versions() {
     echo "Python $python_ver, Node $node_ver, PostgreSQL $postgres_ver, Redis $redis_ver"
 }
 
-# Show version configuration with sources
+# Show version configuration with sources (only for selected components)
 function show_version_configuration() {
     print_info "Version Configuration:"
     
-    # Python version
-    local python_ver=$(get_effective_python_version)
-    local python_source=""
-    if [[ -n "$CLI_PYTHON_VERSION" ]]; then
-        python_source=" (from CLI flag)"
-    elif [[ -n "$PYTHON_VERSION" ]]; then
-        python_source=" (from config file)"
-    else
-        python_source=" (default)"
+    # Only show Python version if Python is being used
+    if [[ "${USE_PYTHON:-false}" == "true" ]]; then
+        local python_ver=$(get_effective_python_version)
+        local python_source=""
+        if [[ -n "$CLI_PYTHON_VERSION" ]]; then
+            python_source=" (from CLI flag)"
+        elif [[ -n "$PYTHON_VERSION" ]]; then
+            python_source=" (from config file)"
+        else
+            python_source=" (default)"
+        fi
+        echo "  Python: $python_ver$python_source"
     fi
-    echo "  Python: $python_ver$python_source"
     
-    # Node version
-    local node_ver=$(get_effective_node_version)
-    local node_source=""
-    if [[ -n "$CLI_NODE_VERSION" ]]; then
-        node_source=" (from CLI flag)"
-    elif [[ -n "$NODE_VERSION" ]]; then
-        node_source=" (from config file)"
-    else
-        node_source=" (default)"
+    # Only show Node version if Node is being used
+    if [[ "${USE_NODE:-false}" == "true" ]]; then
+        local node_ver=$(get_effective_node_version)
+        local node_source=""
+        if [[ -n "$CLI_NODE_VERSION" ]]; then
+            node_source=" (from CLI flag)"
+        elif [[ -n "$NODE_VERSION" ]]; then
+            node_source=" (from config file)"
+        else
+            node_source=" (default)"
+        fi
+        echo "  Node.js: $node_ver$node_source"
     fi
-    echo "  Node.js: $node_ver$node_source"
     
-    # PostgreSQL version
-    local postgres_ver=$(get_effective_postgres_version)
-    local postgres_source=""
-    if [[ -n "$CLI_POSTGRES_VERSION" ]]; then
-        postgres_source=" (from CLI flag)"
-    elif [[ -n "$POSTGRES_VERSION" ]]; then
-        postgres_source=" (from config file)"
-    else
-        postgres_source=" (default)"
+    # Only show PostgreSQL version if PostgreSQL is being used
+    if [[ "${USE_POSTGRESQL:-false}" == "true" ]]; then
+        local postgres_ver=$(get_effective_postgres_version)
+        local postgres_source=""
+        if [[ -n "$CLI_POSTGRES_VERSION" ]]; then
+            postgres_source=" (from CLI flag)"
+        elif [[ -n "$POSTGRES_VERSION" ]]; then
+            postgres_source=" (from config file)"
+        else
+            postgres_source=" (default)"
+        fi
+        echo "  PostgreSQL: $postgres_ver$postgres_source"
     fi
-    echo "  PostgreSQL: $postgres_ver$postgres_source"
     
-    # Redis version
-    local redis_ver=$(get_effective_redis_version)
-    local redis_source=""
-    if [[ -n "$CLI_REDIS_VERSION" ]]; then
-        redis_source=" (from CLI flag)"
-    elif [[ -n "$REDIS_VERSION" ]]; then
-        redis_source=" (from config file)"
-    else
-        redis_source=" (default)"
+    # Only show Redis version if Redis is being used
+    if [[ "${USE_REDIS:-false}" == "true" ]]; then
+        local redis_ver=$(get_effective_redis_version)
+        local redis_source=""
+        if [[ -n "$CLI_REDIS_VERSION" ]]; then
+            redis_source=" (from CLI flag)"
+        elif [[ -n "$REDIS_VERSION" ]]; then
+            redis_source=" (from config file)"
+        else
+            redis_source=" (default)"
+        fi
+        echo "  Redis: $redis_ver$redis_source"
     fi
-    echo "  Redis: $redis_ver$redis_source"
 }
 
 # Apply CLI version overrides to global configuration variables

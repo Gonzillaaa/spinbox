@@ -751,6 +751,9 @@ function create_project() {
         PROJECT_PATH="./$PROJECT_NAME"
     fi
     
+    # Export component flags for version configuration display
+    export USE_PYTHON USE_NODE USE_POSTGRESQL USE_REDIS
+    
     # Show configuration
     print_info "Creating project: $PROJECT_NAME"
     print_info "Location: $PROJECT_PATH"
@@ -818,6 +821,9 @@ function add_components() {
     
     PROJECT_PATH="."
     PROJECT_NAME="${PROJECT_NAME:-$(basename "$PWD")}"
+    
+    # Export component flags for version configuration display
+    export USE_PYTHON USE_NODE USE_POSTGRESQL USE_REDIS
     
     print_info "Adding components to project: $PROJECT_NAME"
     print_info "New components: ${SELECTED_COMPONENTS[*]}"
