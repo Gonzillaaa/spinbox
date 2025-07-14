@@ -21,6 +21,7 @@ source "$SPINBOX_PROJECT_ROOT/lib/utils.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/config.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/profiles.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/version.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/version-config.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/update.sh"
 
 # Script information
@@ -387,25 +388,33 @@ NOTES:
 EOF
 }
 
+# Global variable to track consumed arguments
+VERSION_FLAGS_CONSUMED=0
+
 # Parse version configuration flags and update global variables
 function parse_version_flags() {
+    VERSION_FLAGS_CONSUMED=0
     while [[ $# -gt 0 ]]; do
         case $1 in
             --python-version)
-                PYTHON_VERSION="$2"
+                set_cli_python_version "$2"
                 shift 2
+                VERSION_FLAGS_CONSUMED=$((VERSION_FLAGS_CONSUMED + 2))
                 ;;
             --node-version)
-                NODE_VERSION="$2"
+                set_cli_node_version "$2"
                 shift 2
+                VERSION_FLAGS_CONSUMED=$((VERSION_FLAGS_CONSUMED + 2))
                 ;;
             --postgres-version)
-                POSTGRES_VERSION="$2"
+                set_cli_postgres_version "$2"
                 shift 2
+                VERSION_FLAGS_CONSUMED=$((VERSION_FLAGS_CONSUMED + 2))
                 ;;
             --redis-version)
-                REDIS_VERSION="$2"
+                set_cli_redis_version "$2"
                 shift 2
+                VERSION_FLAGS_CONSUMED=$((VERSION_FLAGS_CONSUMED + 2))
                 ;;
             *)
                 # Return remaining arguments
@@ -576,7 +585,10 @@ function parse_create_args() {
                 ;;
             --python-version|--node-version|--postgres-version|--redis-version)
                 parse_version_flags "$@"
-                break
+                # Shift by the number of arguments consumed
+                for ((i=0; i<VERSION_FLAGS_CONSUMED; i++)); do
+                    shift
+                done
                 ;;
             --template)
                 TEMPLATE="$2"
@@ -619,7 +631,10 @@ function parse_add_args() {
                 ;;
             --python-version|--node-version|--postgres-version|--redis-version)
                 parse_version_flags "$@"
-                break
+                # Shift by the number of arguments consumed
+                for ((i=0; i<VERSION_FLAGS_CONSUMED; i++)); do
+                    shift
+                done
                 ;;
             -v|--verbose)
                 VERBOSE=true
@@ -956,14 +971,27 @@ function execute_command() {
             print_debug "CLI PROJECT_NAME: '$PROJECT_NAME'"
             print_debug "CLI COMPONENTS: '$COMPONENTS'"
             print_debug "CLI PROFILE: '$PROFILE'"
+            
+            # Apply version overrides from CLI flags
+            apply_version_overrides
+            
             # Export variables needed by project generator
             export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE DRY_RUN VERBOSE
+            
+            # Export CLI override variables for version configuration
+            export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION
             source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             create_project
             ;;
         add)
+            # Apply version overrides from CLI flags
+            apply_version_overrides
+            
             # Export variables needed by project generator
             export COMPONENTS DRY_RUN VERBOSE
+            
+            # Export CLI override variables for version configuration
+            export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION
             source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             add_components
             ;;

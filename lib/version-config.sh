@@ -7,10 +7,11 @@ source "$(dirname "${BASH_SOURCE[0]}")/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/config.sh"
 
 # CLI override variables (highest priority)
-CLI_PYTHON_VERSION=""
-CLI_NODE_VERSION=""
-CLI_POSTGRES_VERSION=""
-CLI_REDIS_VERSION=""
+# Only initialize if not already set (preserve values from parent process)
+: "${CLI_PYTHON_VERSION:=""}"
+: "${CLI_NODE_VERSION:=""}"
+: "${CLI_POSTGRES_VERSION:=""}"
+: "${CLI_REDIS_VERSION:=""}"
 
 # Configuration override hierarchy: CLI flags > config file > defaults
 function get_effective_python_version() {
