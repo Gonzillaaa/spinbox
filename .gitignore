@@ -2,6 +2,5 @@
 .env
 .claude
 test_*
-test-*
 .log*
 .backup*
