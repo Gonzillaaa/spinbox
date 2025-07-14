@@ -1,6 +1,10 @@
 #!/bin/bash
 # Update engine for Spinbox CLI tool
 
+# Source utils for logging functions
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$script_dir/utils.sh"
+
 # Detect installation method
 detect_installation_method() {
     local spinbox_path=$(which spinbox 2>/dev/null)
@@ -51,7 +55,7 @@ create_backup() {
     # Store backup location for potential rollback
     echo "$backup_dir" > "$HOME/.spinbox/last_backup"
     
-    print_success "Backup created successfully."
+    print_status "Backup created successfully."
     echo "$backup_dir"
 }
 
@@ -91,7 +95,7 @@ rollback_update() {
         cp -r "$backup_dir/templates" "$HOME/.spinbox/"
     fi
     
-    print_success "Rollback completed successfully."
+    print_status "Rollback completed successfully."
 }
 
 # Download and extract update
@@ -125,7 +129,7 @@ download_update() {
         return 1
     fi
     
-    print_success "Download completed successfully."
+    print_status "Download completed successfully."
     echo "$temp_dir"
 }
 
@@ -165,7 +169,7 @@ install_update() {
         cp -r "$temp_dir/templates" "$HOME/.spinbox/"
     fi
     
-    print_success "Update installed successfully."
+    print_status "Update installed successfully."
 }
 
 # Verify installation after update
@@ -201,7 +205,7 @@ verify_update() {
         fi
     fi
     
-    print_success "Update verification completed."
+    print_status "Update verification completed."
 }
 
 # Main update function
@@ -226,7 +230,7 @@ perform_update() {
         else
             print_info "Updating via Homebrew..."
             if brew upgrade spinbox; then
-                print_success "Homebrew update completed successfully."
+                print_status "Homebrew update completed successfully."
             else
                 print_error "Homebrew update failed."
                 return 1
@@ -343,7 +347,7 @@ perform_update() {
     # Clean up
     rm -rf "$temp_dir"
     
-    print_success "Update completed successfully!"
+    print_status "Update completed successfully!"
     print_info "Updated from $current_version to $target_version"
     
     return 0
