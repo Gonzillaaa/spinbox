@@ -12,3 +12,7 @@ chroma = false
 
 [configuration]
 node_version = "20"
+
+[templates]
+# Node.js projects typically don't use requirements.txt
+# Component generation will create package.json instead
