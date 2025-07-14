@@ -347,8 +347,8 @@ if [[ "$RUN_ALL" == "true" || "$RUN_GLOBAL" == "true" ]]; then
     run_test "global_create_project" "spinbox create test-global-project --profile data-science --dry-run"
     
     # Test config commands
-    run_test "global_config_list" "spinbox config list"
-    run_test "global_config_get" "spinbox config get python_version"
+    run_test "global_config_list" "spinbox config --list"
+    run_test "global_config_get" "spinbox config --get PYTHON_VERSION"
     
     # Test uninstall
     run_test "global_uninstall" "sudo spinbox uninstall --config --force"
