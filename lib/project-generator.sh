@@ -563,11 +563,13 @@ function generate_component_files() {
 # Generate Python requirements.txt
 function generate_python_requirements() {
     local project_dir="$1"
-    local template_file="$PROJECT_ROOT/templates/requirements/${TEMPLATE_NAME:-minimal}.txt"
+    # Use centralized template path (same pattern as profiles.sh)
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local template_file="$(dirname "$script_dir")/templates/requirements/${TEMPLATE:-minimal}.txt"
     
     if [[ -f "$template_file" ]]; then
         cp "$template_file" "$project_dir/requirements.txt"
-        print_debug "Used requirements template: ${TEMPLATE_NAME:-minimal}"
+        print_debug "Used requirements template: ${TEMPLATE:-minimal}"
     else
         # Fallback to basic requirements
         cat > "$project_dir/requirements.txt" << EOF
