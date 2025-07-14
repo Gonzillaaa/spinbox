@@ -67,7 +67,7 @@ USAGE:
     spinbox <COMMAND> [OPTIONS] [ARGS]
 
 COMMANDS:
-    create      Create a new development project
+    create      Create a new project
     add         Add components to an existing project
     start       Start project services (Docker containers)
     config      Manage global configuration
