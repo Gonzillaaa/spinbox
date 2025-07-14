@@ -46,19 +46,26 @@ function parse_profile_toml() {
     
     while IFS= read -r line; do
         # Skip empty lines and comments
-        [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$line" ]] && continue
+        [[ "$line" == "#"* ]] && continue
         
         # Detect sections
-        if [[ "$line" =~ ^\[([^\]]+)\] ]]; then
-            section="${BASH_REMATCH[1]}"
+        if [[ "$line" == "["*"]" ]]; then
+            section="${line#[}"
+            section="${section%]}"
             # Found section
             continue
         fi
         
         # Parse key-value pairs
-        if [[ "$line" =~ ^[[:space:]]*([^=]+)[[:space:]]*=[[:space:]]*(.+) ]]; then
-            local key="${BASH_REMATCH[1]// /}"
-            local value="${BASH_REMATCH[2]}"
+        if [[ "$line" == *"="* ]]; then
+            local key="${line%%=*}"
+            local value="${line#*=}"
+            
+            # Trim whitespace from key and value
+            key="${key// /}"
+            value="${value# }"  # Remove leading space
+            value="${value% }"  # Remove trailing space
             
             # Remove quotes from value
             value="${value//\"/}"
