@@ -4,7 +4,7 @@
 
 # Spin up containerized prototyping environments in seconds!
 
-Spinbox is a **global CLI tool** for creating customizable development environments using Docker and DevContainers. Build your stack by selecting from predefined profiles or mixing and matching components to create the perfect prototyping environment.
+Spinbox is a **global CLI tool** for creating customizable prototyping environments using Docker and DevContainers. Build your stack by selecting from predefined profiles or mixing and matching components to create the perfect prototyping environment.
 
 ## 🚀 Key Features
 
@@ -26,22 +26,27 @@ Spinbox is a **global CLI tool** for creating customizable development environme
 ### 1. Install Spinbox
 
 **Option A: User install (recommended):**
+
 ```bash
 # Install to ~/.local/bin (no sudo required, automatic PATH setup)
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
 ```
 
+**Note:** The user installation automatically adds `~/.local/bin` to your PATH by detecting your shell and updating the appropriate profile file (.zshrc, .bashrc, etc.). Just restart your terminal or run `source ~/.bashrc` after installation.
+
 **Option B: System install:**
+
 ```bash
 # Install to /usr/local/bin (requires sudo)
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
 ```
 
-**Note:** The user installation automatically adds `~/.local/bin` to your PATH by detecting your shell and updating the appropriate profile file (.zshrc, .bashrc, etc.). Just restart your terminal or run `source ~/.bashrc` after installation.
+**Note:** Installs to `/usr/local/bin` (usually in PATH), requires `sudo`, and does not update your shell profile.
 
 ### 2. Create Your First Project
 
 **Using predefined profiles:**
+
 ```bash
 # Full-stack web application
 spinbox create myapp --profile web-app
@@ -55,11 +60,12 @@ spinbox create ai-project --profile ai-llm
 # Simple Python project
 spinbox create python-project --profile python
 
-# Simple Node.js project  
+# Simple Node.js project
 spinbox create node-project --profile node
 ```
 
 **Custom component selection:**
+
 ```bash
 # Simple Python project
 spinbox create myproject --python
@@ -85,30 +91,31 @@ Spinbox components are organized into three architectural layers:
 
 ### 1. **DevContainer/Base Layer** (Foundation)
 
-| Component | Flag | Description |
-|-----------|------|-------------|
-| Python | `--python` | Python 3.12+ DevContainer with virtual environment |
-| Node.js | `--node` | Node.js 20+ DevContainer with TypeScript |
+| Component | Flag       | Description                                        |
+| --------- | ---------- | -------------------------------------------------- |
+| Python    | `--python` | Python 3.12+ DevContainer with virtual environment |
+| Node.js   | `--node`   | Node.js 20+ DevContainer with TypeScript           |
 
 ### 2. **Application Layer** (API & UI)
 
-| Component | Flag | Port | Description |
-|-----------|------|------|-------------|
-| FastAPI | `--fastapi` | 8000 | Modern Python API framework (includes Python base) |
-| Next.js | `--nextjs` | 3000 | React framework with TypeScript (includes Node.js base) |
+| Component | Flag        | Port | Description                                             |
+| --------- | ----------- | ---- | ------------------------------------------------------- |
+| FastAPI   | `--fastapi` | 8000 | Modern Python API framework (includes Python base)      |
+| Next.js   | `--nextjs`  | 3000 | React framework with TypeScript (includes Node.js base) |
 
 ### 3. **Storage Layer** (Data Persistence)
 
-| Component | Flag | Port | Architectural Role | Best For |
-|-----------|------|------|-------------------|----------|
-| PostgreSQL | `--postgresql` | 5432 | Primary Storage | Relational data, with PGVector for embeddings |
-| MongoDB | `--mongodb` | 27017 | Alternative Storage | Document-oriented data, flexible schemas |
-| Redis | `--redis` | 6379 | Caching Layer | High-performance caching and queues |
-| Chroma | `--chroma` | - | Vector Search | AI/ML embeddings and similarity search |
+| Component  | Flag           | Port  | Architectural Role  | Best For                                      |
+| ---------- | -------------- | ----- | ------------------- | --------------------------------------------- |
+| PostgreSQL | `--postgresql` | 5432  | Primary Storage     | Relational data, with PGVector for embeddings |
+| MongoDB    | `--mongodb`    | 27017 | Alternative Storage | Document-oriented data, flexible schemas      |
+| Redis      | `--redis`      | 6379  | Caching Layer       | High-performance caching and queues           |
+| Chroma     | `--chroma`     | -     | Vector Search       | AI/ML embeddings and similarity search        |
 
 ### Component Combinations
 
 **Common patterns:**
+
 - `--postgresql --redis` → Primary storage + caching layer
 - `--mongodb --chroma` → Document storage + vector search
 - `--fastapi --nextjs --postgresql` → Full-stack web application
@@ -116,14 +123,14 @@ Spinbox components are organized into three architectural layers:
 
 ## 🎯 Predefined Profiles
 
-| Profile | Description | Components | Use Case |
-|---------|-------------|------------|----------|
-| `python` | Python development with essential tools | Python + testing tools | Simple Python projects |
-| `node` | Node.js development with TypeScript | Node.js + TypeScript + testing | Simple Node.js projects |
-| `web-app` | Full-stack web application | FastAPI + Next.js + PostgreSQL | Complete web applications |
-| `api-only` | API server with caching | FastAPI + PostgreSQL + Redis | Backend API services |
-| `data-science` | Data science with pandas, numpy, matplotlib, Jupyter, scikit-learn, plotly | Python + PostgreSQL | Data science and analytics |
-| `ai-llm` | AI/LLM with OpenAI, Anthropic, LangChain, Transformers, Chroma | Python + PostgreSQL + Chroma | AI and machine learning |
+| Profile        | Description                                                                | Components                     | Use Case                   |
+| -------------- | -------------------------------------------------------------------------- | ------------------------------ | -------------------------- |
+| `python`       | Python development with essential tools                                    | Python + testing tools         | Simple Python projects     |
+| `node`         | Node.js development with TypeScript                                        | Node.js + TypeScript + testing | Simple Node.js projects    |
+| `web-app`      | Full-stack web application                                                 | FastAPI + Next.js + PostgreSQL | Complete web applications  |
+| `api-only`     | API server with caching                                                    | FastAPI + PostgreSQL + Redis   | Backend API services       |
+| `data-science` | Data science with pandas, numpy, matplotlib, Jupyter, scikit-learn, plotly | Python + PostgreSQL            | Data science and analytics |
+| `ai-llm`       | AI/LLM with OpenAI, Anthropic, LangChain, Transformers, Chroma             | Python + PostgreSQL + Chroma   | AI and machine learning    |
 
 ```bash
 # List all profiles
@@ -136,6 +143,7 @@ spinbox profiles web-app
 ## 🛠️ CLI Commands
 
 ### Project Creation
+
 ```bash
 spinbox create <name> [options]
   --profile <profile>        # Use predefined profile
@@ -147,6 +155,7 @@ spinbox create <name> [options]
 ```
 
 ### Project Management
+
 ```bash
 # Add components to existing project
 spinbox add --postgresql --redis
@@ -164,6 +173,7 @@ spinbox update --check     # Check for updates
 ```
 
 ### Configuration
+
 ```bash
 # View configuration
 spinbox config --list
@@ -220,6 +230,7 @@ For Python projects, choose from curated dependency templates:
 ## 🔧 Advanced Features
 
 ### Version Configuration
+
 ```bash
 # Override default versions
 spinbox create api --python-version 3.11 --node-version 18
@@ -229,6 +240,7 @@ spinbox config --set PYTHON_VERSION=3.11
 ```
 
 ### DevContainer Features
+
 - Zsh with Powerlevel10k theme
 - Pre-configured VS Code extensions
 - Git aliases and helpers
@@ -236,6 +248,7 @@ spinbox config --set PYTHON_VERSION=3.11
 - Syntax highlighting and auto-completion
 
 ### Extending Spinbox
+
 - Add custom generators in `generators/`
 - Create new profiles in `templates/profiles/`
 - Customize requirements in `templates/requirements/`
