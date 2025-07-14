@@ -78,8 +78,8 @@ spinbox create ml-project --profile data-science
 # AI/LLM prototyping environment
 spinbox create ai-project --profile ai-llm
 
-# Minimal prototyping environment
-spinbox create basic-env --profile minimal
+# Python prototyping environment
+spinbox create basic-env --profile python
 ```
 
 **Component-based creation:**
@@ -519,11 +519,12 @@ spinbox profiles --show api-only
 
 | Profile | Description | Components |
 |---------|-------------|------------|
+| `python` | Python development with essential tools | python + testing tools |
+| `node` | Node.js development with TypeScript | node + typescript + testing |
 | `web-app` | Full-stack web application | fastapi, nextjs, postgresql |
 | `api-only` | FastAPI API with PostgreSQL | fastapi, postgresql, redis |
-| `data-science` | Data science environment | python, postgresql |
-| `ai-llm` | AI/LLM development | python, postgresql, chroma |
-| `minimal` | Basic prototyping environment | python |
+| `data-science` | Data science with pandas, numpy, matplotlib, Jupyter, scikit-learn, plotly | python, postgresql |
+| `ai-llm` | AI/LLM with OpenAI, Anthropic, LangChain, Transformers, Chroma | python, postgresql, chroma |
 
 #### Profile Details
 

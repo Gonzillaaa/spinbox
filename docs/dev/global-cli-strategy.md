@@ -69,8 +69,8 @@ spinbox start  # or docker-compose up -d
 ```bash
 # Project creation (main use case)
 spinbox <projectname>                     # Create new project with interactive selection
-spinbox <projectname> --python           # Create minimal Python project
-spinbox <projectname> --node             # Create minimal Node/JavaScript project
+spinbox <projectname> --python           # Create Python development project
+spinbox <projectname> --node             # Create Node.js development project
 spinbox <projectname> --profile api      # Create with predefined profile
 
 # Version configuration (hybrid approach)
@@ -118,7 +118,8 @@ spinbox help                             # Show help information
 - `--profile api`: Backend + Database + Redis
 - `--profile web`: Backend + Frontend + Database
 - `--profile data`: Python + Jupyter + Database
-- `--profile minimal`: Just DevContainer
+- `--profile python`: Python development with essential tools
+- `--profile node`: Node.js development with TypeScript
 
 ## Version Configuration Strategy
 
