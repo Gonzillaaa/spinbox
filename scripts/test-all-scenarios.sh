@@ -73,7 +73,7 @@ run_test() {
     
     log_info "Running: $test_name"
     
-    if eval "$test_command" &>> "$LOG_FILE"; then
+    if eval "$test_command" >> "$LOG_FILE" 2>&1; then
         if [[ "$expected_result" == "0" ]]; then
             record_test "$test_name" "PASS" "Command succeeded as expected"
             return 0
@@ -141,20 +141,20 @@ cleanup_installation() {
     
     # Try modern uninstall first
     if [[ -f "$PROJECT_ROOT/uninstall.sh" ]]; then
-        "$PROJECT_ROOT/uninstall.sh" --config --force &>> "$LOG_FILE" || true
-        sudo "$PROJECT_ROOT/uninstall.sh" --config --force &>> "$LOG_FILE" || true
+        "$PROJECT_ROOT/uninstall.sh" --config --force >> "$LOG_FILE" 2>&1 || true
+        sudo "$PROJECT_ROOT/uninstall.sh" --config --force >> "$LOG_FILE" 2>&1 || true
     fi
     
     # Manual cleanup as fallback
-    sudo rm -f /usr/local/bin/spinbox &>> "$LOG_FILE" || true
-    rm -f "$HOME/.local/bin/spinbox" &>> "$LOG_FILE" || true
-    rm -rf "$HOME/.spinbox" &>> "$LOG_FILE" || true
-    sudo rm -rf /usr/local/lib/spinbox &>> "$LOG_FILE" || true
-    rm -rf "$HOME/.local/lib/spinbox" &>> "$LOG_FILE" || true
+    sudo rm -f /usr/local/bin/spinbox >> "$LOG_FILE" 2>&1 || true
+    rm -f "$HOME/.local/bin/spinbox" >> "$LOG_FILE" 2>&1 || true
+    rm -rf "$HOME/.spinbox" >> "$LOG_FILE" 2>&1 || true
+    sudo rm -rf /usr/local/lib/spinbox >> "$LOG_FILE" 2>&1 || true
+    rm -rf "$HOME/.local/lib/spinbox" >> "$LOG_FILE" 2>&1 || true
     
     # Clean test projects
-    rm -rf ~/test-* &>> "$LOG_FILE" || true
-    rm -rf "$PROJECT_ROOT"/test-* &>> "$LOG_FILE" || true
+    rm -rf ~/test-* >> "$LOG_FILE" 2>&1 || true
+    rm -rf "$PROJECT_ROOT"/test-* >> "$LOG_FILE" 2>&1 || true
 }
 
 # Parse command line arguments
@@ -428,7 +428,7 @@ if [[ "$RUN_ALL" == "true" || "$RUN_EDGE" == "true" ]]; then
     
     # Test double installation
     if [[ "$RUN_ALL" == "true" ]]; then
-        $PROJECT_ROOT/install-user.sh &>> "$LOG_FILE"
+        $PROJECT_ROOT/install-user.sh >> "$LOG_FILE" 2>&1
         run_test "edge_double_install" "$PROJECT_ROOT/install-user.sh"
         cleanup_installation
     fi
@@ -449,13 +449,13 @@ if [[ "$RUN_ALL" == "true" ]]; then
     dev_output=$("$PROJECT_ROOT/bin/spinbox" profiles 2>&1)
     
     # Install locally and get output
-    $PROJECT_ROOT/install-user.sh &>> "$LOG_FILE"
+    $PROJECT_ROOT/install-user.sh >> "$LOG_FILE" 2>&1
     export PATH="$HOME/.local/bin:$PATH"
     hash -r
     local_output=$(spinbox profiles 2>&1)
     
     # Compare outputs
-    if diff <(echo "$dev_output") <(echo "$local_output") &>> "$LOG_FILE"; then
+    if diff <(echo "$dev_output") <(echo "$local_output") >> "$LOG_FILE" 2>&1; then
         record_test "consistency_dev_local" "PASS" "Development and local outputs identical"
     else
         record_test "consistency_dev_local" "FAIL" "Development and local outputs differ"
@@ -463,12 +463,12 @@ if [[ "$RUN_ALL" == "true" ]]; then
     
     # Cleanup and install globally
     cleanup_installation
-    sudo $PROJECT_ROOT/install.sh &>> "$LOG_FILE"
+    sudo $PROJECT_ROOT/install.sh >> "$LOG_FILE" 2>&1
     hash -r
     global_output=$(spinbox profiles 2>&1)
     
     # Compare outputs
-    if diff <(echo "$dev_output") <(echo "$global_output") &>> "$LOG_FILE"; then
+    if diff <(echo "$dev_output") <(echo "$global_output") >> "$LOG_FILE" 2>&1; then
         record_test "consistency_dev_global" "PASS" "Development and global outputs identical"
     else
         record_test "consistency_dev_global" "FAIL" "Development and global outputs differ"
