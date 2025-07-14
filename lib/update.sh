@@ -55,7 +55,7 @@ create_backup() {
     # Store backup location for potential rollback
     echo "$backup_dir" > "$HOME/.spinbox/last_backup"
     
-    print_status "Backup created successfully."
+    print_status "Backup created successfully." >&2
     echo "$backup_dir"
 }
 
@@ -106,7 +106,7 @@ download_update() {
     
     download_url=$(get_download_url "$version")
     
-    print_info "Downloading Spinbox $version..."
+    print_info "Downloading Spinbox $version..." >&2
     
     # Create temporary directory
     mkdir -p "$temp_dir"
@@ -117,19 +117,19 @@ download_update() {
     elif command -v wget &> /dev/null; then
         wget -qO- "$download_url" | tar -xz -C "$temp_dir" --strip-components=1
     else
-        print_error "Neither curl nor wget is available. Cannot download update."
+        print_error "Neither curl nor wget is available. Cannot download update." >&2
         rm -rf "$temp_dir"
         return 1
     fi
     
     # Verify download
     if [[ ! -f "$temp_dir/bin/spinbox" ]]; then
-        print_error "Download failed or incomplete. Missing main executable."
+        print_error "Download failed or incomplete. Missing main executable." >&2
         rm -rf "$temp_dir"
         return 1
     fi
     
-    print_status "Download completed successfully."
+    print_status "Download completed successfully." >&2
     echo "$temp_dir"
 }
 
@@ -199,7 +199,7 @@ verify_update() {
     # If specific version expected, verify it
     if [[ -n "$expected_version" ]]; then
         local actual_version
-        actual_version=$(spinbox --version | grep -o 'v[0-9.]*' | head -1)
+        actual_version=$(spinbox --version | grep -o 'v[0-9.].*' | head -1)
         if [[ "$actual_version" != "$expected_version" ]]; then
             print_warning "Version mismatch: expected $expected_version, got $actual_version"
         fi
