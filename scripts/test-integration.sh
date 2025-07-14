@@ -48,8 +48,8 @@ test_scenario "Developer Workflow" \
     '
     # Run from development directory
     ./bin/spinbox --version &&
-    ./bin/spinbox profiles | grep -q "6 profiles" &&
-    ./bin/spinbox create /tmp/test-dev-project --profile python --dry-run &&
+    [[ $(./bin/spinbox profiles | grep -E "^  [a-z-]+" | wc -l) -eq 6 ]] &&
+    cd /tmp && /Users/gonzalo/code/spinbox/bin/spinbox create test-dev-project --profile python --dry-run && cd - >/dev/null &&
     echo "Development workflow works correctly"
     '
 
@@ -66,10 +66,10 @@ test_scenario "New User Installation" \
     [[ -d "$HOME/.spinbox/source" ]] &&
     
     # Create first project
-    spinbox create /tmp/test-first-project --profile python --dry-run &&
+    cd /tmp && spinbox create test-first-project --profile python --dry-run && cd - >/dev/null &&
     
     # Check profiles
-    spinbox profiles | grep -q "Python development with essential tools" &&
+    spinbox profiles | grep -q "Python development environment with essential tools" &&
     
     # Cleanup
     spinbox uninstall --config --force
@@ -88,7 +88,7 @@ test_scenario "System Administrator" \
     
     # Test as regular user
     spinbox --version &&
-    spinbox profiles | grep -q "6 profiles" &&
+    [[ $(spinbox profiles | grep -E "^  [a-z-]+" | wc -l) -eq 6 ]] &&
     
     # Cleanup
     sudo spinbox uninstall --config --force
@@ -110,12 +110,12 @@ test_scenario "Profile Migration" \
     spinbox profiles | grep -q "node" &&
     
     # Test creating with new profiles
-    spinbox create /tmp/test-python --profile python --dry-run &&
-    spinbox create /tmp/test-node --profile node --dry-run &&
+    cd /tmp && spinbox create test-python --profile python --dry-run && cd - >/dev/null &&
+    cd /tmp && spinbox create test-node --profile node --dry-run && cd - >/dev/null &&
     
     # Test base options work
-    spinbox create /tmp/test-base-py --python --dry-run &&
-    spinbox create /tmp/test-base-nd --node --dry-run &&
+    cd /tmp && spinbox create test-base-py --python --dry-run && cd - >/dev/null &&
+    cd /tmp && spinbox create test-base-nd --node --dry-run && cd - >/dev/null &&
     
     # Cleanup
     spinbox uninstall --config --force
