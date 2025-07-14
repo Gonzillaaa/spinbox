@@ -74,25 +74,15 @@ install_spinbox() {
         rm -rf "$TEMP_DIR" 2>/dev/null || true
     fi
     
-    # Clone repository
+    # Clone repository directly to centralized source location
     git clone "$REPO_URL" "$TEMP_DIR"
     cd "$TEMP_DIR"
     
     # Make spinbox executable
     chmod +x bin/spinbox
     
-    # Create centralized source directory
-    mkdir -p "$CONFIG_DIR/source"
-    
-    # Copy all needed directories to centralized source
+    # No need to copy files since we cloned directly to the centralized location
     print_status "Setting up configuration..."
-    cp -r lib "$CONFIG_DIR/source/"
-    if [ -d "generators" ]; then
-        cp -r generators "$CONFIG_DIR/source/"
-    fi
-    if [ -d "templates" ]; then
-        cp -r templates "$CONFIG_DIR/source/"
-    fi
     
     # Install binary to user location (uses centralized source via detection)
     print_status "Installing to $INSTALL_DIR..."
