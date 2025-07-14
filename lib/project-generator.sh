@@ -10,7 +10,6 @@ source "$(dirname "${BASH_SOURCE[0]}")/version-config.sh"
 # Project generation variables
 PROJECT_PATH=""
 SELECTED_COMPONENTS=()
-FORCE_CREATE=false
 TEMPLATE_NAME=""
 
 # Component flags
@@ -81,21 +80,16 @@ function validate_project_directory() {
     local project_dir="$1"
     
     if [[ -d "$project_dir" ]]; then
-        if [[ "$FORCE_CREATE" == true ]]; then
-            print_warning "Directory $project_dir exists, will overwrite due to --force flag"
-            return 0
-        else
-            print_error "Directory $project_dir already exists"
-            print_info "Use --force to overwrite or choose a different name"
-            return 1
-        fi
+        print_error "Directory $project_dir already exists"
+        print_info "Please choose a different name or location"
+        exit 1
     fi
     
     # Check if parent directory is writable
     local parent_dir=$(dirname "$project_dir")
     if [[ ! -w "$parent_dir" ]]; then
         print_error "Cannot create project in $parent_dir (permission denied)"
-        return 1
+        exit 1
     fi
     
     return 0
@@ -111,11 +105,6 @@ function create_project_directory() {
     fi
     
     # Create main project directory
-    if [[ "$FORCE_CREATE" == true ]] && [[ -d "$project_dir" ]]; then
-        print_status "Removing existing directory $project_dir"
-        rm -rf "$project_dir"
-    fi
-    
     safe_create_dir "$project_dir"
     
     # Create essential subdirectories

@@ -38,7 +38,6 @@ PROJECT_DIR=""
 COMPONENTS=""
 TEMPLATE=""
 PROFILE=""
-FORCE=false
 VERBOSE=false
 DRY_RUN=false
 
@@ -125,7 +124,6 @@ OPTIONS:
     
     --template NAME        Use requirements.txt template (minimal, data-science, ai-llm, etc.)
     
-    -f, --force            Overwrite existing directory
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
     -h, --help            Show this help message
@@ -588,10 +586,6 @@ function parse_create_args() {
                 PROFILE="$2"
                 shift 2
                 ;;
-            -f|--force)
-                FORCE=true
-                shift
-                ;;
             -v|--verbose)
                 VERBOSE=true
                 shift
@@ -963,7 +957,7 @@ function execute_command() {
             print_debug "CLI COMPONENTS: '$COMPONENTS'"
             print_debug "CLI PROFILE: '$PROFILE'"
             # Export variables needed by project generator
-            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE FORCE DRY_RUN VERBOSE
+            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE DRY_RUN VERBOSE
             source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
             create_project
             ;;
