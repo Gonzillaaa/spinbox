@@ -11,7 +11,9 @@ LOG_FILE="/tmp/spinbox-test-$(date +%Y%m%d-%H%M%S).log"
 GITHUB_RAW_URL="https://raw.githubusercontent.com/Gonzillaaa/spinbox/main"
 
 # Test results tracking
-declare -A TEST_RESULTS
+# Using simple arrays instead of associative arrays for compatibility
+TEST_NAMES=()
+TEST_RESULTS=()
 TOTAL_TESTS=0
 PASSED_TESTS=0
 FAILED_TESTS=0
@@ -51,7 +53,8 @@ record_test() {
     local message="$3"
     
     ((TOTAL_TESTS++))
-    TEST_RESULTS["$test_name"]="$result"
+    TEST_NAMES+=("$test_name")
+    TEST_RESULTS+=("$result")
     
     if [[ "$result" == "PASS" ]]; then
         ((PASSED_TESTS++))
@@ -492,9 +495,9 @@ else
     echo -e "${RED}✗ SOME TESTS FAILED${NC}"
     echo ""
     echo "Failed tests:"
-    for test_name in "${!TEST_RESULTS[@]}"; do
-        if [[ "${TEST_RESULTS[$test_name]}" == "FAIL" ]]; then
-            echo "  - $test_name"
+    for i in "${!TEST_NAMES[@]}"; do
+        if [[ "${TEST_RESULTS[$i]}" == "FAIL" ]]; then
+            echo "  - ${TEST_NAMES[$i]}"
         fi
     done
     exit_code=1
