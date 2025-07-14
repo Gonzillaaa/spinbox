@@ -1249,11 +1249,24 @@ function execute_uninstall_command() {
         return 0
     fi
     
+    # Check if sudo will be needed
+    local needs_sudo=false
+    if [[ -f "$binary_path" ]]; then
+        local binary_dir="$(dirname "$binary_path")"
+        if [[ ! -w "$binary_dir" ]]; then
+            needs_sudo=true
+        fi
+    fi
+    
     # Show what will be removed
     print_info "The following will be removed:"
     for item in "${items_to_remove[@]}"; do
         echo "  - $item"
     done
+    
+    if [[ "$needs_sudo" == "true" ]]; then
+        print_warning "Note: sudo access will be required to remove system files"
+    fi
     
     if [[ "$UNINSTALL_CONFIG" == "false" ]]; then
         print_info "Configuration files will be preserved (use --config to remove)"
@@ -1287,8 +1300,13 @@ function execute_uninstall_command() {
         if rm -f "$binary_path" 2>/dev/null; then
             print_status "Removed Spinbox binary"
         else
-            print_error "Failed to remove $binary_path (try with sudo)"
-            ((errors++))
+            # Try with sudo if initial removal failed
+            if sudo rm -f "$binary_path" 2>/dev/null; then
+                print_status "Removed Spinbox binary (with sudo)"
+            else
+                print_error "Failed to remove $binary_path"
+                ((errors++))
+            fi
         fi
     fi
     
