@@ -186,13 +186,15 @@ feat: implement entire CLI foundation (too broad)
 ## 4. CLI-Specific Guidelines
 
 ### Spinbox CLI Architecture
-- **Entry Point**: `bin/spinbox` - Main CLI executable with command routing
+- **Entry Point**: `bin/spinbox` - Main CLI executable with command routing and development/production mode detection
+- **Centralized Source**: `~/.spinbox/source/` - Single source of truth for all installations (production mode)
 - **Libraries**: `lib/` directory contains reusable modules:
   - `utils.sh` - Common utilities and error handling
   - `config.sh` - Configuration management with variable preservation
   - `version-config.sh` - CLI flag override hierarchy (CLI > config > defaults)
   - `project-generator.sh` - Project creation and component orchestration
 - **Generators**: `generators/` directory contains component-specific modules
+- **Installation Architecture**: Both global (`/usr/local/bin/`) and local (`~/.local/bin/`) installations use centralized source
 
 ### CLI Development Principles
 - **Unix Standards**: Follow standard CLI conventions (--help, --version, etc.)

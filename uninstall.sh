@@ -14,6 +14,10 @@ print_status() {
     echo -e "${GREEN}[INFO]${NC} $1"
 }
 
+print_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
 print_warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1"
 }
@@ -95,6 +99,10 @@ BINARY_LOCATIONS=(
 )
 
 CONFIG_DIR="$HOME/.spinbox"
+OLD_LIB_LOCATIONS=(
+    "/usr/local/lib/spinbox"
+    "$HOME/.local/lib/spinbox"
+)
 HOMEBREW_FORMULA=""
 
 # Check for Homebrew installation
@@ -121,11 +129,23 @@ for location in "${BINARY_LOCATIONS[@]}"; do
     fi
 done
 
+# Find old library installations
+FOUND_OLD_LIBS=()
+for location in "${OLD_LIB_LOCATIONS[@]}"; do
+    if [[ -d "$location" ]]; then
+        FOUND_OLD_LIBS+=("$location")
+    fi
+done
+
 # Check what will be removed
 ITEMS_TO_REMOVE=()
 
 for binary in "${FOUND_BINARIES[@]}"; do
     ITEMS_TO_REMOVE+=("Spinbox binary: $binary")
+done
+
+for lib in "${FOUND_OLD_LIBS[@]}"; do
+    ITEMS_TO_REMOVE+=("Old library directory: $lib")
 done
 
 if [[ "$REMOVE_CONFIG" == "true" && -d "$CONFIG_DIR" ]]; then
@@ -203,6 +223,23 @@ for binary in "${FOUND_BINARIES[@]}"; do
             print_status "Removed: $binary (with sudo)"
         else
             print_error "Failed to remove: $binary"
+            ((ERRORS++))
+        fi
+    fi
+done
+
+# Remove old library directories
+for lib in "${FOUND_OLD_LIBS[@]}"; do
+    print_debug "Removing: $lib"
+    
+    if rm -rf "$lib" 2>/dev/null; then
+        print_status "Removed: $lib"
+    else
+        # Try with sudo if initial removal failed
+        if sudo rm -rf "$lib" 2>/dev/null; then
+            print_status "Removed: $lib (with sudo)"
+        else
+            print_error "Failed to remove: $lib"
             ((ERRORS++))
         fi
     fi

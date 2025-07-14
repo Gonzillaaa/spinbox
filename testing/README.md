@@ -24,8 +24,9 @@ That's it! One command, everything tested.
 
 ### Ultra-Simple Test Framework
 
-- **`simple-test.sh`** - Enhanced test framework with 59 comprehensive tests
+- **`simple-test.sh`** - Enhanced test framework with 68 comprehensive tests
 - **`quick-test.sh`** - Main test runner with additional smoke tests
+- **`cli-test.sh`** - Additional CLI-specific unit tests
 
 ### What's Tested
 
@@ -40,7 +41,7 @@ The framework provides comprehensive coverage:
 
 **CLI Functionality:**
 - **Command Execution** - All CLI commands (help, version, create, config, profiles)
-- **Profile Validation** - All 5 predefined profiles (web-app, api-only, data-science, ai-llm, minimal)
+- **Profile Validation** - All 6 predefined profiles (web-app, api-only, data-science, ai-llm, python, node)
 - **Project Creation** - Dry-run validation of project creation workflows
 - **Error Cases** - Invalid inputs and failure scenario handling
 - **Component Generators** - Existence and structure validation
@@ -48,10 +49,10 @@ The framework provides comprehensive coverage:
 ## Test Results
 
 ```
-59 comprehensive tests ✅
+68 comprehensive tests ✅
 Core library functionality ✅
 Complete CLI command coverage ✅
-All 5 profiles validated ✅
+All 6 profiles validated ✅
 Project creation workflows ✅
 Error handling and edge cases ✅
 Fast execution (1.3 seconds) ✅
@@ -89,10 +90,16 @@ This framework replaces the previous complex test suite that had:
 - ❌ Reliability issues
 
 The new framework provides comprehensive coverage with:
-- ✅ 59 focused tests covering both library and CLI functionality
+- ✅ 68 focused tests covering both library and CLI functionality
 - ✅ Zero dependencies
 - ✅ Sub-5-second execution
 - ✅ 100% reliability
+
+## Related Testing
+
+For integration and installation testing, see:
+- **[USER-TESTING.md](../USER-TESTING.md)** - Complete testing guide including integration tests
+- **`/scripts/`** directory - Installation and workflow test scripts
 
 ---
 

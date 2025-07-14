@@ -46,7 +46,8 @@ Technical documentation for contributors, component developers, and advanced use
 | `api-only` | Backend API development | Backend + Database + Redis | `spinbox create api --profile api-only` |
 | `data-science` | ML/Data science projects | Python + Database | `spinbox create ml-proj --profile data-science` |
 | `ai-llm` | AI/LLM development | Python + Database + Chroma | `spinbox create ai-proj --profile ai-llm` |
-| `minimal` | Basic development | Python DevContainer | `spinbox create basic --profile minimal` |
+| `python` | Python development | Python + testing tools | `spinbox create basic --profile python` |
+| `node` | Node.js development | Node.js + TypeScript + testing | `spinbox create basic --profile node` |
 
 ## 🔧 Components Quick Reference
 

@@ -6,7 +6,15 @@ set -euo pipefail
 
 # Get the directory where this script is located
 SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"
+
+# Detect development vs production mode
+if [[ -f "$(dirname "$SPINBOX_SCRIPT_DIR")/lib/utils.sh" ]]; then
+    # Development mode - use local files
+    SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"
+else
+    # Production mode - use centralized source
+    SPINBOX_PROJECT_ROOT="$HOME/.spinbox/source"
+fi
 
 # Source required libraries
 source "$SPINBOX_PROJECT_ROOT/lib/utils.sh"

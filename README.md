@@ -11,7 +11,7 @@ Spinbox is a **global CLI tool** for creating customizable development environme
 - **Global CLI Tool**: Simple commands like `spinbox create myproject --profile web-app`
 - **DevContainer-First**: Every project includes DevContainer configuration for VS Code, Cursor, and other editors
 - **Modular Components**: Mix and match languages, frameworks, and databases
-- **Predefined Profiles**: 5 curated profiles for common development scenarios
+- **Predefined Profiles**: 6 curated profiles for common development scenarios
 - **Security Built-in**: Virtual environments, .env templates, and security best practices
 - **Zero Config**: Sensible defaults with full customization when needed
 
@@ -51,6 +51,12 @@ spinbox create api-server --profile api-only
 
 # AI/LLM development
 spinbox create ai-project --profile ai-llm
+
+# Simple Python project
+spinbox create python-project --profile python
+
+# Simple Node.js project  
+spinbox create node-project --profile node
 ```
 
 **Custom component selection:**
@@ -112,11 +118,12 @@ Spinbox components are organized into three architectural layers:
 
 | Profile | Description | Components | Use Case |
 |---------|-------------|------------|----------|
+| `python` | Python development with essential tools | Python + testing tools | Simple Python projects |
+| `node` | Node.js development with TypeScript | Node.js + TypeScript + testing | Simple Node.js projects |
 | `web-app` | Full-stack web application | FastAPI + Next.js + PostgreSQL | Complete web applications |
 | `api-only` | API server with caching | FastAPI + PostgreSQL + Redis | Backend API services |
-| `data-science` | Data analysis environment | Python + PostgreSQL | Data science and analytics |
-| `ai-llm` | AI/LLM prototyping | Python + PostgreSQL + Chroma | AI and machine learning |
-| `minimal` | Basic environment | Python | Simple prototyping |
+| `data-science` | Data science with pandas, numpy, matplotlib, Jupyter, scikit-learn, plotly | Python + PostgreSQL | Data science and analytics |
+| `ai-llm` | AI/LLM with OpenAI, Anthropic, LangChain, Transformers, Chroma | Python + PostgreSQL + Chroma | AI and machine learning |
 
 ```bash
 # List all profiles

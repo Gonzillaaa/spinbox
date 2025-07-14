@@ -1,6 +1,6 @@
 [profile]
 name = "ai-llm"
-description = "AI/LLM development environment with vector database"
+description = "AI/LLM development environment with OpenAI, Anthropic, LangChain, Transformers, and Chroma vector database"
 
 [components]
 fastapi = false

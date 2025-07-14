@@ -1,0 +1,14 @@
+[profile]
+name = "node"
+description = "Node.js development environment with TypeScript and testing tools"
+
+[components]
+fastapi = false
+nextjs = false
+postgresql = false
+redis = false
+mongodb = false
+chroma = false
+
+[configuration]
+node_version = "20"

@@ -1,6 +1,6 @@
 [profile]
 name = "data-science"
-description = "Data science environment with Python, Jupyter, and common ML libraries"
+description = "Data science environment with pandas, numpy, matplotlib, Jupyter, scikit-learn, and plotly"
 
 [components]
 fastapi = false

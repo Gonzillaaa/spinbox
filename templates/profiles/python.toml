@@ -1,6 +1,6 @@
 [profile]
-name = "minimal"
-description = "Minimal development environment with basic tools"
+name = "python"
+description = "Python development environment with essential tools and testing"
 
 [components]
 fastapi = false
@@ -12,7 +12,6 @@ chroma = false
 
 [configuration]
 python_version = "3.12"
-node_version = "20"
 
 [templates]
 python_requirements = "minimal"

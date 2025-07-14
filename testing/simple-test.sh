@@ -382,8 +382,8 @@ test_profile_validation() {
     # Test that profile templates directory exists
     test_assert '[[ -d "$profiles_dir" ]]' "Profiles directory exists"
     
-    # Test that all 5 expected profiles exist
-    local expected_profiles=("web-app" "api-only" "data-science" "ai-llm" "minimal")
+    # Test that all 6 expected profiles exist
+    local expected_profiles=("web-app" "api-only" "data-science" "ai-llm" "python" "node")
     
     for profile in "${expected_profiles[@]}"; do
         local profile_file="$profiles_dir/${profile}.toml"
@@ -414,7 +414,7 @@ test_project_creation_smoke() {
     test_assert '"$cli_path" create smoke-test --python --dry-run >/dev/null 2>&1' "Dry run project creation works"
     
     # Test profile validation with dry-run
-    test_assert '"$cli_path" create smoke-profile-test --profile minimal --dry-run >/dev/null 2>&1' "Dry run with profile works"
+    test_assert '"$cli_path" create smoke-profile-test --profile python --dry-run >/dev/null 2>&1' "Dry run with profile works"
     
     # Test version override with dry-run
     test_assert '"$cli_path" create smoke-version-test --python --python-version 3.11 --dry-run >/dev/null 2>&1' "Dry run with version override works"
