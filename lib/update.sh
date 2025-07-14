@@ -9,7 +9,7 @@ detect_installation_method() {
     if command -v brew &> /dev/null && brew list spinbox &> /dev/null 2>&1; then
         echo "homebrew"
     # Check for system installation 
-    elif [[ "$spinbox_path" == "/usr/local/bin/spinbox" ]] && [[ -d "/usr/local/lib/spinbox" ]]; then
+    elif [[ "$spinbox_path" == "/usr/local/bin/spinbox" ]]; then
         echo "system"
     # Check for user installation
     elif [[ "$spinbox_path" == "$HOME/.local/bin/spinbox" ]] && [[ -d "$HOME/.spinbox" ]]; then
