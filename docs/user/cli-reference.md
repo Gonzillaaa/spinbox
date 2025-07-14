@@ -25,8 +25,14 @@ Create a new development project with specified components or profiles.
 
 #### Syntax
 ```bash
-spinbox create <PROJECT_NAME> [OPTIONS]
+spinbox create <PROJECT_PATH> [OPTIONS]
 ```
+
+The `PROJECT_PATH` can be either:
+- A simple project name: `myproject` (creates `./myproject/`)
+- A relative path: `code/myproject` (creates `./code/myproject/`)
+- An absolute path: `/path/to/myproject` (creates `/path/to/myproject/`)
+- A home directory path: `~/projects/myproject` (creates `~/projects/myproject/`)
 
 #### Options
 
@@ -58,7 +64,6 @@ spinbox create <PROJECT_NAME> [OPTIONS]
 **Project Options:**
 | Option | Description |
 |--------|-------------|
-| `--dir <path>` | Create project in specific directory |
 | `--template <name>` | Use requirements.txt template |
 | `--force` | `-f` | Overwrite existing directory |
 
@@ -109,10 +114,19 @@ spinbox create old-frontend --nextjs --node-version 18
 spinbox create custom-stack --profile web-app --python-version 3.11 --node-version 19
 ```
 
-**Advanced options:**
+**Path-based creation:**
 ```bash
-# Create in specific directory
-spinbox create myproject --python --dir /path/to/project
+# Create in subdirectory
+spinbox create code/myproject --python
+
+# Create with absolute path
+spinbox create /path/to/myproject --python
+
+# Create in home directory
+spinbox create ~/projects/webapp --profile web-app
+
+# Create in parent directory
+spinbox create ../sibling-project --fastapi
 
 # Use specific requirements template
 spinbox create data-proj --python --template data-science

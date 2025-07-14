@@ -104,7 +104,7 @@ function show_create_help() {
 spinbox create - Create a new development project
 
 USAGE:
-    spinbox create <PROJECT_NAME> [OPTIONS]
+    spinbox create <PROJECT_PATH> [OPTIONS]
 
 OPTIONS:
     --profile NAME         Use predefined project profile (web-app, api-only, data-science, ai-llm, minimal)
@@ -123,7 +123,6 @@ OPTIONS:
     --postgres-version VER PostgreSQL version (default: 15)
     --redis-version VER    Redis version (default: 7)
     
-    --dir PATH             Create project in specific directory
     --template NAME        Use requirements.txt template (minimal, data-science, ai-llm, etc.)
     
     -f, --force            Overwrite existing directory
@@ -139,6 +138,10 @@ EXAMPLES:
     
     spinbox create myproject --python                Create custom Python project
     spinbox create webapp --python --node --postgresql Create custom full-stack project
+    
+    spinbox create code/myproject --python           Create project in code/ directory
+    spinbox create ~/projects/webapp --profile web-app Create project in home directory
+    spinbox create ../sibling-dir/api --fastapi      Create project in sibling directory
 
 TEMPLATES:
     minimal          Basic development tools (uv, pytest, black, requests)
@@ -535,16 +538,28 @@ function parse_create_args() {
     fi
     
     if [[ $# -eq 0 ]]; then
-        print_error "Project name is required"
+        print_error "Project name or path is required"
         echo "Use 'spinbox create --help' for usage information."
         exit 1
     fi
     
-    # First argument should be project name
-    PROJECT_NAME="$1"
+    # First argument should be project name or path
+    local project_input="$1"
     shift
     
-    # Validate project name
+    # Check if input contains path separators
+    if [[ "$project_input" == *"/"* ]] || [[ "$project_input" == *"\\"* ]]; then
+        # Extract directory and project name from path
+        PROJECT_DIR="$(dirname "$project_input")"
+        PROJECT_NAME="$(basename "$project_input")"
+        print_debug "Parsed path: dir='$PROJECT_DIR', name='$PROJECT_NAME'"
+    else
+        # Simple project name without path
+        PROJECT_NAME="$project_input"
+        PROJECT_DIR=""
+    fi
+    
+    # Validate project name (extracted from basename)
     if ! validate_project_name "$PROJECT_NAME"; then
         exit 1
     fi
@@ -564,10 +579,6 @@ function parse_create_args() {
             --python-version|--node-version|--postgres-version|--redis-version)
                 parse_version_flags "$@"
                 break
-                ;;
-            --dir)
-                PROJECT_DIR="$2"
-                shift 2
                 ;;
             --template)
                 TEMPLATE="$2"
