@@ -1,14 +1,20 @@
 #!/bin/bash
-# Comprehensive Test Suite for Spinbox - All Installation Scenarios
+# End-to-End Installation Scenarios Test Suite
 # Tests development mode, local/global installations, remote installations, and edge cases
 
 set -e
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 LOG_FILE="/tmp/spinbox-test-$(date +%Y%m%d-%H%M%S).log"
 GITHUB_RAW_URL="https://raw.githubusercontent.com/Gonzillaaa/spinbox/main"
+
+# Source the test utilities
+source "$PROJECT_ROOT/testing/unit/test-utils.sh"
+
+# Setup test environment and cleanup
+setup_test_environment "End-to-End Installation Scenarios Tests"
 
 # Test results tracking
 # Using simple arrays instead of associative arrays for compatibility
@@ -17,26 +23,6 @@ TEST_RESULTS=()
 TOTAL_TESTS=0
 PASSED_TESTS=0
 FAILED_TESTS=0
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Cleanup function
-cleanup_all_scenarios() {
-    log_info "Cleaning up all test artifacts..."
-    rm -rf "$PROJECT_ROOT"/test-* 2>/dev/null || true
-    rm -rf ~/test-* 2>/dev/null || true
-    rm -rf /tmp/test-* 2>/dev/null || true
-    "$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
-    sudo "$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
-}
-
-# Ensure cleanup runs on exit
-trap cleanup_all_scenarios EXIT
 
 # Logging functions
 log() {

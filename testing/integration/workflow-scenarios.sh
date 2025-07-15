@@ -1,32 +1,23 @@
 #!/bin/bash
-# Integration Test Suite - Critical User Workflows
+# Workflow Scenarios Test Suite - Critical User Workflows
 # Tests real-world usage scenarios end-to-end
 
 set -e
 
 echo "================================"
-echo "Spinbox Integration Test Suite"
+echo "Spinbox Workflow Scenarios Test Suite"
 echo "================================"
 
-cd /Users/gonzalo/code/spinbox
+# Set up test environment
+SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$PROJECT_ROOT"
 
-# Test results
-TESTS_RUN=0
-TESTS_PASSED=0
-TESTS_FAILED=0
+# Source the test utilities
+source testing/unit/test-utils.sh
 
-# Cleanup function
-cleanup_integration_test() {
-    echo "[Cleanup] Cleaning up test artifacts..."
-    rm -rf test-* 2>/dev/null || true
-    rm -rf ~/test-* 2>/dev/null || true
-    rm -rf /tmp/test-* 2>/dev/null || true
-    ./uninstall.sh --config --force &>/dev/null || true
-    sudo ./uninstall.sh --config --force &>/dev/null || true
-}
-
-# Ensure cleanup runs on exit
-trap cleanup_integration_test EXIT
+# Setup test environment and cleanup
+setup_test_environment "Workflow Scenarios Tests"
 
 # Test function
 test_scenario() {

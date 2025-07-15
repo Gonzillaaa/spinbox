@@ -64,7 +64,9 @@ When choosing between multiple approaches:
 - Avoid creating overly complicated fixtures just to make tests pass
 
 #### Testing Examples
-✅ **Good**: 22 focused tests in simple-test.sh that run in < 5 seconds
+✅ **Good**: 72 focused tests in testing/unit/core-functionality.sh that run in < 10 seconds
+✅ **Good**: Standard directory structure with unit/integration/end-to-end separation
+✅ **Good**: Centralized test utilities and single entry point
 ❌ **Bad**: 115+ test functions with complex dependencies that hang
 
 ### Error Handling Philosophy

@@ -1,15 +1,15 @@
 #!/bin/bash
-# CLI Tests for Spinbox
-# Tests the new CLI functionality with simple, fast tests
+# CLI Integration Tests for Spinbox
+# Tests the CLI functionality with integration-focused tests
 
 # Set up test environment
 set -e
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$PROJECT_ROOT"
 
-# Source the simple test framework
-source testing/simple-test.sh
+# Source the test utilities
+source testing/unit/test-utils.sh
 
 # Test configuration
 TEST_PROJECT_NAME="test-cli-project"
@@ -23,18 +23,8 @@ setup_test_env() {
     export CONFIG_DIR="$TEST_DIR/.config"
 }
 
-# Cleanup test environment
-cleanup_test_env() {
-    rm -rf "$TEST_DIR" 2>/dev/null || true
-    rm -rf "$TEST_PROJECT_NAME" 2>/dev/null || true
-    rm -rf "test-cli-project" 2>/dev/null || true
-    rm -rf "test-fullstack" 2>/dev/null || true
-    rm -rf "test-versions" 2>/dev/null || true
-    rm -rf "perf-test" 2>/dev/null || true
-}
-
-# Ensure cleanup runs on exit
-trap cleanup_test_env EXIT
+# Setup test environment and cleanup
+setup_test_environment "CLI Integration Tests"
 
 # CLI Help System Tests
 test_cli_help() {

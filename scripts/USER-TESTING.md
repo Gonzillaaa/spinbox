@@ -5,21 +5,42 @@ Integration and installation testing for real-world Spinbox usage scenarios.
 ## Quick Start
 
 ```bash
-# Run integration tests - Test real user workflows
-./test-integration.sh
+# Use the new unified test runner (recommended)
+cd testing
+./test-runner.sh --integration      # Run integration tests
+./test-runner.sh --end-to-end       # Run end-to-end tests
+./test-runner.sh --all              # Run all tests
 
-# Run comprehensive system tests - Test everything
-./test-all-scenarios.sh
+# Or run individual test suites directly
+./integration/workflow-scenarios.sh    # 8 user workflow scenarios
+./end-to-end/installation-scenarios.sh # Comprehensive system testing
 ```
 
-## Scripts Overview
+## New Testing Structure
+
+### Reorganized Testing Framework
+
+The testing framework has been reorganized into a standard structure:
+
+```
+testing/
+├── unit/
+│   ├── core-functionality.sh    # Core library and CLI tests (72 tests)
+│   └── test-utils.sh            # Shared testing utilities
+├── integration/
+│   ├── cli-integration.sh       # CLI integration tests
+│   └── workflow-scenarios.sh    # Real-world workflow tests (formerly test-integration.sh)
+├── end-to-end/
+│   └── installation-scenarios.sh # Installation tests (formerly test-all-scenarios.sh)
+└── test-runner.sh               # Unified test entry point
+```
 
 ### Integration Tests
 
 | Script | Purpose | Use Case |
 |--------|---------|----------|
-| `test-integration.sh` | 8 user workflow scenarios | Quick workflow validation |
-| `test-all-scenarios.sh` | Comprehensive system testing | Full system validation |
+| `testing/integration/workflow-scenarios.sh` | 8 user workflow scenarios | Quick workflow validation |
+| `testing/end-to-end/installation-scenarios.sh` | Comprehensive system testing | Full system validation |
 
 ### Functionality Tests
 
@@ -38,7 +59,7 @@ Integration and installation testing for real-world Spinbox usage scenarios.
 |--------|---------|
 | `remove-installed.sh` | Complete uninstallation helper |
 
-## test-integration.sh
+## testing/integration/workflow-scenarios.sh
 
 Tests 8 critical user workflows:
 
