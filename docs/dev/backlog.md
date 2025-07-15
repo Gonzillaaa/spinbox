@@ -72,6 +72,81 @@ Now that the foundation is solid, the roadmap focuses on developer experience im
 - Include proper `.gitignore` for security
 - Centralized source architecture prevents conflicts
 
+## 🐛 Bug Fixes and Test Issues (v0.1 Maintenance)
+
+**Current Test Status**: ~75% passing (45/61 tests), targeting 90%+ with these fixes
+
+### Easy Fixes (30-60 minutes total, ~8 test improvements)
+
+**Cross-Mode Consistency Bug** - 15 minutes
+- **Issue**: Development and production modes produce different outputs
+- **Root Cause**: Path resolution differences in `bin/spinbox` between modes
+- **Impact**: Workflow test failure, user confusion
+- **Fix**: Normalize path resolution in CLI detection logic
+- **Files**: `bin/spinbox:10-17`
+
+**Update System Missing Features** - 30 minutes  
+- **Issue**: 6 failing tests for unimplemented update command flags
+- **Root Cause**: CLI accepts `--dry-run`, `--force`, `--yes`, `--version` but functionality missing
+- **Impact**: Update workflow broken, user expectations unmet
+- **Fix**: Implement missing flag handlers in `lib/update.sh`
+- **Files**: `bin/spinbox:211-214`, `lib/update.sh`
+
+**CLI Reference Test Expectation** - 5 minutes
+- **Issue**: Test expects Python 3.9 but system returns 3.12
+- **Root Cause**: Outdated test expectation in `testing/workflows/cli-reference.sh:190`
+- **Impact**: False test failure
+- **Fix**: Update expected version string
+- **Files**: `testing/workflows/cli-reference.sh:190`
+
+### Medium Fixes (2-3 hours total, ~15 test improvements)
+
+**Global Installation Test Failures** - 1-2 hours
+- **Issue**: 12 failing tests due to sudo requirements
+- **Root Cause**: `install.sh` requires sudo but tests run without privileges
+- **Impact**: Installation workflow validation broken
+- **Fix**: Mock sudo operations in test environment or skip gracefully
+- **Files**: `install.sh:47-54`, `testing/end-to-end/installation-scenarios.sh`
+
+**Remote Installation Issues** - 45 minutes
+- **Issue**: 3 failing tests for GitHub-based installation
+- **Root Cause**: Network timeouts and curl error handling
+- **Impact**: Remote installation workflow unreliable
+- **Fix**: Add retry logic and better error handling
+- **Files**: Remote installation test scripts
+
+**Edge Case Validation** - 30 minutes
+- **Issue**: 3 failing tests for invalid inputs and error conditions
+- **Root Cause**: Missing validation for project names, paths, and options
+- **Impact**: Poor user experience with cryptic errors
+- **Fix**: Add comprehensive input validation
+- **Files**: `lib/project-generator.sh`, command handlers
+
+### Low Priority/Future Items
+
+**Test Infrastructure Polish** - 1 hour
+- **Issue**: Broken pipe errors and reporting discrepancies
+- **Root Cause**: Process cleanup and output buffering issues
+- **Impact**: Test output noise, minor reporting confusion
+- **Fix**: Improve cleanup and error suppression
+- **Files**: `testing/test-utils.sh`, various test runners
+
+**Architecture Consistency** - 2 hours
+- **Issue**: 2 failing tests for centralized vs distributed source handling
+- **Root Cause**: Legacy path assumptions in some components
+- **Impact**: Inconsistent behavior across installation methods
+- **Fix**: Standardize source path resolution
+- **Files**: Component generators, installation scripts
+
+### Implementation Priority (Following CLAUDE.md)
+
+1. **Easy fixes first** (Simple → Essential → Reliable)
+2. **User-facing impact** (Cross-mode consistency, Update features)
+3. **Test infrastructure** (Medium complexity items)
+4. **Architecture polish** (Future enhancement)
+
+**Expected Impact**: With easy + medium fixes, test success rate should improve from ~75% to ~90%, providing solid foundation for v0.2+ features.
+
 ## 🚀 Priority 1: Developer Experience Enhancements (v0.2)
 
 ### **Goal**: Enhance the developer experience with working examples and simplified workflows

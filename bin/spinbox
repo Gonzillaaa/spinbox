@@ -1243,6 +1243,9 @@ function show_config_status() {
 
 # Execute update command
 function execute_update_command() {
+    # Export variables needed by update functions
+    export DRY_RUN VERBOSE
+    
     # Check if just checking for updates
     if [[ "$CHECK_ONLY" == "true" ]]; then
         check_for_updates
