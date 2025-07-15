@@ -21,6 +21,17 @@ Integration and installation testing for real-world Spinbox usage scenarios.
 | `test-integration.sh` | 8 user workflow scenarios | Quick workflow validation |
 | `test-all-scenarios.sh` | Comprehensive system testing | Full system validation |
 
+### Functionality Tests
+
+| Script | Purpose | Use Case |
+|--------|---------|----------|
+| `test-cli-reference.sh` | CLI reference documentation validation | Verify CLI matches docs |
+| `test-component-generators.sh` | Component generator testing | Test all generators |
+| `test-advanced-cli.sh` | Advanced CLI features testing | Test version overrides, templates |
+| `test-project-creation.sh` | Real project creation validation | Test actual file generation |
+| `test-update-system.sh` | Update/backup/rollback testing | Test update functionality |
+| `test-profiles.sh` | Profile parsing and validation | Test all profile definitions |
+
 ### Utility Scripts
 
 | Script | Purpose |
@@ -67,6 +78,84 @@ Comprehensive testing suite with modular phases:
 
 Runtime: ~2-3 minutes for full suite
 
+## Functionality Test Scripts
+
+### test-component-generators.sh
+
+Tests all component generators and identifies missing implementations:
+
+- **Existing Generators**: Tests FastAPI, Next.js, PostgreSQL, Python, Node generators
+- **Missing Generators**: Identifies missing MongoDB, Redis, Chroma generators
+- **CLI Integration**: Tests component flags (`--mongodb`, `--redis`, etc.)
+- **Component Combinations**: Tests common component combinations
+- **Real Implementation**: Validates generators create actual files
+
+Runtime: ~10-15 seconds
+
+### test-advanced-cli.sh
+
+Tests advanced CLI features beyond basic commands:
+
+- **Version Overrides**: Tests `--python-version`, `--node-version`, `--postgres-version` flags
+- **Template Selection**: Tests `--template` flag with all documented templates
+- **Force Flag**: Tests `--force` flag behavior
+- **Configuration Operations**: Tests `spinbox config --set`, `--reset`, `--setup`
+- **Update Features**: Tests advanced update flags (`--version`, `--force`, `--yes`)
+- **Add Command**: Tests `spinbox add` with version overrides and multiple components
+
+Runtime: ~15-20 seconds
+
+### test-project-creation.sh
+
+Tests actual file and directory generation (non-dry-run mode):
+
+- **Real Project Creation**: Creates actual projects using profiles and components
+- **File Structure Validation**: Verifies expected files and directories are created
+- **Configuration Validation**: Tests DevContainer and Docker Compose file generation
+- **JSON/YAML Validation**: Validates syntax of generated configuration files
+- **Requirements/Package Files**: Tests Python requirements.txt and Node package.json generation
+- **Project Structure**: Validates proper directory structure for different project types
+
+Runtime: ~20-30 seconds (creates and cleans up real projects)
+
+### test-update-system.sh
+
+Tests update, backup, and rollback functionality:
+
+- **Update Check**: Tests `spinbox update --check` and version information
+- **Dry Run**: Tests `spinbox update --dry-run` preview functionality
+- **Version-Specific Updates**: Tests `spinbox update --version X.Y.Z`
+- **Force Updates**: Tests `spinbox update --force` behavior
+- **Backup Functionality**: Tests backup creation and rollback mechanisms
+- **Installation Detection**: Tests detection of different installation methods
+- **Error Handling**: Tests error conditions and helpful error messages
+
+Runtime: ~10-15 seconds
+
+### test-cli-reference.sh
+
+Comprehensive CLI reference documentation validation:
+
+- **All Commands**: Tests every command documented in `docs/user/cli-reference.md`
+- **All Flags**: Tests all documented options and flags
+- **Exit Codes**: Validates proper exit codes for success and error conditions
+- **Help System**: Tests help for all commands and flag combinations
+- **Error Messages**: Validates user-friendly error messages
+- **Profile Validation**: Tests all 6 documented profiles work correctly
+
+Runtime: ~5-10 seconds
+
+### test-profiles.sh
+
+Profile-specific testing and validation:
+
+- **Profile Parsing**: Tests all profile definition files can be parsed
+- **Profile Creation**: Tests project creation with each profile
+- **Component Mapping**: Validates profiles include expected components
+- **Template Assignment**: Tests profiles use correct requirements templates
+
+Runtime: ~10-15 seconds
+
 ## remove-installed.sh
 
 Comprehensive uninstallation utility that:
@@ -82,6 +171,9 @@ Comprehensive uninstallation utility that:
 ```bash
 # Run integration tests
 ./test-integration.sh
+
+# Test CLI functionality
+./test-cli-reference.sh
 
 # If making installation changes, also run:
 ./test-all-scenarios.sh --local --global
@@ -100,15 +192,41 @@ Comprehensive uninstallation utility that:
 ```bash
 # Test development mode specifically
 ./test-all-scenarios.sh --dev
+
+# Test specific functionality areas
+./test-component-generators.sh
+./test-advanced-cli.sh
 ```
 
-### 4. Complete System Validation
+### 4. Testing New Features
+```bash
+# Test component generators
+./test-component-generators.sh
+
+# Test advanced CLI features
+./test-advanced-cli.sh
+
+# Test real project creation
+./test-project-creation.sh
+
+# Test update system
+./test-update-system.sh
+```
+
+### 5. Complete System Validation
 ```bash
 # Run everything (takes ~2-3 minutes)
 ./test-all-scenarios.sh
+
+# Run all functionality tests
+./test-cli-reference.sh
+./test-component-generators.sh
+./test-advanced-cli.sh
+./test-project-creation.sh
+./test-update-system.sh
 ```
 
-### 5. Cleaning Up After Testing
+### 6. Cleaning Up After Testing
 ```bash
 # Remove all Spinbox installations
 ./remove-installed.sh

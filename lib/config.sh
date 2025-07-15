@@ -17,14 +17,15 @@ DEFAULT_POSTGRES_VERSION="15"
 DEFAULT_REDIS_VERSION="7"
 
 # Global configuration variables
-PYTHON_VERSION=""
-NODE_VERSION=""
-POSTGRES_VERSION=""
-REDIS_VERSION=""
-DOCKER_REGISTRY=""
-PROJECT_AUTHOR=""
-PROJECT_EMAIL=""
-PROJECT_LICENSE="MIT"
+# Only initialize if not already set (preserve values from parent process)
+: "${PYTHON_VERSION:=""}"
+: "${NODE_VERSION:=""}"
+: "${POSTGRES_VERSION:=""}"
+: "${REDIS_VERSION:=""}"
+: "${DOCKER_REGISTRY:=""}"
+: "${PROJECT_AUTHOR:=""}"
+: "${PROJECT_EMAIL:=""}"
+: "${PROJECT_LICENSE:="MIT"}"
 DEFAULT_COMPONENTS=""
 
 # Project-specific configuration variables (preserve existing values)
@@ -260,7 +261,8 @@ function set_config_value() {
   case "$scope" in
     global)
       if [[ " PYTHON_VERSION NODE_VERSION POSTGRES_VERSION REDIS_VERSION DOCKER_REGISTRY PROJECT_AUTHOR PROJECT_EMAIL PROJECT_LICENSE DEFAULT_COMPONENTS " =~ " $key " ]]; then
-        declare -g "$key"="$value"
+        # Set the variable globally (compatible with older bash versions)
+        eval "$key=\"\$value\""
         save_global_config
       else
         print_error "Invalid global configuration key: $key"
@@ -269,7 +271,8 @@ function set_config_value() {
       ;;
     user)
       if [[ " PREFERRED_EDITOR TERMINAL_THEME AUTO_START_SERVICES SKIP_CONFIRMATIONS " =~ " $key " ]]; then
-        declare -g "$key"="$value"
+        # Set the variable globally (compatible with older bash versions)
+        eval "$key=\"\$value\""
         save_user_config
       else
         print_error "Invalid user configuration key: $key"
@@ -278,7 +281,8 @@ function set_config_value() {
       ;;
     project)
       if [[ " PROJECT_NAME PROJECT_DESCRIPTION USE_BACKEND USE_FRONTEND USE_DATABASE USE_REDIS BACKEND_PORT FRONTEND_PORT DATABASE_PORT REDIS_PORT " =~ " $key " ]]; then
-        declare -g "$key"="$value"
+        # Set the variable globally (compatible with older bash versions)
+        eval "$key=\"\$value\""
         save_project_config
       else
         print_error "Invalid project configuration key: $key"

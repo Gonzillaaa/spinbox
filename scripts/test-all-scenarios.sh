@@ -25,6 +25,19 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Cleanup function
+cleanup_all_scenarios() {
+    log_info "Cleaning up all test artifacts..."
+    rm -rf "$PROJECT_ROOT"/test-* 2>/dev/null || true
+    rm -rf ~/test-* 2>/dev/null || true
+    rm -rf /tmp/test-* 2>/dev/null || true
+    "$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
+    sudo "$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
+}
+
+# Ensure cleanup runs on exit
+trap cleanup_all_scenarios EXIT
+
 # Logging functions
 log() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"

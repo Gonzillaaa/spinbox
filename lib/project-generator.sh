@@ -80,9 +80,19 @@ function validate_project_directory() {
     local project_dir="$1"
     
     if [[ -d "$project_dir" ]]; then
-        print_error "Directory $project_dir already exists"
-        print_info "Please choose a different name or location"
-        exit 1
+        if [[ "$FORCE" == true ]]; then
+            print_warning "Directory $project_dir already exists - force mode enabled, will overwrite"
+            if [[ "$DRY_RUN" != true ]]; then
+                rm -rf "$project_dir"
+                print_info "Removed existing directory $project_dir"
+            else
+                print_info "DRY RUN: Would remove existing directory $project_dir"
+            fi
+        else
+            print_error "Directory $project_dir already exists"
+            print_info "Use --force to overwrite or choose a different name/location"
+            exit 1
+        fi
     fi
     
     # Check if parent directory is writable
@@ -406,8 +416,6 @@ function generate_docker_compose() {
     fi
     
     cat > "$project_dir/docker-compose.yml" << EOF
-version: '3.8'
-
 services:
 $(generate_compose_services)
 
@@ -519,14 +527,26 @@ function generate_component_files() {
         return 0
     fi
     
-    # Generate Python requirements.txt
+    # Generate Python components
     if [[ "$USE_PYTHON" == true ]]; then
         generate_python_requirements "$project_dir"
+        # Generate basic Python project structure
+        if source "$PROJECT_ROOT/generators/minimal-python.sh" 2>/dev/null; then
+            generate_minimal_python_files "$project_dir"
+        else
+            print_warning "Minimal Python generator not found"
+        fi
     fi
     
-    # Generate Node.js package.json
+    # Generate Node.js components
     if [[ "$USE_NODE" == true ]]; then
         generate_node_package_json "$project_dir"
+        # Generate basic Node.js project structure
+        if source "$PROJECT_ROOT/generators/minimal-node.sh" 2>/dev/null; then
+            generate_minimal_node_files "$project_dir"
+        else
+            print_warning "Minimal Node.js generator not found"
+        fi
     fi
     
     # Generate component-specific configurations using modular generators
@@ -554,6 +574,30 @@ function generate_component_files() {
         else
             print_warning "PostgreSQL generator not found, using fallback"
             generate_database_init "$project_dir"
+        fi
+    fi
+    
+    if [[ "$USE_MONGODB" == true ]]; then
+        if source "$PROJECT_ROOT/generators/mongodb.sh" 2>/dev/null; then
+            generate_mongodb_component "$project_dir"
+        else
+            print_warning "MongoDB generator not found"
+        fi
+    fi
+    
+    if [[ "$USE_REDIS" == true ]]; then
+        if source "$PROJECT_ROOT/generators/redis.sh" 2>/dev/null; then
+            generate_redis_component "$project_dir"
+        else
+            print_warning "Redis generator not found"
+        fi
+    fi
+    
+    if [[ "$USE_CHROMA" == true ]]; then
+        if source "$PROJECT_ROOT/generators/chroma.sh" 2>/dev/null; then
+            generate_chroma_component "$project_dir"
+        else
+            print_warning "Chroma generator not found"
         fi
     fi
     
