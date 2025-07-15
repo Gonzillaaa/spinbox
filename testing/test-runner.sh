@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Source test utilities
-source "$SCRIPT_DIR/unit/test-utils.sh"
+source "$SCRIPT_DIR/test-utils.sh"
 
 # Test suite paths
 UNIT_TESTS="$SCRIPT_DIR/unit/core-functionality.sh"

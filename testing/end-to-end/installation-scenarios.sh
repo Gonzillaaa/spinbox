@@ -11,7 +11,7 @@ LOG_FILE="/tmp/spinbox-test-$(date +%Y%m%d-%H%M%S).log"
 GITHUB_RAW_URL="https://raw.githubusercontent.com/Gonzillaaa/spinbox/main"
 
 # Source the test utilities
-source "$PROJECT_ROOT/testing/unit/test-utils.sh"
+source "$PROJECT_ROOT/testing/test-utils.sh"
 
 # Setup test environment and cleanup
 setup_test_environment "End-to-End Installation Scenarios Tests"

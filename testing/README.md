@@ -36,13 +36,13 @@ That's it! One command, everything tested.
 ```
 testing/
 ├── unit/
-│   ├── core-functionality.sh    # Core library and CLI tests (72 tests)
-│   └── test-utils.sh            # Shared testing utilities
+│   └── core-functionality.sh    # Core library and CLI tests (77 tests)
 ├── integration/
 │   ├── cli-integration.sh       # CLI integration tests
 │   └── workflow-scenarios.sh    # Real-world workflow tests
 ├── end-to-end/
 │   └── installation-scenarios.sh # Installation and deployment tests
+├── test-utils.sh                # Shared testing utilities
 └── test-runner.sh               # Unified test entry point
 ```
 
@@ -138,11 +138,11 @@ End-to-End Tests: Comprehensive coverage ✅
 
 ### Using Test Utils
 
-The framework provides shared utilities in `testing/unit/test-utils.sh`:
+The framework provides shared utilities in `testing/test-utils.sh`:
 
 ```bash
 # Source the utilities
-source testing/unit/test-utils.sh
+source testing/test-utils.sh
 
 # Setup test environment
 setup_test_environment "My Test Suite"

@@ -14,7 +14,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$PROJECT_ROOT"
 
 # Source the test utilities
-source testing/unit/test-utils.sh
+source testing/test-utils.sh
 
 # Setup test environment and cleanup
 setup_test_environment "Workflow Scenarios Tests"
@@ -23,28 +23,24 @@ setup_test_environment "Workflow Scenarios Tests"
 test_scenario() {
     local name="$1"
     local description="$2"
+    local command="$3"
     
-    ((TESTS_RUN++))
-    echo ""
-    echo "Test $TESTS_RUN: $name"
-    echo "Description: $description"
-    echo "---------------------------------"
+    log_section "$name"
+    log_info "$description"
     
-    if eval "$3"; then
-        echo "✓ PASSED"
-        ((TESTS_PASSED++))
+    if eval "$command"; then
+        record_test_result "$name" "PASS" "$description"
+        return 0
     else
-        echo "✗ FAILED"
-        ((TESTS_FAILED++))
+        record_test_result "$name" "FAIL" "$description"
         return 1
     fi
 }
 
-# Cleanup before starting
-echo "[Setup] Cleaning previous installations..."
-./uninstall.sh --config --force &>/dev/null || true
-sudo ./uninstall.sh --config --force &>/dev/null || true
-rm -rf ~/test-* /tmp/test-* &>/dev/null || true
+# Initial cleanup
+log_info "Cleaning previous installations..."
+"$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
+sudo "$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
 
 # Scenario 1: Developer Workflow
 test_scenario "Developer Workflow" \
@@ -210,27 +206,5 @@ test_scenario "Error Recovery" \
     echo "Error handling works correctly"
     '
 
-# Final cleanup
-echo ""
-echo "[Cleanup] Final cleanup..."
-./uninstall.sh --config --force &>/dev/null || true
-sudo ./uninstall.sh --config --force &>/dev/null || true
-rm -rf ~/test-* /tmp/test-* &>/dev/null || true
-
-# Results
-echo ""
-echo "================================"
-echo "Integration Test Results"
-echo "================================"
-echo "Tests Run: $TESTS_RUN"
-echo "Passed: $TESTS_PASSED"
-echo "Failed: $TESTS_FAILED"
-echo ""
-
-if [[ $TESTS_FAILED -eq 0 ]]; then
-    echo "✓ ALL INTEGRATION TESTS PASSED!"
-    exit 0
-else
-    echo "✗ Some tests failed"
-    exit 1
-fi
+# Show final results using shared utilities
+show_test_summary "Workflow Scenarios Tests"
