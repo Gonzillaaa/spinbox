@@ -103,7 +103,7 @@ test_error_handling() {
     
     # Test missing project name
     assert_true \
-        "\"$CLI_PATH\" create 2>&1 | grep -q 'Project name is required'" \
+        "\"$CLI_PATH\" create 2>&1 | grep -q 'Project name or path is required'" \
         "Missing project name error"
     
     # Test invalid project name
@@ -207,28 +207,16 @@ main() {
     # Cleanup
     cleanup_test_env
     
-    # Final report
-    echo -e "\n${BLUE}=== Test Results ===${NC}"
-    echo "Total tests run: $TESTS_RUN"
-    echo -e "Passed: ${GREEN}$TESTS_PASSED${NC}"
-    echo -e "Failed: ${RED}$TESTS_FAILED${NC}"
-    echo "Total time: ${total_duration} seconds"
-    
     # Performance check
+    echo ""
     if [[ $(echo "$total_duration < 5.0" | bc) -eq 1 ]]; then
-        echo -e "${GREEN}✓ Performance target met (< 5 seconds)${NC}"
+        log_success "Performance target met (${total_duration}s < 5s)"
     else
-        echo -e "${YELLOW}! Performance target missed (${total_duration}s > 5s)${NC}"
+        log_warning "Performance target missed (${total_duration}s > 5s)"
     fi
     
-    # Exit with appropriate code
-    if [[ $TESTS_FAILED -eq 0 ]]; then
-        echo -e "\n${GREEN}All tests passed!${NC}"
-        exit 0
-    else
-        echo -e "\n${RED}Some tests failed!${NC}"
-        exit 1
-    fi
+    # Show final results using shared utilities
+    show_test_summary "CLI Integration Tests"
 }
 
 # Run tests if script is executed directly
