@@ -44,6 +44,7 @@ TEMPLATE=""
 PROFILE=""
 VERBOSE=false
 DRY_RUN=false
+FORCE=false
 
 # Update-specific variables
 UPDATE_ACTION=""
@@ -130,6 +131,7 @@ OPTIONS:
     
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
+    -f, --force           Force creation, overwrite existing directory
     -h, --help            Show this help message
 
 EXAMPLES:
@@ -609,6 +611,10 @@ function parse_create_args() {
                 DRY_RUN=true
                 shift
                 ;;
+            -f|--force)
+                FORCE=true
+                shift
+                ;;
             *)
                 print_error "Unknown option for create: $1"
                 echo "Use 'spinbox create --help' for usage information."
@@ -979,7 +985,7 @@ function execute_command() {
             apply_version_overrides
             
             # Export variables needed by project generator
-            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE DRY_RUN VERBOSE
+            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE DRY_RUN VERBOSE FORCE
             
             # Export CLI override variables for version configuration
             export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION
@@ -994,7 +1000,7 @@ function execute_command() {
             apply_version_overrides
             
             # Export variables needed by project generator
-            export COMPONENTS DRY_RUN VERBOSE
+            export COMPONENTS DRY_RUN VERBOSE FORCE
             
             # Export CLI override variables for version configuration
             export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION

@@ -80,9 +80,19 @@ function validate_project_directory() {
     local project_dir="$1"
     
     if [[ -d "$project_dir" ]]; then
-        print_error "Directory $project_dir already exists"
-        print_info "Please choose a different name or location"
-        exit 1
+        if [[ "$FORCE" == true ]]; then
+            print_warning "Directory $project_dir already exists - force mode enabled, will overwrite"
+            if [[ "$DRY_RUN" != true ]]; then
+                rm -rf "$project_dir"
+                print_info "Removed existing directory $project_dir"
+            else
+                print_info "DRY RUN: Would remove existing directory $project_dir"
+            fi
+        else
+            print_error "Directory $project_dir already exists"
+            print_info "Use --force to overwrite or choose a different name/location"
+            exit 1
+        fi
     fi
     
     # Check if parent directory is writable
