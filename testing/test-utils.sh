@@ -14,28 +14,53 @@ TESTS_RUN=0
 TESTS_PASSED=0
 TESTS_FAILED=0
 
+# Simple sudo check function
+has_sudo() {
+    # Check if sudo is available and user has privileges
+    if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Common cleanup function
 cleanup_test_env() {
     echo -e "${BLUE}[Cleanup] Cleaning up test artifacts...${NC}"
     
     # Remove test directories from project root
+    echo -e "${BLUE}[Cleanup] Removing test directories from project root...${NC}"
     rm -rf "$PROJECT_ROOT"/test-* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/perf-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/smoke-* 2>/dev/null || true
     
     # Remove test directories from home
+    echo -e "${BLUE}[Cleanup] Removing test directories from home...${NC}"
     rm -rf ~/test-* 2>/dev/null || true
+    rm -rf ~/perf-test* 2>/dev/null || true
+    rm -rf ~/smoke-* 2>/dev/null || true
     
     # Remove test directories from tmp
+    echo -e "${BLUE}[Cleanup] Removing test directories from tmp...${NC}"
     rm -rf /tmp/test-* 2>/dev/null || true
+    rm -rf /tmp/spinbox-* 2>/dev/null || true
+    rm -rf /tmp/perf-test* 2>/dev/null || true
+    rm -rf /tmp/smoke-* 2>/dev/null || true
     
     # Remove temporary test directory if set
     if [[ -n "$TEST_DIR" && -d "$TEST_DIR" ]]; then
+        echo -e "${BLUE}[Cleanup] Removing temporary test directory...${NC}"
         rm -rf "$TEST_DIR" 2>/dev/null || true
     fi
     
     # Clean up any installations (only if uninstall script exists)
     if [[ -f "$PROJECT_ROOT/uninstall.sh" ]]; then
+        echo -e "${BLUE}[Cleanup] Cleaning up installations...${NC}"
         "$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
-        sudo "$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
+        # Only use sudo if explicitly enabled and available
+        if [[ "$ENABLE_SUDO" == "true" ]] && has_sudo; then
+            sudo "$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
+        fi
     fi
     
     echo -e "${GREEN}[Cleanup] Test cleanup completed${NC}"
@@ -94,23 +119,30 @@ run_test_with_timeout() {
     
     log_info "Running: $test_name"
     
+    # Record start time
+    local start_time=$(date +%s)
+    
     # Run command with timeout
     if timeout "$timeout_seconds" bash -c "$test_command" >/dev/null 2>&1; then
         local exit_code=$?
+        local end_time=$(date +%s)
+        local duration=$((end_time - start_time))
         if [[ "$expected_result" == "0" ]]; then
-            record_test_result "$test_name" "PASS" "Command succeeded as expected"
+            record_test_result "$test_name" "PASS" "Command succeeded as expected (${duration}s)"
             return 0
         else
-            record_test_result "$test_name" "FAIL" "Command succeeded but failure was expected"
+            record_test_result "$test_name" "FAIL" "Command succeeded but failure was expected (${duration}s)"
             return 1
         fi
     else
         local exit_code=$?
+        local end_time=$(date +%s)
+        local duration=$((end_time - start_time))
         if [[ "$expected_result" != "0" ]]; then
-            record_test_result "$test_name" "PASS" "Command failed as expected"
+            record_test_result "$test_name" "PASS" "Command failed as expected (${duration}s)"
             return 0
         else
-            record_test_result "$test_name" "FAIL" "Command failed or timed out (exit code: $exit_code)"
+            record_test_result "$test_name" "FAIL" "Command failed or timed out (exit code: $exit_code, ${duration}s)"
             return 1
         fi
     fi
@@ -125,7 +157,14 @@ assert_true() {
         record_test_result "$description" "PASS" "Condition true"
         return 0
     else
-        record_test_result "$description" "FAIL" "Condition false: $condition"
+        # Capture command output for better error reporting
+        local output
+        output=$(eval "$condition" 2>&1 || true)
+        local error_msg="Condition false: $condition"
+        if [[ -n "$output" ]]; then
+            error_msg="$error_msg\n  Output: $output"
+        fi
+        record_test_result "$description" "FAIL" "$error_msg"
         return 1
     fi
 }
@@ -225,9 +264,20 @@ show_test_summary() {
 setup_test_environment() {
     local test_name="$1"
     
-    # Set up project root
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[1]}")" && pwd)"
-    PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+    # Set up project root - find the spinbox directory
+    local calling_script="${BASH_SOURCE[1]}"
+    SCRIPT_DIR="$(cd "$(dirname "$calling_script")" && pwd)"
+    
+    # Find the project root by looking for the spinbox directory
+    PROJECT_ROOT="$SCRIPT_DIR"
+    while [[ "$PROJECT_ROOT" != "/" && ! -f "$PROJECT_ROOT/bin/spinbox" ]]; do
+        PROJECT_ROOT="$(cd "$PROJECT_ROOT/.." && pwd)"
+    done
+    
+    if [[ ! -f "$PROJECT_ROOT/bin/spinbox" ]]; then
+        echo "Error: Could not find spinbox project root"
+        exit 1
+    fi
     
     # Create temporary test directory
     TEST_DIR="/tmp/spinbox-test-$$"

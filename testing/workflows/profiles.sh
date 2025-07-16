@@ -3,11 +3,11 @@
 # Tests all profiles for parsing errors and component generation
 # Following CLAUDE.md principles: Simple, Fast, Essential Coverage
 
-set -e
+# Note: Not using set -e so tests can continue after failures
 
 # Script configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 SPINBOX_CMD="$PROJECT_ROOT/bin/spinbox"
 
 # Colors for output

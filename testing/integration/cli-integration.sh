@@ -2,8 +2,7 @@
 # CLI Integration Tests for Spinbox
 # Tests the CLI functionality with integration-focused tests
 
-# Set up test environment
-set -e
+# Note: Not using set -e so tests can continue after failures
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$PROJECT_ROOT"
@@ -13,8 +12,10 @@ source testing/test-utils.sh
 
 # Test configuration
 TEST_PROJECT_NAME="test-cli-project"
-TEST_DIR="/tmp/spinbox-test-$$"
 CLI_PATH="$PROJECT_ROOT/bin/spinbox"
+
+# Setup test environment and cleanup
+setup_test_environment "CLI Integration Tests"
 
 # Setup test environment
 setup_test_env() {
@@ -22,9 +23,6 @@ setup_test_env() {
     export TEST_MODE=true
     export CONFIG_DIR="$TEST_DIR/.config"
 }
-
-# Setup test environment and cleanup
-setup_test_environment "CLI Integration Tests"
 
 # CLI Help System Tests
 test_cli_help() {
@@ -169,7 +167,7 @@ test_performance() {
     
     # Test dry-run performance (should be under 5 seconds)
     start_time=$(date +%s.%N)
-    "$CLI_PATH" create perf-test --python --dry-run > /dev/null 2>&1
+    "$CLI_PATH" create "test-cli-perf-$$" --python --dry-run > /dev/null 2>&1
     end_time=$(date +%s.%N)
     duration=$(echo "$end_time - $start_time" | bc)
     

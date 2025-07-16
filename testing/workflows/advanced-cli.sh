@@ -1,33 +1,23 @@
 #!/bin/bash
-# Advanced CLI Features Test Suite for Spinbox
+# Advanced CLI Features Workflow Tests for Spinbox
 # Tests version overrides, templates, force flags, and advanced configuration
 # Following CLAUDE.md principles: Simple, Fast, Essential Coverage
 
-set -e
+# Note: Not using set -e so tests can continue after failures
 
-# Script configuration
+# Set up test environment
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$PROJECT_ROOT"
+
+# Source the test utilities
+source testing/test-utils.sh
+
+# Setup test environment and cleanup
+setup_test_environment "Advanced CLI Features Tests"
+
 SPINBOX_CMD="$PROJECT_ROOT/bin/spinbox"
-TEST_DIR="/tmp/spinbox-advanced-test-$$"
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Test tracking
-TOTAL_TESTS=0
-PASSED_TESTS=0
-FAILED_TESTS=0
 MISSING_FEATURES=()
-
-# Simple logging functions
-log_info() {
-    echo -e "${BLUE}[INFO]${NC} $*"
-}
 
 log_success() {
     echo -e "${GREEN}✓${NC} $*"
