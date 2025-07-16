@@ -17,6 +17,14 @@ INTEGRATION_CLI="$SCRIPT_DIR/integration/cli-integration.sh"
 INTEGRATION_WORKFLOW="$SCRIPT_DIR/integration/workflow-scenarios.sh"
 END_TO_END="$SCRIPT_DIR/end-to-end/installation-scenarios.sh"
 
+# Workflow test paths
+WORKFLOWS_ADVANCED="$SCRIPT_DIR/workflows/advanced-cli.sh"
+WORKFLOWS_CLI_REF="$SCRIPT_DIR/workflows/cli-reference.sh"
+WORKFLOWS_COMPONENTS="$SCRIPT_DIR/workflows/component-generators.sh"
+WORKFLOWS_PROFILES="$SCRIPT_DIR/workflows/profiles.sh"
+WORKFLOWS_PROJECT="$SCRIPT_DIR/workflows/project-creation.sh"
+WORKFLOWS_UPDATE="$SCRIPT_DIR/workflows/update-system.sh"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -33,31 +41,27 @@ USAGE:
     $(basename "$0") [OPTIONS]
 
 OPTIONS:
-    --unit              Run unit tests (core functionality)
-    --integration       Run integration tests (CLI and workflows)
-    --end-to-end        Run end-to-end tests (installation scenarios)
-    --all               Run all test suites (default)
-    --quick             Run only unit tests (fastest option)
-    --help              Show this help message
-    
-INDIVIDUAL TEST SUITES:
-    --core              Run core functionality tests only
-    --cli               Run CLI integration tests only  
-    --workflow          Run workflow scenario tests only
-    --installation      Run installation scenario tests only
+    --unit          Run unit tests only
+    --integration   Run integration tests only
+    --workflows     Run workflow tests only
+    --all           Run all test suites
+    --help          Show this help message
+
+DEFAULT:
+    When run without options, executes unit and integration tests
 
 EXAMPLES:
-    $(basename "$0")                    # Run all tests
-    $(basename "$0") --unit             # Run unit tests only
-    $(basename "$0") --integration      # Run integration tests only
-    $(basename "$0") --quick            # Run core tests only (fastest)
-    $(basename "$0") --core --cli       # Run specific test suites
+    $(basename "$0")                # Run standard tests (unit + integration)
+    $(basename "$0") --all           # Run all test suites
+    $(basename "$0") --unit          # Run unit tests only
+    $(basename "$0") --integration   # Run integration tests only
+    $(basename "$0") --workflows     # Run workflow tests only
 
 NOTES:
     - Unit tests are fastest (< 10 seconds)
     - Integration tests require moderate time (< 2 minutes)
-    - End-to-end tests may take longer (several minutes)
-    - Use --quick for rapid development feedback
+    - Workflow tests cover advanced features
+    - Use --unit for rapid development feedback
 
 EOF
 }
@@ -148,40 +152,62 @@ run_end_to_end_tests() {
     fi
 }
 
-# Individual test suite runners
-run_core_tests() {
-    echo -e "${BLUE}Running Core Functionality Tests...${NC}"
-    bash "$UNIT_TESTS"
+# Workflow test suite runners
+run_workflows_tests() {
+    echo -e "${BLUE}===============================================${NC}"
+    echo -e "${BLUE}            Running Workflow Tests             ${NC}"
+    echo -e "${BLUE}===============================================${NC}"
+    
+    local workflows_passed=0
+    local workflows_total=0
+    
+    # Array of workflow tests
+    local workflow_tests=(
+        "WORKFLOWS_ADVANCED:Advanced CLI Features"
+        "WORKFLOWS_CLI_REF:CLI Reference Validation"
+        "WORKFLOWS_COMPONENTS:Component Generators"
+        "WORKFLOWS_PROFILES:Profile Validation"
+        "WORKFLOWS_PROJECT:Project Creation"
+        "WORKFLOWS_UPDATE:Update System"
+    )
+    
+    for workflow_test in "${workflow_tests[@]}"; do
+        local var_name="${workflow_test%%:*}"
+        local test_name="${workflow_test##*:}"
+        local test_path="${!var_name}"
+        
+        if [[ -f "$test_path" ]]; then
+            echo -e "${YELLOW}--- $test_name Tests ---${NC}"
+            ((workflows_total++))
+            if bash "$test_path"; then
+                echo -e "${GREEN}✓ $test_name tests passed${NC}"
+                ((workflows_passed++))
+            else
+                echo -e "${RED}✗ $test_name tests failed${NC}"
+            fi
+        else
+            echo -e "${RED}✗ Workflow test file not found: $test_path${NC}"
+        fi
+    done
+    
+    # Report workflow results
+    if [[ $workflows_passed -eq $workflows_total && $workflows_total -gt 0 ]]; then
+        echo -e "${GREEN}✓ All workflow tests completed successfully${NC}"
+        return 0
+    else
+        echo -e "${RED}✗ Workflow tests failed ($workflows_passed/$workflows_total passed)${NC}"
+        return 1
+    fi
 }
 
-run_cli_tests() {
-    echo -e "${BLUE}Running CLI Integration Tests...${NC}"
-    bash "$INTEGRATION_CLI"
-}
-
-run_workflow_tests() {
-    echo -e "${BLUE}Running Workflow Scenario Tests...${NC}"
-    bash "$INTEGRATION_WORKFLOW"
-}
-
-run_installation_tests() {
-    echo -e "${BLUE}Running Installation Scenario Tests...${NC}"
-    bash "$END_TO_END"
-}
 
 # Main execution function
 main() {
     local run_unit=false
     local run_integration=false
-    local run_end_to_end=false
-    local run_all=true
-    local run_quick=false
-    
-    # Individual test flags
-    local run_core=false
-    local run_cli=false
-    local run_workflow=false
-    local run_installation=false
+    local run_workflows=false
+    local run_all=false
+    local run_default=true
     
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
@@ -196,38 +222,14 @@ main() {
                 run_all=false
                 shift
                 ;;
-            --end-to-end)
-                run_end_to_end=true
+            --workflows)
+                run_workflows=true
                 run_all=false
                 shift
                 ;;
             --all)
                 run_all=true
-                shift
-                ;;
-            --quick)
-                run_quick=true
-                run_all=false
-                shift
-                ;;
-            --core)
-                run_core=true
-                run_all=false
-                shift
-                ;;
-            --cli)
-                run_cli=true
-                run_all=false
-                shift
-                ;;
-            --workflow)
-                run_workflow=true
-                run_all=false
-                shift
-                ;;
-            --installation)
-                run_installation=true
-                run_all=false
+                run_default=false
                 shift
                 ;;
             --help|-h)
@@ -257,7 +259,18 @@ main() {
     local start_time=$(date +%s)
     
     # Run tests based on options
-    if [[ "$run_all" == "true" ]]; then
+    if [[ "$run_default" == "true" ]]; then
+        # Default: run unit and integration tests
+        ((total_suites++))
+        if run_unit_tests; then
+            ((passed_suites++))
+        fi
+        
+        ((total_suites++))
+        if run_integration_tests; then
+            ((passed_suites++))
+        fi
+    elif [[ "$run_all" == "true" ]]; then
         # Run all test suites
         ((total_suites++))
         if run_unit_tests; then
@@ -270,17 +283,14 @@ main() {
         fi
         
         ((total_suites++))
+        if run_workflows_tests; then
+            ((passed_suites++))
+        fi
+        
+        ((total_suites++))
         if run_end_to_end_tests; then
             ((passed_suites++))
         fi
-        
-    elif [[ "$run_quick" == "true" ]]; then
-        # Run only unit tests for quick feedback
-        ((total_suites++))
-        if run_unit_tests; then
-            ((passed_suites++))
-        fi
-        
     else
         # Run specific test suites
         if [[ "$run_unit" == "true" ]]; then
@@ -297,38 +307,9 @@ main() {
             fi
         fi
         
-        if [[ "$run_end_to_end" == "true" ]]; then
+        if [[ "$run_workflows" == "true" ]]; then
             ((total_suites++))
-            if run_end_to_end_tests; then
-                ((passed_suites++))
-            fi
-        fi
-        
-        # Run individual test suites
-        if [[ "$run_core" == "true" ]]; then
-            ((total_suites++))
-            if run_core_tests; then
-                ((passed_suites++))
-            fi
-        fi
-        
-        if [[ "$run_cli" == "true" ]]; then
-            ((total_suites++))
-            if run_cli_tests; then
-                ((passed_suites++))
-            fi
-        fi
-        
-        if [[ "$run_workflow" == "true" ]]; then
-            ((total_suites++))
-            if run_workflow_tests; then
-                ((passed_suites++))
-            fi
-        fi
-        
-        if [[ "$run_installation" == "true" ]]; then
-            ((total_suites++))
-            if run_installation_tests; then
+            if run_workflows_tests; then
                 ((passed_suites++))
             fi
         fi
@@ -355,7 +336,7 @@ main() {
         exit 0
     else
         echo -e "${RED}❌ Some test suites failed${NC}"
-        echo -e "${RED}💡 Use individual test options to debug specific failures${NC}"
+        echo -e "${RED}💡 Check the output above for specific failures${NC}"
         exit 1
     fi
 }
