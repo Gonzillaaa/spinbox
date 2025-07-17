@@ -36,6 +36,11 @@ function generate_fastapi_component() {
     generate_fastapi_tests "$fastapi_dir"
     generate_fastapi_env_files "$fastapi_dir"
     
+    # Generate working examples if requested
+    if [[ "${WITH_EXAMPLES:-false}" == "true" ]]; then
+        generate_fastapi_working_examples "$fastapi_dir"
+    fi
+    
     print_status "FastAPI backend component created successfully"
 }
 

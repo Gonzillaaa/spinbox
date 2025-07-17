@@ -42,6 +42,7 @@ PROJECT_DIR=""
 COMPONENTS=""
 TEMPLATE=""
 PROFILE=""
+WITH_EXAMPLES=false
 VERBOSE=false
 DRY_RUN=false
 FORCE=false
@@ -129,6 +130,8 @@ OPTIONS:
     
     --template NAME        Use requirements.txt template (minimal, data-science, ai-llm, etc.)
     
+    --with-examples        Include working code examples for selected components
+    
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
     -f, --force           Force creation, overwrite existing directory
@@ -178,6 +181,8 @@ OPTIONS:
     --node-version VER     Node.js version (default: current or 20)
     --postgres-version VER PostgreSQL version (default: current or 15)
     --redis-version VER    Redis version (default: current or 7)
+    
+    --with-examples        Include working code examples for added components
     
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
@@ -603,6 +608,10 @@ function parse_create_args() {
                 PROFILE="$2"
                 shift 2
                 ;;
+            --with-examples)
+                WITH_EXAMPLES=true
+                shift
+                ;;
             -v|--verbose)
                 VERBOSE=true
                 shift
@@ -644,6 +653,10 @@ function parse_add_args() {
                 for ((i=0; i<VERSION_FLAGS_CONSUMED; i++)); do
                     shift
                 done
+                ;;
+            --with-examples)
+                WITH_EXAMPLES=true
+                shift
                 ;;
             -v|--verbose)
                 VERBOSE=true
@@ -985,7 +998,7 @@ function execute_command() {
             apply_version_overrides
             
             # Export variables needed by project generator
-            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE DRY_RUN VERBOSE FORCE
+            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE WITH_EXAMPLES DRY_RUN VERBOSE FORCE
             
             # Export CLI override variables for version configuration
             export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION
@@ -1000,7 +1013,7 @@ function execute_command() {
             apply_version_overrides
             
             # Export variables needed by project generator
-            export COMPONENTS DRY_RUN VERBOSE FORCE
+            export COMPONENTS WITH_EXAMPLES DRY_RUN VERBOSE FORCE
             
             # Export CLI override variables for version configuration
             export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION
