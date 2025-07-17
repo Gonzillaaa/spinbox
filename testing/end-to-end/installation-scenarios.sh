@@ -1,14 +1,20 @@
 #!/bin/bash
-# Comprehensive Test Suite for Spinbox - All Installation Scenarios
+# End-to-End Installation Scenarios Test Suite
 # Tests development mode, local/global installations, remote installations, and edge cases
 
-set -e
+# Note: Not using set -e so tests can continue after failures
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 LOG_FILE="/tmp/spinbox-test-$(date +%Y%m%d-%H%M%S).log"
 GITHUB_RAW_URL="https://raw.githubusercontent.com/Gonzillaaa/spinbox/main"
+
+# Source the test utilities
+source "$PROJECT_ROOT/testing/test-utils.sh"
+
+# Setup test environment and cleanup
+setup_test_environment "End-to-End Installation Scenarios Tests"
 
 # Test results tracking
 # Using simple arrays instead of associative arrays for compatibility
@@ -17,26 +23,7 @@ TEST_RESULTS=()
 TOTAL_TESTS=0
 PASSED_TESTS=0
 FAILED_TESTS=0
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Cleanup function
-cleanup_all_scenarios() {
-    log_info "Cleaning up all test artifacts..."
-    rm -rf "$PROJECT_ROOT"/test-* 2>/dev/null || true
-    rm -rf ~/test-* 2>/dev/null || true
-    rm -rf /tmp/test-* 2>/dev/null || true
-    "$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
-    sudo "$PROJECT_ROOT/uninstall.sh" --config --force &>/dev/null || true
-}
-
-# Ensure cleanup runs on exit
-trap cleanup_all_scenarios EXIT
+SKIPPED_TESTS=0
 
 # Logging functions
 log() {
@@ -72,6 +59,9 @@ record_test() {
     if [[ "$result" == "PASS" ]]; then
         ((PASSED_TESTS++))
         log_success "$test_name: $message"
+    elif [[ "$result" == "SKIP" ]]; then
+        ((SKIPPED_TESTS++))
+        log_warning "$test_name: $message"
     else
         ((FAILED_TESTS++))
         log_error "$test_name: $message"
@@ -328,45 +318,62 @@ fi
 if [[ "$RUN_ALL" == "true" || "$RUN_GLOBAL" == "true" ]]; then
     echo "=== Phase 3: Global Installation Tests ==="
     
-    [[ "$SKIP_CLEANUP" != "true" ]] && cleanup_installation
-    
-    # Install globally
-    run_test "global_install" "sudo $PROJECT_ROOT/install.sh"
-    
-    # Clear hash table
-    hash -r
-    
-    # Verify installation
-    if [[ -f "/usr/local/bin/spinbox" ]]; then
-        record_test "global_binary_installed" "PASS" "Global binary installed"
+    # Check sudo availability
+    if ! has_sudo; then
+        log_warning "Skipping global installation tests (sudo not available or not enabled)"
+        record_test "global_install" "SKIP" "Global installation requires sudo"
+        record_test "global_binary_installed" "SKIP" "Global binary test skipped"
+        record_test "global_source_created" "SKIP" "Global source test skipped"
+        record_test "global_version" "SKIP" "Global version test skipped"
+        record_test "global_ai_profile" "SKIP" "Global AI profile test skipped"
+        record_test "global_data_science_profile" "SKIP" "Global data science profile test skipped"
+        record_test "global_minimal_removed" "SKIP" "Global minimal profile test skipped"
+        record_test "global_create_project" "SKIP" "Global create project test skipped"
+        record_test "global_config_list" "SKIP" "Global config list test skipped"
+        record_test "global_config_get" "SKIP" "Global config get test skipped"
+        record_test "global_uninstall" "SKIP" "Global uninstall test skipped"
+        echo ""
     else
-        record_test "global_binary_installed" "FAIL" "Global binary not found"
+        [[ "$SKIP_CLEANUP" != "true" ]] && cleanup_installation
+        
+        # Install globally
+        run_test "global_install" "sudo $PROJECT_ROOT/install.sh"
+        
+        # Clear hash table
+        hash -r
+        
+        # Verify installation
+        if [[ -f "/usr/local/bin/spinbox" ]]; then
+            record_test "global_binary_installed" "PASS" "Global binary installed"
+        else
+            record_test "global_binary_installed" "FAIL" "Global binary not found"
+        fi
+        
+        if [[ -d "$HOME/.spinbox/source" ]]; then
+            record_test "global_source_created" "PASS" "Centralized source created"
+        else
+            record_test "global_source_created" "FAIL" "Centralized source missing"
+        fi
+        
+        # Test installed binary
+        run_test "global_version" "spinbox --version"
+        
+        # Test profiles
+        global_profiles=$(spinbox profiles 2>&1)
+        validate_profiles "global" "$global_profiles"
+        
+        # Test project creation
+        run_test "global_create_project" "spinbox create test-global-project --profile data-science --dry-run"
+        
+        # Test config commands
+        run_test "global_config_list" "spinbox config --list"
+        run_test "global_config_get" "spinbox config --get PYTHON_VERSION"
+        
+        # Test uninstall
+        run_test "global_uninstall" "sudo spinbox uninstall --config --force"
+        
+        echo ""
     fi
-    
-    if [[ -d "$HOME/.spinbox/source" ]]; then
-        record_test "global_source_created" "PASS" "Centralized source created"
-    else
-        record_test "global_source_created" "FAIL" "Centralized source missing"
-    fi
-    
-    # Test installed binary
-    run_test "global_version" "spinbox --version"
-    
-    # Test profiles
-    global_profiles=$(spinbox profiles 2>&1)
-    validate_profiles "global" "$global_profiles"
-    
-    # Test project creation
-    run_test "global_create_project" "spinbox create test-global-project --profile data-science --dry-run"
-    
-    # Test config commands
-    run_test "global_config_list" "spinbox config --list"
-    run_test "global_config_get" "spinbox config --get PYTHON_VERSION"
-    
-    # Test uninstall
-    run_test "global_uninstall" "sudo spinbox uninstall --config --force"
-    
-    echo ""
 fi
 
 # Phase 4: Remote Installation Tests (requires network)
@@ -402,18 +409,24 @@ if [[ "$RUN_ALL" == "true" || "$RUN_REMOTE" == "true" ]]; then
     run_test "remote_user_cleanup" "spinbox uninstall --config --force || true"
     
     # Test system installation from GitHub
-    run_test "remote_system_install" "curl -sSL $GITHUB_RAW_URL/install.sh | sudo bash"
-    
-    hash -r
-    
-    if command -v spinbox &> /dev/null; then
-        record_test "remote_system_command" "PASS" "Remote system installation successful"
+    if ! has_sudo; then
+        record_test "remote_system_install" "SKIP" "Remote system installation requires sudo"
+        record_test "remote_system_command" "SKIP" "Remote system command test skipped"
+        record_test "remote_system_cleanup" "SKIP" "Remote system cleanup test skipped"
     else
-        record_test "remote_system_command" "FAIL" "Remote system installation failed"
+        run_test "remote_system_install" "curl -sSL $GITHUB_RAW_URL/install.sh | sudo bash"
+        
+        hash -r
+        
+        if command -v spinbox &> /dev/null; then
+            record_test "remote_system_command" "PASS" "Remote system installation successful"
+        else
+            record_test "remote_system_command" "FAIL" "Remote system installation failed"
+        fi
+        
+        # Cleanup system installation
+        run_test "remote_system_cleanup" "sudo spinbox uninstall --config --force || true"
     fi
-    
-    # Cleanup system installation
-    run_test "remote_system_cleanup" "sudo spinbox uninstall --config --force || true"
     
     echo ""
 fi
@@ -476,15 +489,19 @@ if [[ "$RUN_ALL" == "true" ]]; then
     
     # Cleanup and install globally
     cleanup_installation
-    sudo $PROJECT_ROOT/install.sh >> "$LOG_FILE" 2>&1
-    hash -r
-    global_output=$(spinbox profiles 2>&1)
-    
-    # Compare outputs
-    if diff <(echo "$dev_output") <(echo "$global_output") >> "$LOG_FILE" 2>&1; then
-        record_test "consistency_dev_global" "PASS" "Development and global outputs identical"
+    if ! has_sudo; then
+        record_test "consistency_dev_global" "SKIP" "Global installation consistency test requires sudo"
     else
-        record_test "consistency_dev_global" "FAIL" "Development and global outputs differ"
+        sudo $PROJECT_ROOT/install.sh >> "$LOG_FILE" 2>&1
+        hash -r
+        global_output=$(spinbox profiles 2>&1)
+        
+        # Compare outputs
+        if diff <(echo "$dev_output") <(echo "$global_output") >> "$LOG_FILE" 2>&1; then
+            record_test "consistency_dev_global" "PASS" "Development and global outputs identical"
+        else
+            record_test "consistency_dev_global" "FAIL" "Development and global outputs differ"
+        fi
     fi
     
     cleanup_installation
@@ -499,10 +516,15 @@ echo ""
 echo "Total Tests: $TOTAL_TESTS"
 echo -e "${GREEN}Passed: $PASSED_TESTS${NC}"
 echo -e "${RED}Failed: $FAILED_TESTS${NC}"
+echo -e "${YELLOW}Skipped: $SKIPPED_TESTS${NC}"
 echo ""
 
 if [[ $FAILED_TESTS -eq 0 ]]; then
-    echo -e "${GREEN}✓ ALL TESTS PASSED!${NC}"
+    if [[ $SKIPPED_TESTS -eq 0 ]]; then
+        echo -e "${GREEN}✓ ALL TESTS PASSED!${NC}"
+    else
+        echo -e "${GREEN}✓ ALL TESTS PASSED (some skipped)!${NC}"
+    fi
     exit_code=0
 else
     echo -e "${RED}✗ SOME TESTS FAILED${NC}"

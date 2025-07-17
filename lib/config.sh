@@ -84,7 +84,7 @@ DEFAULT_COMPONENTS=""
 # Generated on $(date)
 EOF
 
-  print_status "Created default global configuration"
+  print_debug "Created default global configuration"
 }
 
 # Load global configuration

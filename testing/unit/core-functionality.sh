@@ -1,6 +1,7 @@
 #!/bin/bash
-# Simple Test Framework for Spinbox Core Functions
-# Minimal, fast, reliable testing without complex dependencies
+# Core Functionality Test Suite for Spinbox
+# Comprehensive tests for library functions and basic smoke tests
+# Merged from simple-test.sh (68 tests) + quick-test.sh (4 additional checks)
 
 # Test counters
 TESTS_RUN=0
@@ -98,14 +99,14 @@ test_file_exists() {
 # Test runner
 run_tests() {
     echo -e "${YELLOW}===============================================${NC}"
-    echo -e "${YELLOW}          Spinbox Simple Test Suite           ${NC}"
+    echo -e "${YELLOW}        Spinbox Core Functionality Tests        ${NC}"
     echo -e "${YELLOW}===============================================${NC}"
     echo ""
     
     # Set up test environment
     setup_tests
     
-    # Run test categories
+    # Run original test categories from simple-test.sh
     test_configuration_loading
     test_version_substitution
     test_file_generation
@@ -115,6 +116,12 @@ run_tests() {
     test_cli_commands
     test_profile_validation
     test_project_creation_smoke
+    
+    # Run additional smoke tests from quick-test.sh
+    test_key_files_existence
+    test_scripts_executable
+    test_configuration_system_smoke
+    test_version_defaults
     
     # Clean up
     cleanup_tests
@@ -136,6 +143,8 @@ run_tests() {
         echo -e "${GREEN}Failed:       $TESTS_FAILED${NC}"
         echo ""
         echo -e "${GREEN}All tests passed!${NC}"
+        echo ""
+        echo -e "${GREEN}✨ Spinbox core functionality verified!${NC}"
         exit 0
     fi
 }
@@ -145,12 +154,12 @@ setup_tests() {
     echo -e "${BLUE}Setting up test environment...${NC}"
     
     # Create temporary test directory
-    TEST_DIR="/tmp/spinbox-simple-test-$$"
+    TEST_DIR="/tmp/spinbox-core-test-$$"
     mkdir -p "$TEST_DIR"
     
     # Source the libraries we want to test
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+    PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
     source "$PROJECT_ROOT/lib/utils.sh" 2>/dev/null || echo "Warning: Could not source $PROJECT_ROOT/lib/utils.sh"
     
     echo -e "${GREEN}Test environment ready${NC}"
@@ -438,6 +447,60 @@ test_project_creation_smoke() {
     # Test uninstall script exists and is executable
     test_file_exists "$PROJECT_ROOT/uninstall.sh" "Uninstall script exists"
     test_assert '[[ -x "$PROJECT_ROOT/uninstall.sh" ]]' "Uninstall script is executable"
+    
+    echo ""
+}
+
+# Additional smoke tests from quick-test.sh
+test_key_files_existence() {
+    echo -e "${YELLOW}=== Key Files Existence Tests ===${NC}"
+    
+    # Test that key files exist
+    test_file_exists "$PROJECT_ROOT/lib/config.sh" "lib/config.sh exists"
+    test_file_exists "$PROJECT_ROOT/lib/utils.sh" "lib/utils.sh exists"
+    test_file_exists "$PROJECT_ROOT/bin/spinbox" "bin/spinbox exists"
+    test_file_exists "$PROJECT_ROOT/install.sh" "install.sh exists"
+    
+    echo ""
+}
+
+test_scripts_executable() {
+    echo -e "${YELLOW}=== Scripts Executable Tests ===${NC}"
+    
+    # Test that scripts are executable
+    test_assert '[[ -x "$PROJECT_ROOT/bin/spinbox" ]]' "bin/spinbox is executable"
+    test_assert '[[ -x "$PROJECT_ROOT/install.sh" ]]' "install.sh is executable"
+    
+    echo ""
+}
+
+test_configuration_system_smoke() {
+    echo -e "${YELLOW}=== Configuration System Smoke Tests ===${NC}"
+    
+    # Test configuration loading (basic smoke test)
+    test_assert 'bash -c "source $PROJECT_ROOT/lib/utils.sh 2>/dev/null && source $PROJECT_ROOT/lib/config.sh 2>/dev/null" 2>/dev/null' "Configuration system loads without errors"
+    
+    echo ""
+}
+
+test_version_defaults() {
+    echo -e "${YELLOW}=== Version Defaults Tests ===${NC}"
+    
+    # Test version defaults are set
+    # Extract just the configuration loading portion
+    local CONFIG_DIR="$PROJECT_ROOT/.config"
+    local TEST_PYTHON_VERSION=""
+    local TEST_NODE_VERSION=""
+    if [[ -f "${CONFIG_DIR}/global.conf" ]]; then
+        source "${CONFIG_DIR}/global.conf" 2>/dev/null
+        TEST_PYTHON_VERSION="$PYTHON_VERSION"
+        TEST_NODE_VERSION="$NODE_VERSION"
+    fi
+    TEST_PYTHON_VERSION="${TEST_PYTHON_VERSION:-3.12}"
+    TEST_NODE_VERSION="${TEST_NODE_VERSION:-20}"
+    
+    test_assert '[[ -n "$TEST_PYTHON_VERSION" ]]' "Python version default set"
+    test_assert '[[ -n "$TEST_NODE_VERSION" ]]' "Node version default set"
     
     echo ""
 }

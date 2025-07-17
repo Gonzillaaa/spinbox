@@ -64,7 +64,9 @@ When choosing between multiple approaches:
 - Avoid creating overly complicated fixtures just to make tests pass
 
 #### Testing Examples
-✅ **Good**: 22 focused tests in simple-test.sh that run in < 5 seconds
+✅ **Good**: 72 focused tests in testing/unit/core-functionality.sh that run in < 10 seconds
+✅ **Good**: Standard directory structure with unit/integration/end-to-end separation
+✅ **Good**: Centralized test utilities and single entry point
 ❌ **Bad**: 115+ test functions with complex dependencies that hang
 
 ### Error Handling Philosophy
@@ -152,9 +154,9 @@ feat: implement entire CLI foundation (too broad)
 
 #### Smart Documentation Protocol
 **BEFORE starting work:**
-1. **Check task index** - Look at `docs/README.md` quick navigation for your specific task
+1. **Check task index** - Look at `docs/dev/backlog.md` `docs/README.md` quick navigation for your specific task
 2. **Read only relevant sections** - Use the index to find the exact parts needed (not entire docs)
-3. **Update TodoWrite** - Pull specific tasks from implementation plan
+3. **Update Backlog** - Pull specific tasks from implementation plan keep `docs/dev/backlog.md` updated
 
 **DURING work:**
 - **Update status only** - Change ⏳ to 🔄 to ✅ in `docs/global-cli-implementation.md`
@@ -164,6 +166,7 @@ feat: implement entire CLI foundation (too broad)
 **AFTER work:**
 - **Quick status update** - Mark completed tasks with ✅
 - **Brief implementation note** - 1-2 sentences about what was actually built (if different from plan)
+- **Update Backlog** - Pull specific tasks from implementation plan keep `docs/dev/backlog.md` updated
 
 #### Implementation Workflow
 1. **Create feature branch** for the phase you're working on
