@@ -154,9 +154,9 @@ feat: implement entire CLI foundation (too broad)
 
 #### Smart Documentation Protocol
 **BEFORE starting work:**
-1. **Check task index** - Look at `docs/README.md` quick navigation for your specific task
+1. **Check task index** - Look at `docs/dev/backlog.md` `docs/README.md` quick navigation for your specific task
 2. **Read only relevant sections** - Use the index to find the exact parts needed (not entire docs)
-3. **Update TodoWrite** - Pull specific tasks from implementation plan
+3. **Update Backlog** - Pull specific tasks from implementation plan keep `docs/dev/backlog.md` updated
 
 **DURING work:**
 - **Update status only** - Change ⏳ to 🔄 to ✅ in `docs/global-cli-implementation.md`
@@ -166,6 +166,7 @@ feat: implement entire CLI foundation (too broad)
 **AFTER work:**
 - **Quick status update** - Mark completed tasks with ✅
 - **Brief implementation note** - 1-2 sentences about what was actually built (if different from plan)
+- **Update Backlog** - Pull specific tasks from implementation plan keep `docs/dev/backlog.md` updated
 
 #### Implementation Workflow
 1. **Create feature branch** for the phase you're working on
