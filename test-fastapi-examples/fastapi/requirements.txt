@@ -1,0 +1,33 @@
+# FastAPI and ASGI server
+fastapi>=0.103.0
+uvicorn[standard]>=0.23.0
+
+# Database
+sqlalchemy>=2.0.0
+alembic>=1.12.0
+
+# PostgreSQL adapter
+psycopg2-binary>=2.9.7
+
+# Redis client
+redis>=5.0.0
+
+# Data validation and serialization
+pydantic>=2.4.0
+pydantic-settings>=2.0.0
+
+# Environment management
+python-dotenv>=1.0.0
+
+# HTTP client for testing
+httpx>=0.24.1
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Development tools
+black>=23.0.0
+isort>=5.12.0
+mypy>=1.5.0

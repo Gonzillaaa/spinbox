@@ -680,8 +680,42 @@ function create_fastapi_component() {
     echo "  5. Run development server: uvicorn app.main:app --reload"
 }
 
+# Generate working examples for FastAPI
+function generate_fastapi_working_examples() {
+    local fastapi_dir="$1"
+    local examples_source="$PROJECT_ROOT/templates/examples/core-components/fastapi"
+    
+    print_info "Adding FastAPI working examples..."
+    
+    # Copy core FastAPI examples
+    if [[ -d "$examples_source" ]]; then
+        # Copy example files
+        for example_file in "$examples_source"/example-*.py; do
+            if [[ -f "$example_file" ]]; then
+                cp "$example_file" "$fastapi_dir/"
+                print_debug "Copied $(basename "$example_file")"
+            fi
+        done
+        
+        # Copy examples README
+        if [[ -f "$examples_source/README.md" ]]; then
+            cp "$examples_source/README.md" "$fastapi_dir/EXAMPLES.md"
+            print_debug "Copied examples documentation"
+        fi
+        
+        print_info "FastAPI working examples added successfully"
+        print_info "Examples available:"
+        echo "  • example-basic-crud.py - Complete CRUD operations"
+        echo "  • example-auth-simple.py - JWT authentication"
+        echo "  • example-websocket.py - Real-time WebSocket communication"
+        echo "  • EXAMPLES.md - Setup and usage instructions"
+    else
+        print_warning "FastAPI examples directory not found: $examples_source"
+    fi
+}
+
 # Export functions for use by project generator
-export -f generate_fastapi_component create_fastapi_component
+export -f generate_fastapi_component create_fastapi_component generate_fastapi_working_examples
 export -f generate_fastapi_dockerfiles generate_fastapi_requirements
 export -f generate_fastapi_application generate_fastapi_database_config
 export -f generate_fastapi_tests generate_fastapi_env_files
