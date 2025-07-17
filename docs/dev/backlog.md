@@ -44,18 +44,40 @@ Spinbox v0.1 implementation is **complete** with all core functionality working:
 
 Now that the foundation is solid, the roadmap focuses on developer experience improvements and advanced features.
 
-### Distribution Enhancement Opportunities
+## 🎯 v0.2+ Priority Implementation Order
 
-- **Homebrew Tap Repository** ⏳ **NEXT MILESTONE** - Create dedicated tap for easier installation
-  - **Current State**: Formula exists with v0.1.0-beta.4 configuration and proper install paths
-  - **Implementation needed**:
-    1. Create separate `gonzillaaa/homebrew-spinbox` GitHub repository
-    2. Move `Formula/spinbox.rb` to new repository structure
-    3. Set up GitHub Actions workflow to auto-update formula SHA256 on new releases
-    4. Test complete installation flow: `brew tap gonzillaaa/spinbox && brew install spinbox`
-    5. Verify formula paths work correctly with Homebrew's libexec structure
-    6. Update README.md to include Homebrew installation option
-  - **Benefits**: Simplifies installation from current manual process to `brew tap && brew install`
+### 🥇 **Priority 1: Developer Experience & Working Examples** (v0.1.0-beta.5)
+- **Status**: 🔄 **IN PROGRESS** - Complete current testing consolidation PR
+- **Current Branch**: `feature/testing-consolidation` (ready for review)
+- **Goal**: Add working example code with `--with-examples` flag
+- **Target**: Complete to 100% before moving to next priority
+- **Next Steps**: Review and merge testing consolidation PR, then implement working examples
+
+### 🥈 **Priority 2: Automatic Dependency Management** (v0.1.0-beta.6)
+- **Goal**: `--with-deps` flag automatically adds packages to requirements.txt/package.json
+- **Impact**: Eliminates manual dependency hunting
+- **Examples**: `spinbox add --chroma --with-deps` → adds chromadb to requirements.txt
+
+### 🥉 **Priority 3: Git Hooks Integration** (v0.1.0-beta.7)
+- **Goal**: Simple quality gates without complexity
+- **Impact**: Automatic code quality enforcement
+- **Examples**: `spinbox hooks add --pre-commit` → adds black, isort, flake8
+
+### 🏅 **Priority 4: Homebrew Tap Repository** (v0.1.0-beta.8)
+- **Goal**: Easier installation for Mac users
+- **Impact**: Installation becomes `brew tap && brew install`
+- **Note**: Moved from "NEXT MILESTONE" to prioritize core developer experience
+- **Implementation needed**:
+  1. Create separate `gonzillaaa/homebrew-spinbox` GitHub repository
+  2. Move `Formula/spinbox.rb` to new repository structure
+  3. Set up GitHub Actions workflow to auto-update formula SHA256 on new releases
+  4. Test complete installation flow: `brew tap gonzillaaa/spinbox && brew install spinbox`
+  5. Verify formula paths work correctly with Homebrew's libexec structure
+  6. Update README.md to include Homebrew installation option
+
+### 🏆 **Priority 5: Cloud Deployment Helpers** (v0.1.0-beta.9)
+- **Goal**: Guided deployment to popular platforms
+- **Impact**: Easier deployment workflows
 
 ### ✅ Completed v0.1 Foundation
 
@@ -1595,23 +1617,38 @@ All foundational CLI functionality implemented and working:
 - Full component generator system (6 components)
 - Profile system with 6 predefined profiles
 - Centralized installation and update system
-- Comprehensive testing (36+ tests passing)
+- Comprehensive testing (250+ tests passing)
 
-### **Phase 1 (v0.2.0) - Developer Experience**
-- **Week 1-2**: Working example code templates
-- **Week 3**: `--with-examples` flag implementation
-- **Week 4**: Enhanced development workflows
+### **Phase 1 (v0.1.0-beta.5) - Developer Experience Completion**
+- Complete current testing consolidation work
+- Implement `--with-examples` flag for all components
+- Add working code templates for all component combinations
+- **Target**: 100% completion before next phase
 
-### **Phase 2 (v0.3.0) - Distribution Enhancement**
-- **Week 1**: Homebrew tap repository setup
-- **Week 2**: Automated release workflows
-- **Week 3**: Community documentation
-- **Week 4**: Installation simplification
+### **Phase 2 (v0.1.0-beta.6) - Dependency Management**
+- Implement `--with-deps` flag
+- Create dependency mappings for all components
+- Add automatic package management for Python and Node.js projects
 
-### **Phase 3 (v0.4.0) - Advanced Features**
-- **Week 1-2**: Development workflow helpers
-- **Week 3**: Plugin system foundation
-- **Week 4**: Performance optimizations
+### **Phase 3 (v0.1.0-beta.7) - Git Hooks Integration**
+- Add `spinbox hooks` command
+- Implement pre-commit, pre-push, and security hooks
+- Create hook templates and examples
+
+### **Phase 4 (v0.1.0-beta.8) - Distribution Enhancement**
+- Create Homebrew tap repository
+- Setup automated release workflows
+- Simplify installation process
+
+### **Phase 5 (v0.1.0-beta.9) - Cloud Deployment**
+- Implement deployment helpers
+- Add platform-specific configuration generation
+- Create deployment guides
+
+### **v0.2.0 Final Release**
+- Consolidate all beta features
+- Comprehensive testing and documentation
+- Production-ready release
 
 ---
 
@@ -1621,7 +1658,7 @@ All foundational CLI functionality implemented and working:
 - Time to working project: 0.134 seconds (target was < 5 seconds)
 - Generated code compiles and runs without errors
 - All component combinations working seamlessly
-- 36+ tests passing in comprehensive test suite
+- 250+ tests passing in comprehensive test suite (100% pass rate)
 
 **v0.2+ Goals**:
 - Time from project creation to first API call: < 5 minutes
