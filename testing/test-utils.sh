@@ -31,6 +31,10 @@ cleanup_test_env() {
     # Remove test directories from project root
     echo -e "${BLUE}[Cleanup] Removing test directories from project root...${NC}"
     rm -rf "$PROJECT_ROOT"/test-* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/dep-test-* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/edge-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/multi-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/example-test-* 2>/dev/null || true
     rm -rf "$PROJECT_ROOT"/perf-test* 2>/dev/null || true
     rm -rf "$PROJECT_ROOT"/smoke-* 2>/dev/null || true
     

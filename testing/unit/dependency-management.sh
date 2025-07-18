@@ -75,8 +75,10 @@ create_test_project_with_deps() {
     local components="$1"
     local test_name="dep-test-$(date +%s)"
     
-    # Create test project with dependencies
+    # Create test project with dependencies (use TEST_DIR to avoid cluttering project root)
+    cd "$TEST_DIR" > /dev/null 2>&1
     "$PROJECT_ROOT/bin/spinbox" create "$test_name" $components --with-deps --dry-run > /dev/null 2>&1
+    cd - > /dev/null 2>&1
     
     # For real testing, we need to create actual files
     mkdir -p "$TEST_DIR/$test_name"
@@ -93,6 +95,10 @@ cleanup_test_project() {
     if [[ -n "$TEST_PROJECT" ]] && [[ -d "$TEST_PROJECT" ]]; then
         rm -rf "$TEST_PROJECT"
     fi
+    # Clean up any test directories that might have been created in project root
+    rm -rf "$PROJECT_ROOT"/dep-test-* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/edge-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/multi-test* 2>/dev/null || true
 }
 
 # Setup test environment
@@ -129,6 +135,11 @@ main() {
     echo ""
     
     setup_test_environment
+    
+    # Pre-cleanup any leftover test directories from previous runs
+    rm -rf "$PROJECT_ROOT"/dep-test-* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/edge-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/multi-test* 2>/dev/null || true
     
     # === Python Dependency Tests ===
     echo -e "${YELLOW}=== Python Dependency Tests ===${NC}"

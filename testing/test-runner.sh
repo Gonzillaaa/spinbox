@@ -287,6 +287,13 @@ main() {
     # Set up test environment
     setup_test_environment "Unified Test Runner"
     
+    # Pre-cleanup any leftover test directories from previous runs
+    rm -rf "$PROJECT_ROOT"/dep-test-* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/edge-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/multi-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/example-test-* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/perf-test* 2>/dev/null || true
+    
     # Show header
     echo -e "${YELLOW}=================================================${NC}"
     echo -e "${YELLOW}          Spinbox Unified Test Runner           ${NC}"
@@ -369,6 +376,16 @@ main() {
     echo -e "${RED}Failed: $((total_suites - passed_suites))${NC}"
     echo -e "Execution time: ${execution_time}s"
     echo ""
+    
+    # Final cleanup of any test directories
+    echo ""
+    echo -e "${BLUE}Running final cleanup...${NC}"
+    rm -rf "$PROJECT_ROOT"/dep-test-* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/edge-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/multi-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/example-test-* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/perf-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/test-* 2>/dev/null || true
     
     if [[ $passed_suites -eq $total_suites ]]; then
         echo -e "${GREEN}🎉 All test suites passed!${NC}"
