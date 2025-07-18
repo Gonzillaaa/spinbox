@@ -53,6 +53,12 @@ The `PROJECT_PATH` can be either:
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
 
+**Enhancement Flags:**
+| Option | Description |
+|--------|-------------|
+| `--with-deps` | Automatically manage dependencies (add to requirements.txt/package.json) |
+| `--with-examples` | Include working code examples for each component |
+
 **Version Configuration:**
 | Option | Description |
 |--------|-------------|
@@ -102,6 +108,18 @@ spinbox create api --fastapi --redis
 spinbox create frontend-app --nextjs --mongodb
 ```
 
+**Enhancement flags:**
+```bash
+# Create with automatic dependency management
+spinbox create myproject --fastapi --postgresql --with-deps
+
+# Create with working examples
+spinbox create myproject --fastapi --postgresql --with-examples
+
+# Create with both dependencies and examples
+spinbox create myproject --fastapi --postgresql --with-deps --with-examples
+```
+
 **Version customization:**
 ```bash
 # Override Python version
@@ -112,27 +130,6 @@ spinbox create old-frontend --nextjs --node-version 18
 
 # Multiple version overrides
 spinbox create custom-stack --profile web-app --python-version 3.11 --node-version 19
-```
-
-**Path-based creation:**
-```bash
-# Create in subdirectory
-spinbox create code/myproject --python
-
-# Create with absolute path
-spinbox create /path/to/myproject --python
-
-# Create in home directory
-spinbox create ~/projects/webapp --profile web-app
-
-# Create in parent directory
-spinbox create ../sibling-project --fastapi
-
-# Use specific requirements template
-spinbox create data-proj --python --template data-science
-
-# Force overwrite existing directory
-spinbox create myproject --python --force
 ```
 
 ### `spinbox add`
@@ -160,6 +157,12 @@ spinbox add [OPTIONS]
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
 
+**Enhancement Flags:**
+| Option | Description |
+|--------|-------------|
+| `--with-deps` | Automatically manage dependencies for added components |
+| `--with-examples` | Include working code examples for added components |
+
 **Version Configuration:**
 | Option | Description |
 |--------|-------------|
@@ -179,18 +182,15 @@ spinbox add --postgresql
 spinbox add --postgresql --redis        # Primary storage + caching layer
 spinbox add --mongodb --chroma        # Alternative storage + vector search
 
+# Add with dependencies and examples
+spinbox add --redis --with-deps --with-examples
+
 # Add with version specification
 spinbox add --postgresql --postgres-version 14
 
 # Add Next.js to FastAPI-only project
 spinbox add --nextjs --node-version 18
 ```
-
-#### Behavior
-- Detects existing components and only adds new ones
-- Preserves existing configuration where possible
-- Updates DevContainer and Docker Compose configurations
-- Maintains project integrity
 
 ### `spinbox start`
 
@@ -233,134 +233,6 @@ spinbox start --force-recreate
 spinbox start --no-detach
 ```
 
-#### Behavior
-- Starts all services defined in `docker-compose.yml`
-- Services run in detached mode by default
-- Provides status feedback and error handling
-- Can show logs if requested
-
-### `spinbox update`
-
-Update Spinbox to the latest version or a specific version.
-
-#### Syntax
-```bash
-spinbox update [OPTIONS]
-```
-
-#### Options
-| Option | Description |
-|--------|-------------|
-| `--check` | Check for updates without installing |
-| `--version VERSION` | Update to specific version (e.g., 1.2.0) |
-| `--force` | Force update even if already on latest version |
-| `--yes` | Skip confirmation prompts |
-| `--dry-run` | Show what would be updated without making changes |
-| `--verbose` | Enable verbose output |
-
-#### Examples
-```bash
-# Check for updates
-spinbox update --check
-
-# Update to latest version
-spinbox update
-
-# Update to specific version
-spinbox update --version 1.2.0
-
-# Force update with no prompts
-spinbox update --force --yes
-
-# Preview update process
-spinbox update --dry-run
-```
-
-#### Behavior
-- **Automatic backup**: Creates backup of current installation before updating
-- **Installation method detection**: Automatically detects if installed via Homebrew or manual installation
-- **Homebrew integration**: Uses `brew upgrade spinbox` for Homebrew installations
-- **Rollback support**: Automatically rolls back on failed updates
-- **Configuration preservation**: Preserves user configuration during updates
-- **Version validation**: Validates version numbers and checks availability
-- **Network requirements**: Requires internet connection to check for updates
-
-#### Update Process
-1. **Check current version** and compare with target version
-2. **Detect installation method** (Homebrew vs manual)
-3. **Create backup** of current installation
-4. **Download update** from GitHub releases
-5. **Install update** atomically
-6. **Verify installation** works correctly
-7. **Clean up** temporary files
-8. **Rollback** if any step fails
-
-#### Notes
-- Updates preserve user configuration files in `~/.spinbox/config/`
-- Backup files are stored in `~/.spinbox/backup/`
-- Failed updates are automatically rolled back
-- Network connectivity is required for update checks
-- Homebrew users should use `brew upgrade spinbox` directly when possible
-
-### `spinbox uninstall`
-
-Remove Spinbox from the system with optional configuration cleanup.
-
-#### Syntax
-```bash
-spinbox uninstall [OPTIONS]
-```
-
-#### Options
-
-| Option | Description |
-|--------|-------------|
-| `--config` | Also remove configuration files (~/.spinbox) |
-| `--all` | Remove everything including config (same as --config) |
-| `--script` | Download and run standalone uninstall script |
-| `--force` | `-f` | Skip confirmation prompts |
-| `--dry-run` | `-d` | Show what would be removed without making changes |
-
-#### Examples
-
-**Basic uninstall:**
-```bash
-# Remove Spinbox binary only (preserves configuration)
-spinbox uninstall
-
-# Remove binary and configuration files  
-spinbox uninstall --config
-
-# Remove everything
-spinbox uninstall --all
-```
-
-**Advanced options:**
-```bash
-# Dry-run to see what would be removed
-spinbox uninstall --dry-run --config
-
-# Force removal without confirmation
-spinbox uninstall --force --config
-
-# Use standalone script (for corrupted installations)
-spinbox uninstall --script
-```
-
-#### Behavior
-- By default, only removes the Spinbox binary
-- Configuration files preserved unless `--config` or `--all` specified
-- Supports dry-run mode to preview changes
-- Provides confirmation prompts unless `--force` used
-- Detects Homebrew installations and suggests appropriate method
-- Standalone script option for recovery scenarios
-
-#### Notes
-- Homebrew installations should use `brew uninstall spinbox`
-- Projects created with Spinbox are not affected
-- Docker images and containers remain untouched
-- Use `--script` if the main binary is corrupted
-
 ### `spinbox config`
 
 Manage global Spinbox configuration.
@@ -391,7 +263,7 @@ spinbox config [OPTIONS]
 
 **Global Configuration:**
 | Key | Description | Default |
-|-----|-------------|---------|
+|-----|-------------|---------|----|
 | `PYTHON_VERSION` | Default Python version | `3.12` |
 | `NODE_VERSION` | Default Node.js version | `20` |
 | `POSTGRES_VERSION` | Default PostgreSQL version | `15` |
@@ -403,7 +275,7 @@ spinbox config [OPTIONS]
 
 **User Preferences:**
 | Key | Description | Default |
-|-----|-------------|---------|
+|-----|-------------|---------|----|
 | `PREFERRED_EDITOR` | Preferred code editor | `code` |
 | `AUTO_START_SERVICES` | Auto-start services after creation | `true` |
 | `SKIP_CONFIRMATIONS` | Skip confirmation prompts | `false` |
@@ -482,25 +354,6 @@ spinbox status --config
 spinbox status --components
 ```
 
-#### Output Information
-
-**Project Status:**
-- Project detection (Spinbox project or not)
-- Project name and description (if configured)
-- Detected components (fastapi, nextjs, postgresql, etc.)
-- DevContainer status
-
-**Configuration Status:**
-- Global configuration file status
-- Current software versions
-- User preferences status
-- Configuration file locations
-
-**Components Status:**
-- List of all available components
-- Component descriptions
-- Usage examples
-
 ### `spinbox profiles`
 
 List and display information about available project profiles.
@@ -540,14 +393,80 @@ spinbox profiles --show api-only
 | `data-science` | Data science with pandas, numpy, matplotlib, Jupyter, scikit-learn, plotly | python, postgresql |
 | `ai-llm` | AI/LLM with OpenAI, Anthropic, LangChain, Transformers, Chroma | python, postgresql, chroma |
 
-#### Profile Details
+### `spinbox update`
 
-Each profile shows:
-- Description and use case
-- Included components
-- Default software versions
-- Requirements template used
-- Example usage commands
+Update Spinbox to the latest version or a specific version.
+
+#### Syntax
+```bash
+spinbox update [OPTIONS]
+```
+
+#### Options
+| Option | Description |
+|--------|-------------|
+| `--check` | Check for updates without installing |
+| `--version VERSION` | Update to specific version (e.g., 1.2.0) |
+| `--force` | Force update even if already on latest version |
+| `--yes` | Skip confirmation prompts |
+| `--dry-run` | Show what would be updated without making changes |
+| `--verbose` | Enable verbose output |
+
+#### Examples
+```bash
+# Check for updates
+spinbox update --check
+
+# Update to latest version
+spinbox update
+
+# Update to specific version
+spinbox update --version 1.2.0
+
+# Force update with no prompts
+spinbox update --force --yes
+
+# Preview update process
+spinbox update --dry-run
+```
+
+### `spinbox uninstall`
+
+Remove Spinbox from the system with optional configuration cleanup.
+
+#### Syntax
+```bash
+spinbox uninstall [OPTIONS]
+```
+
+#### Options
+
+| Option | Description |
+|--------|-------------|
+| `--config` | Also remove configuration files (~/.spinbox) |
+| `--all` | Remove everything including config (same as --config) |
+| `--script` | Download and run standalone uninstall script |
+| `--force` | `-f` | Skip confirmation prompts |
+| `--dry-run` | `-d` | Show what would be removed without making changes |
+
+#### Examples
+
+```bash
+# Remove Spinbox binary only (preserves configuration)
+spinbox uninstall
+
+# Remove binary and configuration files  
+spinbox uninstall --config
+
+# Remove everything
+spinbox uninstall --all
+
+# Dry-run to see what would be removed
+spinbox uninstall --dry-run --config
+
+# Force removal without confirmation
+spinbox uninstall --force --config
+```
 
 ### `spinbox version`
 
@@ -557,15 +476,6 @@ Show version information.
 ```bash
 spinbox version
 spinbox --version
-```
-
-#### Output
-```
-Spinbox v1.0.0
-Prototyping Environment Scaffolding Tool
-
-Copyright (c) 2024 Spinbox Contributors
-Licensed under MIT License
 ```
 
 ### `spinbox help`
@@ -645,66 +555,47 @@ CREATED_DATE="2024-01-01"
 SPINBOX_VERSION="1.0.0"
 ```
 
-## Templates
+## Enhancement Flags
 
-### Requirements Templates
+### Automatic Dependency Management (`--with-deps`)
 
-Available Python requirements templates:
+Automatically adds dependencies to appropriate package files:
 
-| Template | Description | Key Libraries |
-|----------|-------------|---------------|
-| `minimal` | Basic prototyping tools | uv, pytest, black, requests |
-| `data-science` | ML/data science libraries | pandas, numpy, matplotlib, jupyter |
-| `ai-llm` | AI/LLM development | openai, anthropic, langchain, tiktoken |
-| `web-scraping` | Web scraping tools | beautifulsoup4, selenium, scrapy |
-| `api-development` | API development | fastapi, uvicorn, pydantic, httpx |
-| `custom` | Minimal template for customization | Basic tools only |
+- **Python projects**: Adds packages to `requirements.txt`
+- **Node.js projects**: Adds packages to `package.json`
+- **Installation scripts**: Creates `setup-python-deps.sh` and `setup-nodejs-deps.sh`
+- **Smart detection**: Prevents cross-contamination between Python and Node.js
 
-### Profile Templates
-
-Located at: `~/.spinbox/templates/profiles/`
-
-**Format (TOML):**
-```toml
-[profile]
-name = "web-app"
-description = "Full-stack web application"
-
-[components]
-fastapi = true
-nextjs = true
-postgresql = true
-redis = false
-mongodb = false
-chroma = false
-
-[configuration]
-python_version = "3.12"
-node_version = "20"
-postgres_version = "15"
-
-[templates]
-python_requirements = "api-development"
+**Example:**
+```bash
+spinbox create myproject --fastapi --postgresql --with-deps
+# Results in requirements.txt with FastAPI, SQLAlchemy, PostgreSQL adapter, etc.
 ```
 
-## Environment Variables
+### Working Examples (`--with-examples`)
 
-### Configuration Override
+Includes production-ready code examples for each component:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `SPINBOX_CONFIG_DIR` | Override config directory | `/custom/path` |
-| `SPINBOX_CACHE_DIR` | Override cache directory | `/custom/cache` |
-| `SPINBOX_DEBUG` | Enable debug mode | `true` |
+- **Core components**: FastAPI, Next.js, PostgreSQL, Redis, MongoDB, Chroma
+- **AI/LLM integration**: OpenAI, Anthropic, LangChain, LlamaIndex
+- **Component combinations**: FastAPI + PostgreSQL, Next.js + FastAPI, etc.
+- **Complete documentation**: Setup instructions, usage examples, best practices
 
-### Version Override
+**Example:**
+```bash
+spinbox create myproject --fastapi --postgresql --with-examples
+# Results in working CRUD examples, authentication examples, etc.
+```
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `PYTHON_VERSION` | Override Python version | `3.11` |
-| `NODE_VERSION` | Override Node.js version | `18` |
-| `POSTGRES_VERSION` | Override PostgreSQL version | `14` |
-| `REDIS_VERSION` | Override Redis version | `6` |
+### Combining Enhancement Flags
+
+```bash
+# Create complete development environment
+spinbox create fullstack --fastapi --nextjs --postgresql --with-deps --with-examples
+
+# Add component with both enhancements
+spinbox add --redis --with-deps --with-examples
+```
 
 ## Exit Codes
 

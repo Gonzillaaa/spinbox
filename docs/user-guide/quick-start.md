@@ -166,6 +166,47 @@ code .
 - PostgreSQL for data persistence
 - DevContainer optimized for AI prototyping
 
+## Enhanced Features
+
+### Automatic Dependency Management
+
+**Create projects with automatic dependency management:**
+```bash
+spinbox create myproject --fastapi --postgresql --with-deps
+```
+
+**What you get:**
+- All required packages automatically added to `requirements.txt`
+- Installation scripts (`setup-python-deps.sh`) for easy setup
+- Smart detection prevents cross-language contamination
+- Ready-to-use dependency management
+
+### Working Code Examples
+
+**Create projects with production-ready examples:**
+```bash
+spinbox create myproject --fastapi --postgresql --with-examples
+```
+
+**What you get:**
+- Working CRUD examples for FastAPI + PostgreSQL
+- Authentication examples with JWT
+- WebSocket examples for real-time features
+- Complete documentation and setup instructions
+
+### Combine Both Features
+
+**Create a complete development environment:**
+```bash
+spinbox create fullstack --fastapi --nextjs --postgresql --with-deps --with-examples
+```
+
+**What you get:**
+- Complete dependency management
+- Working code examples for all components
+- Production-ready patterns and best practices
+- Comprehensive documentation
+
 ## Essential Commands
 
 ### Project Creation
@@ -176,6 +217,9 @@ spinbox create <name> --profile <profile-name>
 # With custom components
 spinbox create <name> --python --node --database
 
+# With enhanced features
+spinbox create <name> --profile web-app --with-deps --with-examples
+
 # With version overrides
 spinbox create <name> --profile web-app --python-version 3.11
 ```
@@ -184,6 +228,9 @@ spinbox create <name> --profile web-app --python-version 3.11
 ```bash
 # Add components to existing project
 spinbox add --database --redis
+
+# Add with enhanced features
+spinbox add --redis --with-deps --with-examples
 
 # Start project services
 spinbox start                    # Background
@@ -275,7 +322,19 @@ Every Spinbox project includes a DevContainer configuration:
 - No "works on my machine" problems
 - Supports VS Code, Cursor, and other editors
 
-### 3. Customize as Needed
+### 3. Leverage Enhanced Features
+```bash
+# Automatic dependency management
+spinbox create myproject --profile web-app --with-deps
+
+# Working code examples
+spinbox create myproject --profile web-app --with-examples
+
+# Both features combined
+spinbox create myproject --profile web-app --with-deps --with-examples
+```
+
+### 4. Customize as Needed
 ```bash
 # Override software versions
 spinbox create myproject --profile web-app --python-version 3.11
@@ -288,7 +347,7 @@ spinbox add --redis --chroma
 spinbox config --set PYTHON_VERSION=3.11
 ```
 
-### 4. Leverage Service Management
+### 5. Leverage Service Management
 ```bash
 # Start everything in background
 spinbox start
@@ -307,64 +366,38 @@ docker-compose down
 
 ### Learning New Technologies
 ```bash
-# Try out FastAPI
-spinbox create fastapi-test --backend
+# Try out FastAPI with examples
+spinbox create fastapi-test --backend --with-examples
 
 # Experiment with Next.js
-spinbox create nextjs-test --frontend
+spinbox create nextjs-test --frontend --with-examples
 
 # Test full-stack integration
-spinbox create fullstack-test --backend --frontend --database
+spinbox create fullstack-test --backend --frontend --database --with-examples
 ```
 
 ### Prototyping
 ```bash
-# Quick API prototype
-spinbox create prototype-api --profile api-only
+# Quick API prototype with dependencies
+spinbox create prototype-api --profile api-only --with-deps
 
-# Full app prototype
-spinbox create prototype-app --profile web-app
+# Full app prototype with examples
+spinbox create prototype-app --profile web-app --with-examples
 
-# AI experiment
-spinbox create ai-experiment --profile ai-llm
+# AI experiment with complete setup
+spinbox create ai-experiment --profile ai-llm --with-deps --with-examples
 ```
 
 ### Team Development
 ```bash
 # Everyone gets the same environment
-spinbox create team-project --profile web-app
+spinbox create team-project --profile web-app --with-deps --with-examples
 
 # Share project, team runs:
 cd team-project
 spinbox start
 code .
 ```
-
-## Next Steps
-
-### Explore Documentation
-- **Installation Guide**: [docs/installation.md](./installation.md)
-- **CLI Reference**: [docs/cli-reference.md](./cli-reference.md)
-- **Troubleshooting**: [docs/troubleshooting.md](./troubleshooting.md)
-
-### Learn More About Components
-- **Adding Components**: [docs/adding-components.md](./adding-components.md)
-- **Backend Development**: Check `backend/README.md` in generated projects
-- **Frontend Development**: Check `frontend/README.md` in generated projects
-
-### Customize Your Setup
-```bash
-# Set up global preferences
-spinbox config --setup
-
-# Create custom profiles (advanced)
-# Edit ~/.spinbox/templates/profiles/custom.toml
-```
-
-### Join the Community
-- **GitHub Issues**: Report bugs or request features
-- **GitHub Discussions**: Ask questions and share projects
-- **Documentation**: Contribute to guides and tutorials
 
 ## Troubleshooting Quick Fixes
 
@@ -404,8 +437,31 @@ spinbox config --reset global
 spinbox config --setup
 ```
 
+## Next Steps
+
+### Explore Documentation
+- **Installation Guide**: [installation.md](./installation.md)
+- **CLI Reference**: [cli-reference.md](./cli-reference.md)
+- **Dependency Management**: [dependency-management.md](./dependency-management.md)
+- **Working Examples**: [working-examples.md](./working-examples.md)
+- **Troubleshooting**: [troubleshooting.md](./troubleshooting.md)
+
+### Learn More About Enhanced Features
+- **Dependency Management**: See [dependency-management.md](./dependency-management.md)
+- **Working Examples**: See [working-examples.md](./working-examples.md)
+- **Component Architecture**: Check the main README.md
+
+### Customize Your Setup
+```bash
+# Set up global preferences
+spinbox config --setup
+
+# Create custom profiles (advanced)
+# Edit ~/.spinbox/templates/profiles/custom.toml
+```
+
 ---
 
 **You're all set!** Start building amazing projects with Spinbox. The prototyping environment is ready in seconds, not hours.
 
-**Pro tip**: Try `spinbox create demo --profile web-app` to see a complete full-stack setup in action!
+**Pro tip**: Try `spinbox create demo --profile web-app --with-deps --with-examples` to see a complete full-stack setup with dependencies and examples in action!

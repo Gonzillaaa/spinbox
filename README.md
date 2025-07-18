@@ -156,7 +156,7 @@ See [Dependency Management Guide](docs/user-guide/dependency-management.md) for 
 - **Component Combinations**: FastAPI + PostgreSQL, Next.js + FastAPI, etc.
 - **Data Science**: Pandas, Jupyter, ML pipelines
 
-See [Examples Documentation](docs/examples.md) for complete details.
+See [Working Examples Guide](docs/user-guide/working-examples.md) for complete details.
 
 ### 3. Start Development
 
@@ -336,13 +336,17 @@ spinbox config --set PYTHON_VERSION=3.11
 
 ## 📚 Documentation
 
-- [Quick Start Guide](./docs/user/quick-start.md)
-- [CLI Reference](./docs/user/cli-reference.md)
-- [Installation Guide](./docs/user/installation.md)
-- [Adding Components](./docs/dev/adding-components.md)
-- [Troubleshooting](./docs/troubleshooting.md)
+### User Guide
+- [Quick Start Guide](./docs/user-guide/quick-start.md)
+- [Installation Guide](./docs/user-guide/installation.md)
+- [CLI Reference](./docs/user-guide/cli-reference.md)
+- [Dependency Management](./docs/user-guide/dependency-management.md)
+- [Working Examples](./docs/user-guide/working-examples.md)
+- [Troubleshooting](./docs/user-guide/troubleshooting.md)
 
-See [docs/README.md](./docs/README.md) for complete documentation index.
+### Developer Resources
+- [Adding Components](./docs/dev/adding-components.md)
+- [Complete Documentation Index](./docs/README.md)
 
 ## 🤝 Contributing
 

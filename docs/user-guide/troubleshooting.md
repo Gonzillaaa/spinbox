@@ -1,21 +1,88 @@
 # Troubleshooting Guide
 
-This guide helps you resolve common issues when using the project template.
+This guide helps you resolve common issues when using Spinbox.
 
 ## Important Note
 
-This project uses a **DevContainer-first approach**. All development is designed to happen inside DevContainers, where Python virtual environments and dependencies are automatically managed. If you're having issues, ensure you're working inside the DevContainer rather than on the host system.
+Spinbox uses a **DevContainer-first approach**. All development is designed to happen inside DevContainers, where Python virtual environments and dependencies are automatically managed. If you're having issues, ensure you're working inside the DevContainer rather than on the host system.
 
 ## Table of Contents
 
+- [Installation Issues](#installation-issues)
 - [Docker Issues](#docker-issues)
 - [Container Issues](#container-issues)
 - [DevContainer Issues](#devcontainer-issues)
 - [Network Issues](#network-issues)
 - [Performance Issues](#performance-issues)
-- [Script Issues](#script-issues)
 - [Component-Specific Issues](#component-specific-issues)
 - [Getting Help](#getting-help)
+
+## Installation Issues
+
+### Spinbox Command Not Found
+
+**Symptoms:**
+- `spinbox: command not found`
+- Shell can't find spinbox executable
+
+**Solutions:**
+
+1. **Check installation location:**
+   ```bash
+   # For user installations
+   ls -la ~/.local/bin/spinbox
+   
+   # For system installations
+   ls -la /usr/local/bin/spinbox
+   ```
+
+2. **Add to PATH (user installation):**
+   ```bash
+   export PATH="$HOME/.local/bin:$PATH"
+   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+3. **Add to PATH (system installation):**
+   ```bash
+   export PATH="/usr/local/bin:$PATH"
+   echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+4. **Reinstall if needed:**
+   ```bash
+   # User installation (recommended)
+   curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
+   
+   # System installation
+   curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
+   ```
+
+### Permission Denied
+
+**Symptoms:**
+- Permission denied when running spinbox
+- Cannot execute spinbox binary
+
+**Solutions:**
+
+1. **Make executable:**
+   ```bash
+   chmod +x ~/.local/bin/spinbox  # User installation
+   chmod +x /usr/local/bin/spinbox  # System installation
+   ```
+
+2. **Check ownership:**
+   ```bash
+   ls -la ~/.local/bin/spinbox
+   # Should be owned by your user
+   ```
+
+3. **Fix ownership if needed:**
+   ```bash
+   chown $USER:$USER ~/.local/bin/spinbox
+   ```
 
 ## Docker Issues
 
@@ -149,38 +216,6 @@ This project uses a **DevContainer-first approach**. All development is designed
    chmod -R 755 /path/to/volume
    ```
 
-### Slow Container Performance
-
-**Symptoms:**
-- Long startup times
-- Slow file operations
-- High CPU usage
-
-**Solutions:**
-
-1. **Optimize Docker Desktop settings:**
-   - Increase memory allocation (minimum 4GB recommended)
-   - Enable "Use gRPC FUSE for file sharing" (macOS)
-   - Use VirtioFS for better performance
-
-2. **Optimize volume mounts:**
-   ```yaml
-   # Use cached mounts for better performance
-   volumes:
-     - .:/workspace:cached
-     - /workspace/node_modules  # Anonymous volume for node_modules
-   ```
-
-3. **Use .dockerignore files:**
-   ```bash
-   # .dockerignore
-   node_modules
-   .git
-   .next
-   __pycache__
-   *.log
-   ```
-
 ### Build Failures
 
 **Symptoms:**
@@ -207,11 +242,9 @@ This project uses a **DevContainer-first approach**. All development is designed
    docker-compose build
    ```
 
-4. **Check Dockerfile syntax and commands**
-
 ## DevContainer Issues
 
-DevContainers are the primary prototyping environment for this project. All Python virtual environments and dependencies are managed inside containers.
+DevContainers are the primary prototyping environment for Spinbox. All Python virtual environments and dependencies are managed inside containers.
 
 ### DevContainer Won't Open
 
@@ -393,6 +426,7 @@ DevContainers are the primary prototyping environment for this project. All Pyth
    .next
    build
    dist
+   __pycache__
    ```
 
 3. **Enable Docker Desktop performance features:**
@@ -424,84 +458,6 @@ DevContainers are the primary prototyping environment for this project. All Pyth
 3. **Monitor memory usage:**
    ```bash
    docker stats
-   ```
-
-## Script Issues
-
-### Script Permission Errors
-
-**Symptoms:**
-- Permission denied when running scripts
-- Scripts won't execute
-
-**Solutions:**
-
-1. **Make scripts executable:**
-   ```bash
-   chmod +x *.sh
-   chmod +x lib/*.sh
-   ```
-
-2. **Check script ownership:**
-   ```bash
-   ls -la *.sh
-   chown $USER:$USER *.sh
-   ```
-
-### Script Fails with "Command not found"
-
-**Symptoms:**
-- Command not found errors
-- Missing dependencies
-
-**Solutions:**
-
-1. **Install missing dependencies:**
-   ```bash
-   # Check what's missing
-   which git docker docker-compose code
-   
-   # Install missing tools
-   brew install git docker
-   ```
-
-2. **Update PATH:**
-   ```bash
-   echo $PATH
-   export PATH="/usr/local/bin:$PATH"
-   ```
-
-3. **Source environment:**
-   ```bash
-   source ~/.zshrc
-   ```
-
-### Configuration Errors
-
-**Symptoms:**
-- Invalid configuration errors
-- Scripts exit early
-
-**Solutions:**
-
-1. **Validate configuration:**
-   ```bash
-   # Use the built-in validation
-   source lib/config.sh
-   validate_config
-   ```
-
-2. **Reset configuration:**
-   ```bash
-   # Reset to defaults
-   rm -rf ~/.spinbox/config/
-   spinbox config --reset
-   ```
-
-3. **Check syntax:**
-   ```bash
-   # Check shell script syntax
-   bash -n script-name.sh
    ```
 
 ## Component-Specific Issues
@@ -621,6 +577,101 @@ DevContainers are the primary prototyping environment for this project. All Pyth
    docker-compose exec redis redis-cli FLUSHALL
    ```
 
+## Configuration Issues
+
+### Spinbox Configuration Problems
+
+**Symptoms:**
+- Invalid configuration errors
+- Commands fail with config errors
+- Settings not being applied
+
+**Solutions:**
+
+1. **Check current configuration:**
+   ```bash
+   spinbox config --list
+   ```
+
+2. **Validate configuration files:**
+   ```bash
+   # Check if config files exist
+   ls -la ~/.spinbox/config/
+   
+   # Check syntax
+   cat ~/.spinbox/config/global.conf
+   ```
+
+3. **Reset configuration:**
+   ```bash
+   # Reset to defaults
+   spinbox config --reset global
+   spinbox config --setup
+   ```
+
+4. **Manual configuration cleanup:**
+   ```bash
+   # Remove config directory and recreate
+   rm -rf ~/.spinbox/config/
+   spinbox config --setup
+   ```
+
+## Enhancement Features Issues
+
+### Dependency Management (`--with-deps`) Issues
+
+**Symptoms:**
+- Dependencies not added to requirements.txt/package.json
+- Wrong dependencies added
+- Cross-language contamination
+
+**Solutions:**
+
+1. **Verify flag usage:**
+   ```bash
+   # Ensure --with-deps flag is used
+   spinbox create myproject --fastapi --postgresql --with-deps
+   ```
+
+2. **Check component detection:**
+   ```bash
+   # Verify components are detected correctly
+   spinbox status --project
+   ```
+
+3. **Manual dependency addition:**
+   ```bash
+   # Add dependencies to existing project
+   spinbox add --redis --with-deps
+   ```
+
+### Working Examples (`--with-examples`) Issues
+
+**Symptoms:**
+- Examples not copied to project
+- Broken example code
+- Missing documentation
+
+**Solutions:**
+
+1. **Verify flag usage:**
+   ```bash
+   # Ensure --with-examples flag is used
+   spinbox create myproject --fastapi --postgresql --with-examples
+   ```
+
+2. **Check example files:**
+   ```bash
+   # Verify examples were copied
+   ls -la */examples/ */README.md
+   ```
+
+3. **Add examples to existing project:**
+   ```bash
+   # Add examples to existing project
+   spinbox add --redis --with-examples
+   ```
+
 ## Getting Help
 
 ### Diagnostic Information
@@ -631,6 +682,7 @@ When seeking help, provide:
    ```bash
    # macOS
    sw_vers
+   spinbox --version
    docker --version
    docker-compose --version
    code --version
@@ -639,12 +691,12 @@ When seeking help, provide:
 2. **Error messages:**
    - Full error output
    - Container logs
-   - Script execution logs
+   - Command execution logs
 
 3. **Configuration files:**
    - docker-compose.yml
    - .devcontainer/devcontainer.json
-   - Relevant Dockerfiles
+   - Relevant configuration files
 
 ### Log Collection
 
@@ -655,20 +707,83 @@ docker-compose logs > debug-info/docker-logs.txt
 ls -la > debug-info/file-listing.txt
 cat .devcontainer/devcontainer.json > debug-info/devcontainer.json
 cat docker-compose.yml > debug-info/docker-compose.yml
+spinbox config --list > debug-info/spinbox-config.txt
+```
+
+### Installation Verification
+
+**Complete verification script:**
+```bash
+#!/bin/bash
+echo "=== Spinbox Installation Verification ==="
+
+# Check Spinbox
+echo "1. Checking Spinbox installation..."
+if command -v spinbox &> /dev/null; then
+    echo "✓ Spinbox found: $(which spinbox)"
+    echo "✓ Version: $(spinbox --version)"
+else
+    echo "✗ Spinbox not found in PATH"
+fi
+
+# Check Docker
+echo "2. Checking Docker..."
+if command -v docker &> /dev/null; then
+    echo "✓ Docker found: $(docker --version)"
+else
+    echo "✗ Docker not found"
+fi
+
+# Check Git
+echo "3. Checking Git..."
+if command -v git &> /dev/null; then
+    echo "✓ Git found: $(git --version)"
+else
+    echo "✗ Git not found"
+fi
+
+# Test Spinbox functionality
+echo "4. Testing Spinbox functionality..."
+if spinbox profiles > /dev/null 2>&1; then
+    echo "✓ Spinbox profiles command works"
+else
+    echo "✗ Spinbox profiles command failed"
+fi
+
+echo "=== Verification Complete ==="
 ```
 
 ### Community Resources
 
 1. **GitHub Issues:** Report bugs and request features
-2. **Documentation:** Check official Docker and VS Code docs
-3. **Forums:** Docker Community Forums, Stack Overflow
-4. **Discord/Slack:** Development community channels
+2. **Documentation:** Check the complete documentation in docs/user-guide/
+3. **CLI Help:** Use `spinbox --help` and `spinbox <command> --help`
 
-### Professional Support
+### Quick Commands for Common Issues
 
-For business-critical issues:
-- Docker Business Support
-- VS Code Enterprise Support
-- Professional consulting services
+```bash
+# Reset everything
+spinbox config --reset global
+docker system prune -a
 
-Remember to check the [performance optimization guide](./performance.md) for additional tips on improving system performance.
+# Check installation
+which spinbox
+spinbox --version
+
+# Check Docker
+docker --version
+docker ps
+
+# Check project status
+spinbox status --project
+
+# Rebuild DevContainer
+# VS Code: Ctrl+Shift+P → Dev Containers: Rebuild Container
+```
+
+Remember to check the other documentation files for more specific guidance:
+- [Installation Guide](./installation.md)
+- [Quick Start Guide](./quick-start.md)
+- [CLI Reference](./cli-reference.md)
+- [Dependency Management](./dependency-management.md)
+- [Working Examples](./working-examples.md)
