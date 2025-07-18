@@ -30,6 +30,11 @@ function generate_redis_component() {
     generate_redis_scripts "$redis_dir"
     generate_redis_env_files "$redis_dir"
     
+    # Generate working examples if requested
+    if [[ "${WITH_EXAMPLES:-false}" == "true" ]]; then
+        generate_redis_working_examples "$redis_dir"
+    fi
+    
     print_status "Redis caching component created successfully"
 }
 
@@ -478,6 +483,40 @@ function main() {
     generate_redis_component "$project_dir"
     
     return 0
+}
+
+# Generate working examples for Redis
+function generate_redis_working_examples() {
+    local redis_dir="$1"
+    local examples_source="$PROJECT_ROOT/templates/examples/core-components/redis"
+    
+    print_info "Adding Redis working examples..."
+    
+    # Copy core Redis examples
+    if [[ -d "$examples_source" ]]; then
+        # Copy example files
+        for example_file in "$examples_source"/example-*.py; do
+            if [[ -f "$example_file" ]]; then
+                cp "$example_file" "$redis_dir/scripts/"
+                print_debug "Copied $(basename "$example_file")"
+            fi
+        done
+        
+        # Copy examples README
+        if [[ -f "$examples_source/README.md" ]]; then
+            cp "$examples_source/README.md" "$redis_dir/EXAMPLES.md"
+            print_debug "Copied examples documentation"
+        fi
+        
+        print_info "Redis working examples added successfully"
+        print_info "Examples available:"
+        echo "  • example-caching.py - Caching patterns and strategies"
+        echo "  • example-queues.py - Queue/task management"
+        echo "  • example-pub-sub.py - Publish/subscribe messaging"
+        echo "  • EXAMPLES.md - Setup and usage instructions"
+    else
+        print_warning "Redis examples directory not found: $examples_source"
+    fi
 }
 
 # Execute main function if script is run directly

@@ -31,6 +31,11 @@ function generate_postgresql_component() {
     generate_postgresql_scripts "$postgresql_dir"
     generate_postgresql_env_files "$postgresql_dir"
     
+    # Generate working examples if requested
+    if [[ "${WITH_EXAMPLES:-false}" == "true" ]]; then
+        generate_postgresql_working_examples "$postgresql_dir"
+    fi
+    
     print_status "PostgreSQL database component created successfully"
 }
 
@@ -581,7 +586,41 @@ function create_postgresql_component() {
     echo "  5. Connect: ./scripts/connect.sh"
 }
 
+# Generate working examples for PostgreSQL
+function generate_postgresql_working_examples() {
+    local postgresql_dir="$1"
+    local examples_source="$PROJECT_ROOT/templates/examples/core-components/postgresql"
+    
+    print_info "Adding PostgreSQL working examples..."
+    
+    # Copy core PostgreSQL examples
+    if [[ -d "$examples_source" ]]; then
+        # Copy example files
+        for example_file in "$examples_source"/example-*.sql; do
+            if [[ -f "$example_file" ]]; then
+                cp "$example_file" "$postgresql_dir/scripts/"
+                print_debug "Copied $(basename "$example_file")"
+            fi
+        done
+        
+        # Copy examples README
+        if [[ -f "$examples_source/README.md" ]]; then
+            cp "$examples_source/README.md" "$postgresql_dir/EXAMPLES.md"
+            print_debug "Copied examples documentation"
+        fi
+        
+        print_info "PostgreSQL working examples added successfully"
+        print_info "Examples available:"
+        echo "  • example-schema.sql - Database schema examples"
+        echo "  • example-queries.sql - Common SQL queries"
+        echo "  • example-migrations.sql - Migration examples"
+        echo "  • EXAMPLES.md - Setup and usage instructions"
+    else
+        print_warning "PostgreSQL examples directory not found: $examples_source"
+    fi
+}
+
 # Export functions for use by project generator
-export -f generate_postgresql_component create_postgresql_component
+export -f generate_postgresql_component create_postgresql_component generate_postgresql_working_examples
 export -f generate_postgresql_init_scripts generate_postgresql_config
 export -f generate_postgresql_scripts generate_postgresql_env_files

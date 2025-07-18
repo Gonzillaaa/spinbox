@@ -4,7 +4,35 @@
 
 # Spin up containerized prototyping environments in seconds!
 
-Spinbox is a **global CLI tool** for creating customizable prototyping environments using Docker and DevContainers. Build your stack by selecting from predefined profiles or mixing and matching components to create the perfect prototyping environment.
+**Spinbox** is a powerful CLI tool that eliminates the friction of setting up development environments. Instead of spending hours configuring Docker, databases, and frameworks, Spinbox creates production-ready prototyping environments in under 5 seconds.
+
+## 🎯 Why Spinbox?
+
+**The Problem**: Setting up a new project with FastAPI, PostgreSQL, Redis, and proper DevContainer configuration takes 2-3 hours of copying boilerplate, writing Docker files, and debugging configuration issues.
+
+**The Solution**: Spinbox does it all in one command:
+```bash
+spinbox create myproject --fastapi --postgresql --redis --with-examples
+```
+
+**The Result**: A complete, working development environment with:
+- ✅ Configured DevContainer ready for VS Code/Cursor
+- ✅ All services running in Docker Compose
+- ✅ Working code examples demonstrating best practices
+- ✅ Security best practices (`.env` files, `.gitignore`, virtual environments)
+- ✅ Zero manual configuration required
+
+## 🚀 What Makes Spinbox Different
+
+**DevContainer-First Architecture**: Every project includes complete DevContainer configuration, ensuring consistent development environments across your team.
+
+**Real Working Code**: Unlike scaffolding tools that create empty files, Spinbox includes production-ready examples for every component combination.
+
+**Zero Configuration**: Sensible defaults for everything, with full customization available when needed.
+
+**Modular Design**: Mix and match components to create exactly the stack you need.
+
+**Security Built-in**: Proper `.env` file handling, secure defaults, and security best practices from day one.
 
 ## 🚀 Key Features
 
@@ -75,7 +103,33 @@ spinbox create api --fastapi --redis
 
 # Full-stack custom
 spinbox create webapp --fastapi --nextjs --postgresql
+
+# Add working examples to any project
+spinbox create myproject --profile web-app --with-examples
 ```
+
+### 💡 Working Examples
+
+Spinbox includes production-ready code examples for every component and combination:
+
+```bash
+# Create API with working CRUD examples
+spinbox create api --fastapi --postgresql --with-examples
+
+# Create AI project with OpenAI integration examples  
+spinbox create ai-app --profile ai-llm --with-examples
+
+# Add examples to existing project
+spinbox add --redis --with-examples
+```
+
+**Example Categories:**
+- **Core Components**: FastAPI, Next.js, PostgreSQL, Redis, MongoDB, Chroma
+- **AI/LLM Integration**: OpenAI, Anthropic, LangChain, LlamaIndex
+- **Component Combinations**: FastAPI + PostgreSQL, Next.js + FastAPI, etc.
+- **Data Science**: Pandas, Jupyter, ML pipelines
+
+See [Examples Documentation](docs/examples.md) for complete details.
 
 ### 3. Start Development
 

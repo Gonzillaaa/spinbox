@@ -35,6 +35,11 @@ function generate_nextjs_component() {
     generate_nextjs_components "$nextjs_dir"
     generate_nextjs_styles "$nextjs_dir"
     
+    # Generate working examples if requested
+    if [[ "${WITH_EXAMPLES:-false}" == "true" ]]; then
+        generate_nextjs_working_examples "$nextjs_dir"
+    fi
+    
     print_status "Next.js frontend component created successfully"
 }
 
@@ -675,8 +680,42 @@ function create_nextjs_component() {
     echo "  4. Open http://localhost:3000 in your browser"
 }
 
+# Generate working examples for Next.js
+function generate_nextjs_working_examples() {
+    local nextjs_dir="$1"
+    local examples_source="$PROJECT_ROOT/templates/examples/core-components/nextjs"
+    
+    print_info "Adding Next.js working examples..."
+    
+    # Copy core Next.js examples
+    if [[ -d "$examples_source" ]]; then
+        # Copy example files
+        for example_file in "$examples_source"/example-*.tsx "$examples_source"/example-*.ts; do
+            if [[ -f "$example_file" ]]; then
+                cp "$example_file" "$nextjs_dir/src/components/"
+                print_debug "Copied $(basename "$example_file")"
+            fi
+        done
+        
+        # Copy examples README
+        if [[ -f "$examples_source/README.md" ]]; then
+            cp "$examples_source/README.md" "$nextjs_dir/EXAMPLES.md"
+            print_debug "Copied examples documentation"
+        fi
+        
+        print_info "Next.js working examples added successfully"
+        print_info "Examples available:"
+        echo "  • example-basic-app.tsx - Basic Next.js app structure"
+        echo "  • example-api-routes.ts - API route examples"
+        echo "  • example-components.tsx - Reusable component examples"
+        echo "  • EXAMPLES.md - Setup and usage instructions"
+    else
+        print_warning "Next.js examples directory not found: $examples_source"
+    fi
+}
+
 # Export functions for use by project generator
-export -f generate_nextjs_component create_nextjs_component
+export -f generate_nextjs_component create_nextjs_component generate_nextjs_working_examples
 export -f generate_nextjs_dockerfiles generate_nextjs_package_json
 export -f generate_nextjs_config_files generate_nextjs_application
 export -f generate_nextjs_components generate_nextjs_styles

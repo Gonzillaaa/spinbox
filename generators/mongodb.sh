@@ -31,6 +31,11 @@ function generate_mongodb_component() {
     generate_mongodb_scripts "$mongodb_dir"
     generate_mongodb_env_files "$mongodb_dir"
     
+    # Generate working examples if requested
+    if [[ "${WITH_EXAMPLES:-false}" == "true" ]]; then
+        generate_mongodb_working_examples "$mongodb_dir"
+    fi
+    
     print_status "MongoDB database component created successfully"
 }
 
@@ -367,6 +372,40 @@ function main() {
     generate_mongodb_component "$project_dir"
     
     return 0
+}
+
+# Generate working examples for MongoDB
+function generate_mongodb_working_examples() {
+    local mongodb_dir="$1"
+    local examples_source="$PROJECT_ROOT/templates/examples/core-components/mongodb"
+    
+    print_info "Adding MongoDB working examples..."
+    
+    # Copy core MongoDB examples
+    if [[ -d "$examples_source" ]]; then
+        # Copy example files
+        for example_file in "$examples_source"/example-*.py "$examples_source"/example-*.js; do
+            if [[ -f "$example_file" ]]; then
+                cp "$example_file" "$mongodb_dir/scripts/"
+                print_debug "Copied $(basename "$example_file")"
+            fi
+        done
+        
+        # Copy examples README
+        if [[ -f "$examples_source/README.md" ]]; then
+            cp "$examples_source/README.md" "$mongodb_dir/EXAMPLES.md"
+            print_debug "Copied examples documentation"
+        fi
+        
+        print_info "MongoDB working examples added successfully"
+        print_info "Examples available:"
+        echo "  • example-models.py - Beanie/Motor model definitions"
+        echo "  • example-operations.py - Document CRUD operations"
+        echo "  • example-aggregations.py - Aggregation pipeline examples"
+        echo "  • EXAMPLES.md - Setup and usage instructions"
+    else
+        print_warning "MongoDB examples directory not found: $examples_source"
+    fi
 }
 
 # Execute main function if script is run directly

@@ -31,6 +31,11 @@ function generate_chroma_component() {
     generate_chroma_examples "$project_dir"
     generate_chroma_env_files "$project_dir"
     
+    # Generate working examples if requested
+    if [[ "${WITH_EXAMPLES:-false}" == "true" ]]; then
+        generate_chroma_working_examples "$project_dir"
+    fi
+    
     print_status "Chroma vector database component created successfully"
 }
 
@@ -808,6 +813,41 @@ function main() {
     generate_chroma_component "$project_dir"
     
     return 0
+}
+
+# Generate working examples for Chroma
+function generate_chroma_working_examples() {
+    local project_dir="$1"
+    local examples_source="$PROJECT_ROOT/templates/examples/core-components/chroma"
+    local chroma_dir="$project_dir/vector_db"
+    
+    print_info "Adding Chroma working examples..."
+    
+    # Copy core Chroma examples
+    if [[ -d "$examples_source" ]]; then
+        # Copy example files
+        for example_file in "$examples_source"/example-*.py; do
+            if [[ -f "$example_file" ]]; then
+                cp "$example_file" "$chroma_dir/scripts/"
+                print_debug "Copied $(basename "$example_file")"
+            fi
+        done
+        
+        # Copy examples README
+        if [[ -f "$examples_source/README.md" ]]; then
+            cp "$examples_source/README.md" "$chroma_dir/EXAMPLES.md"
+            print_debug "Copied examples documentation"
+        fi
+        
+        print_info "Chroma working examples added successfully"
+        print_info "Examples available:"
+        echo "  • example-vector-store.py - Vector storage and retrieval"
+        echo "  • example-embeddings.py - Embedding generation and management"
+        echo "  • example-similarity-search.py - Similarity search implementations"
+        echo "  • EXAMPLES.md - Setup and usage instructions"
+    else
+        print_warning "Chroma examples directory not found: $examples_source"
+    fi
 }
 
 # Execute main function if script is run directly
