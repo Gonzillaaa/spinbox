@@ -13,8 +13,10 @@ source "$SCRIPT_DIR/test-utils.sh"
 
 # Test suite paths
 UNIT_TESTS="$SCRIPT_DIR/unit/core-functionality.sh"
+UNIT_DEPENDENCY_TESTS="$SCRIPT_DIR/unit/dependency-management.sh"
 INTEGRATION_CLI="$SCRIPT_DIR/integration/cli-integration.sh"
 INTEGRATION_WORKFLOW="$SCRIPT_DIR/integration/workflow-scenarios.sh"
+INTEGRATION_EXAMPLES="$SCRIPT_DIR/integration/examples-integration.sh"
 END_TO_END="$SCRIPT_DIR/end-to-end/installation-scenarios.sh"
 
 # Workflow test paths
@@ -72,16 +74,40 @@ run_unit_tests() {
     echo -e "${BLUE}             Running Unit Tests               ${NC}"
     echo -e "${BLUE}===============================================${NC}"
     
+    local unit_passed=0
+    local unit_total=0
+    
+    # Run core functionality tests
     if [[ -f "$UNIT_TESTS" ]]; then
+        ((unit_total++))
         if bash "$UNIT_TESTS"; then
-            echo -e "${GREEN}✓ Unit tests completed successfully${NC}"
-            return 0
+            ((unit_passed++))
+            echo -e "${GREEN}✓ Core functionality tests completed successfully${NC}"
         else
-            echo -e "${RED}✗ Unit tests failed${NC}"
-            return 1
+            echo -e "${RED}✗ Core functionality tests failed${NC}"
         fi
     else
-        echo -e "${RED}✗ Unit test file not found: $UNIT_TESTS${NC}"
+        echo -e "${RED}✗ Core functionality test file not found: $UNIT_TESTS${NC}"
+    fi
+    
+    # Run dependency management tests
+    if [[ -f "$UNIT_DEPENDENCY_TESTS" ]]; then
+        ((unit_total++))
+        if bash "$UNIT_DEPENDENCY_TESTS"; then
+            ((unit_passed++))
+            echo -e "${GREEN}✓ Dependency management tests completed successfully${NC}"
+        else
+            echo -e "${RED}✗ Dependency management tests failed${NC}"
+        fi
+    else
+        echo -e "${RED}✗ Dependency management test file not found: $UNIT_DEPENDENCY_TESTS${NC}"
+    fi
+    
+    if [[ $unit_passed -eq $unit_total ]]; then
+        echo -e "${GREEN}✓ All unit tests completed successfully${NC}"
+        return 0
+    else
+        echo -e "${RED}✗ Some unit tests failed ($unit_passed/$unit_total passed)${NC}"
         return 1
     fi
 }
@@ -120,6 +146,20 @@ run_integration_tests() {
         fi
     else
         echo -e "${RED}✗ Workflow scenario test file not found: $INTEGRATION_WORKFLOW${NC}"
+    fi
+    
+    # Run examples integration tests
+    if [[ -f "$INTEGRATION_EXAMPLES" ]]; then
+        echo -e "${YELLOW}--- Examples Integration Tests ---${NC}"
+        ((integration_total++))
+        if bash "$INTEGRATION_EXAMPLES"; then
+            echo -e "${GREEN}✓ Examples integration tests passed${NC}"
+            ((integration_passed++))
+        else
+            echo -e "${RED}✗ Examples integration tests failed${NC}"
+        fi
+    else
+        echo -e "${RED}✗ Examples integration test file not found: $INTEGRATION_EXAMPLES${NC}"
     fi
     
     # Report integration results

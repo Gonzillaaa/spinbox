@@ -83,6 +83,21 @@ test_project_creation() {
         "\"$CLI_PATH\" create test-fullstack --fastapi --nextjs --postgresql --dry-run | grep -q 'Project test-fullstack created successfully'" \
         "Full-stack project creation (dry-run)"
     
+    # Test project creation with dependencies
+    assert_true \
+        "\"$CLI_PATH\" create test-deps --fastapi --with-deps --dry-run | grep -q 'Project test-deps created successfully'" \
+        "Project creation with dependencies (dry-run)"
+    
+    # Test project creation with examples
+    assert_true \
+        "\"$CLI_PATH\" create test-examples --fastapi --with-examples --dry-run | grep -q 'Project test-examples created successfully'" \
+        "Project creation with examples (dry-run)"
+    
+    # Test project creation with both flags
+    assert_true \
+        "\"$CLI_PATH\" create test-both --fastapi --with-deps --with-examples --dry-run | grep -q 'Project test-both created successfully'" \
+        "Project creation with both flags (dry-run)"
+    
     # Test with version overrides (TODO: implement CLI flag parsing for versions)
     # assert_true \
     #     "\"$CLI_PATH\" create test-versions --python --python-version 3.11 --dry-run | grep -q 'Python 3.11 (from CLI flag)'" \
