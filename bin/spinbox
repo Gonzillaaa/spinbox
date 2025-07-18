@@ -23,6 +23,7 @@ source "$SPINBOX_PROJECT_ROOT/lib/profiles.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/version.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/version-config.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/update.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/dependency-manager.sh"
 
 # Script information
 readonly SCRIPT_NAME="spinbox"
@@ -43,6 +44,7 @@ COMPONENTS=""
 TEMPLATE=""
 PROFILE=""
 WITH_EXAMPLES=false
+WITH_DEPS=false
 VERBOSE=false
 DRY_RUN=false
 FORCE=false
@@ -131,6 +133,7 @@ OPTIONS:
     --template NAME        Use requirements.txt template (minimal, data-science, ai-llm, etc.)
     
     --with-examples        Include working code examples for selected components
+    --with-deps            Automatically add dependencies to requirements.txt/package.json
     
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
@@ -145,6 +148,7 @@ EXAMPLES:
     
     spinbox create myproject --python                Create custom Python project
     spinbox create webapp --python --node --postgresql Create custom full-stack project
+    spinbox create myproject --profile web-app --with-deps --with-examples Create with dependencies and examples
     
     spinbox create code/myproject --python           Create project in code/ directory
     spinbox create ~/projects/webapp --profile web-app Create project in home directory
@@ -183,6 +187,7 @@ OPTIONS:
     --redis-version VER    Redis version (default: current or 7)
     
     --with-examples        Include working code examples for added components
+    --with-deps            Automatically add dependencies to requirements.txt/package.json
     
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
@@ -192,6 +197,7 @@ EXAMPLES:
     spinbox add --postgresql           Add PostgreSQL to current project
     spinbox add --fastapi --redis      Add FastAPI backend with Redis
     spinbox add --chroma               Add vector database for AI projects
+    spinbox add --redis --with-deps --with-examples Add Redis with dependencies and examples
 
 NOTES:
     - Must be run from within a project directory
@@ -612,6 +618,10 @@ function parse_create_args() {
                 WITH_EXAMPLES=true
                 shift
                 ;;
+            --with-deps)
+                WITH_DEPS=true
+                shift
+                ;;
             -v|--verbose)
                 VERBOSE=true
                 shift
@@ -656,6 +666,10 @@ function parse_add_args() {
                 ;;
             --with-examples)
                 WITH_EXAMPLES=true
+                shift
+                ;;
+            --with-deps)
+                WITH_DEPS=true
                 shift
                 ;;
             -v|--verbose)

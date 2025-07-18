@@ -553,55 +553,94 @@ function generate_component_files() {
     if [[ "$USE_FASTAPI" == true ]]; then
         if source "$PROJECT_ROOT/generators/fastapi.sh" 2>/dev/null; then
             generate_fastapi_component "$project_dir"
+            manage_component_dependencies "$project_dir" "fastapi"
         else
             print_warning "FastAPI generator not found, using fallback"
             generate_basic_backend "$project_dir"
+            manage_component_dependencies "$project_dir" "fastapi"
         fi
     fi
     
     if [[ "$USE_NEXTJS" == true ]]; then
         if source "$PROJECT_ROOT/generators/nextjs.sh" 2>/dev/null; then
             generate_nextjs_component "$project_dir"
+            manage_component_dependencies "$project_dir" "nextjs"
         else
             print_warning "Next.js generator not found, using fallback"
             generate_basic_frontend "$project_dir"
+            manage_component_dependencies "$project_dir" "nextjs"
         fi
     fi
     
     if [[ "$USE_POSTGRESQL" == true ]]; then
         if source "$PROJECT_ROOT/generators/postgresql.sh" 2>/dev/null; then
             generate_postgresql_component "$project_dir"
+            manage_component_dependencies "$project_dir" "postgresql"
         else
             print_warning "PostgreSQL generator not found, using fallback"
             generate_database_init "$project_dir"
+            manage_component_dependencies "$project_dir" "postgresql"
         fi
     fi
     
     if [[ "$USE_MONGODB" == true ]]; then
         if source "$PROJECT_ROOT/generators/mongodb.sh" 2>/dev/null; then
             generate_mongodb_component "$project_dir"
+            manage_component_dependencies "$project_dir" "mongodb"
         else
             print_warning "MongoDB generator not found"
+            manage_component_dependencies "$project_dir" "mongodb"
         fi
     fi
     
     if [[ "$USE_REDIS" == true ]]; then
         if source "$PROJECT_ROOT/generators/redis.sh" 2>/dev/null; then
             generate_redis_component "$project_dir"
+            manage_component_dependencies "$project_dir" "redis"
         else
             print_warning "Redis generator not found"
+            manage_component_dependencies "$project_dir" "redis"
         fi
     fi
     
     if [[ "$USE_CHROMA" == true ]]; then
         if source "$PROJECT_ROOT/generators/chroma.sh" 2>/dev/null; then
             generate_chroma_component "$project_dir"
+            manage_component_dependencies "$project_dir" "chroma"
         else
             print_warning "Chroma generator not found"
+            manage_component_dependencies "$project_dir" "chroma"
         fi
     fi
     
     print_status "Generated component files"
+    
+    # Handle profile-specific dependencies
+    if [[ -n "$PROFILE" ]]; then
+        case "$PROFILE" in
+            "ai-llm")
+                manage_component_dependencies "$project_dir" "ai-llm"
+                ;;
+            "data-science")
+                manage_component_dependencies "$project_dir" "data-science"
+                ;;
+        esac
+    fi
+    
+    # Sort and clean up dependency files
+    if [[ -f "$project_dir/requirements.txt" ]]; then
+        sort_requirements "$project_dir/requirements.txt"
+    fi
+    
+    if [[ -f "$project_dir/package.json" ]]; then
+        format_package_json "$project_dir/package.json"
+    fi
+    
+    # Create dependency installation scripts
+    create_dependency_scripts "$project_dir"
+    
+    # Show dependency summary
+    show_dependency_summary "$project_dir"
 }
 
 # Generate Python requirements.txt
