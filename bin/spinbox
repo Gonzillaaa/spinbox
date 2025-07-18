@@ -133,7 +133,9 @@ OPTIONS:
     --template NAME        Use requirements.txt template (minimal, data-science, ai-llm, etc.)
     
     --with-examples        Include working code examples for selected components
+                          Adds example files, documentation, and usage instructions
     --with-deps            Automatically add dependencies to requirements.txt/package.json
+                          Also creates installation scripts (setup-python-deps.sh, setup-nodejs-deps.sh)
     
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
@@ -149,6 +151,7 @@ EXAMPLES:
     spinbox create myproject --python                Create custom Python project
     spinbox create webapp --python --node --postgresql Create custom full-stack project
     spinbox create myproject --profile web-app --with-deps --with-examples Create with dependencies and examples
+    spinbox create aiproject --profile ai-llm --with-deps    Create AI project with LLM dependencies
     
     spinbox create code/myproject --python           Create project in code/ directory
     spinbox create ~/projects/webapp --profile web-app Create project in home directory
@@ -187,7 +190,9 @@ OPTIONS:
     --redis-version VER    Redis version (default: current or 7)
     
     --with-examples        Include working code examples for added components
+                          Adds example files, documentation, and usage instructions
     --with-deps            Automatically add dependencies to requirements.txt/package.json
+                          Also creates installation scripts (setup-python-deps.sh, setup-nodejs-deps.sh)
     
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
@@ -198,6 +203,8 @@ EXAMPLES:
     spinbox add --fastapi --redis      Add FastAPI backend with Redis
     spinbox add --chroma               Add vector database for AI projects
     spinbox add --redis --with-deps --with-examples Add Redis with dependencies and examples
+    spinbox add --chroma --with-deps               Add vector database with dependencies
+    spinbox add --nextjs --with-examples           Add Next.js frontend with examples
 
 NOTES:
     - Must be run from within a project directory

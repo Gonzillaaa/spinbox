@@ -12,13 +12,15 @@
 
 **The Solution**: Spinbox does it all in one command:
 ```bash
-spinbox create myproject --fastapi --postgresql --redis --with-examples
+spinbox create myproject --fastapi --postgresql --redis --with-examples --with-deps
 ```
 
 **The Result**: A complete, working development environment with:
 - ✅ Configured DevContainer ready for VS Code/Cursor
 - ✅ All services running in Docker Compose
-- ✅ Working code examples demonstrating best practices
+- ✅ **Automatic dependency management** - all packages added to requirements.txt/package.json
+- ✅ **Working code examples** demonstrating best practices
+- ✅ **Installation scripts** for easy dependency setup
 - ✅ Security best practices (`.env` files, `.gitignore`, virtual environments)
 - ✅ Zero manual configuration required
 
@@ -38,6 +40,8 @@ spinbox create myproject --fastapi --postgresql --redis --with-examples
 
 - **Global CLI Tool**: Simple commands like `spinbox create myproject --profile web-app`
 - **DevContainer-First**: Every project includes DevContainer configuration for VS Code, Cursor, and other editors
+- **Automatic Dependency Management**: `--with-deps` flag automatically adds packages to requirements.txt/package.json
+- **Working Code Examples**: `--with-examples` flag includes production-ready code examples
 - **Modular Components**: Mix and match languages, frameworks, and databases
 - **Predefined Profiles**: 6 curated profiles for common development scenarios
 - **Security Built-in**: Virtual environments, .env templates, and security best practices
@@ -106,6 +110,9 @@ spinbox create webapp --fastapi --nextjs --postgresql
 
 # Add working examples to any project
 spinbox create myproject --profile web-app --with-examples
+
+# Combine dependencies and examples for complete setup
+spinbox create fullstack --fastapi --nextjs --postgresql --with-deps --with-examples
 ```
 
 ### 💡 Working Examples
@@ -122,6 +129,26 @@ spinbox create ai-app --profile ai-llm --with-examples
 # Add examples to existing project
 spinbox add --redis --with-examples
 ```
+
+### 🔧 Automatic Dependency Management
+
+Spinbox automatically manages dependencies with the `--with-deps` flag:
+
+```bash
+# Create project with automatic dependency management
+spinbox create myproject --fastapi --postgresql --with-deps
+
+# Add component with dependencies to existing project
+spinbox add --chroma --with-deps
+```
+
+**What you get:**
+- **Python**: All packages added to `requirements.txt` (FastAPI, SQLAlchemy, Redis, etc.)
+- **Node.js**: All packages added to `package.json` (Next.js, React, TypeScript, etc.)
+- **Installation scripts**: `setup-python-deps.sh` and `setup-nodejs-deps.sh` for easy setup
+- **Smart detection**: No cross-contamination between Python and Node.js dependencies
+
+See [Dependency Management Guide](docs/user-guide/dependency-management.md) for complete details.
 
 **Example Categories:**
 - **Core Components**: FastAPI, Next.js, PostgreSQL, Redis, MongoDB, Chroma
