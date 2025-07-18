@@ -45,6 +45,7 @@ PROFILE=""
 VERBOSE=false
 DRY_RUN=false
 FORCE=false
+WITH_DEPS=false
 
 # Update-specific variables
 UPDATE_ACTION=""
@@ -129,6 +130,8 @@ OPTIONS:
     
     --template NAME        Use requirements.txt template (minimal, data-science, ai-llm, etc.)
     
+    --with-deps           Automatically add packages to requirements.txt/package.json
+    
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
     -f, --force           Force creation, overwrite existing directory
@@ -142,6 +145,9 @@ EXAMPLES:
     
     spinbox create myproject --python                Create custom Python project
     spinbox create webapp --python --node --postgresql Create custom full-stack project
+    
+    spinbox create api --fastapi --with-deps         Create FastAPI project with dependencies
+    spinbox create app --nextjs --with-deps          Create Next.js project with dependencies
     
     spinbox create code/myproject --python           Create project in code/ directory
     spinbox create ~/projects/webapp --profile web-app Create project in home directory
@@ -179,6 +185,8 @@ OPTIONS:
     --postgres-version VER PostgreSQL version (default: current or 15)
     --redis-version VER    Redis version (default: current or 7)
     
+    --with-deps           Automatically add packages to requirements.txt/package.json
+    
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
     -h, --help            Show this help message
@@ -187,6 +195,7 @@ EXAMPLES:
     spinbox add --postgresql           Add PostgreSQL to current project
     spinbox add --fastapi --redis      Add FastAPI backend with Redis
     spinbox add --chroma               Add vector database for AI projects
+    spinbox add --chroma --with-deps   Add Chroma and dependencies to requirements.txt
 
 NOTES:
     - Must be run from within a project directory
@@ -603,6 +612,10 @@ function parse_create_args() {
                 PROFILE="$2"
                 shift 2
                 ;;
+            --with-deps)
+                WITH_DEPS=true
+                shift
+                ;;
             -v|--verbose)
                 VERBOSE=true
                 shift
@@ -644,6 +657,10 @@ function parse_add_args() {
                 for ((i=0; i<VERSION_FLAGS_CONSUMED; i++)); do
                     shift
                 done
+                ;;
+            --with-deps)
+                WITH_DEPS=true
+                shift
                 ;;
             -v|--verbose)
                 VERBOSE=true
@@ -985,7 +1002,7 @@ function execute_command() {
             apply_version_overrides
             
             # Export variables needed by project generator
-            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE DRY_RUN VERBOSE FORCE
+            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE DRY_RUN VERBOSE FORCE WITH_DEPS
             
             # Export CLI override variables for version configuration
             export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION
@@ -1000,7 +1017,7 @@ function execute_command() {
             apply_version_overrides
             
             # Export variables needed by project generator
-            export COMPONENTS DRY_RUN VERBOSE FORCE
+            export COMPONENTS DRY_RUN VERBOSE FORCE WITH_DEPS
             
             # Export CLI override variables for version configuration
             export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION

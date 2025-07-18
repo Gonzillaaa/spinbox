@@ -6,6 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
 
 # Generate Redis caching component
 function generate_redis_component() {
@@ -29,6 +30,9 @@ function generate_redis_component() {
     generate_redis_config "$redis_dir"
     generate_redis_scripts "$redis_dir"
     generate_redis_env_files "$redis_dir"
+    
+    # Manage dependencies if --with-deps flag is enabled
+    manage_component_dependencies "$project_dir" "redis"
     
     print_status "Redis caching component created successfully"
 }

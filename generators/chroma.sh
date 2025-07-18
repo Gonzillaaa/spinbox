@@ -6,6 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
 
 # Generate Chroma vector database component
 function generate_chroma_component() {
@@ -30,6 +31,9 @@ function generate_chroma_component() {
     generate_chroma_scripts "$project_dir"
     generate_chroma_examples "$project_dir"
     generate_chroma_env_files "$project_dir"
+    
+    # Manage dependencies if --with-deps flag is enabled
+    manage_component_dependencies "$project_dir" "chroma"
     
     print_status "Chroma vector database component created successfully"
 }
