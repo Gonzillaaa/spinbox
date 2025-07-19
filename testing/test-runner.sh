@@ -247,6 +247,13 @@ main() {
     # Set up test environment
     setup_test_environment "Unified Test Runner"
     
+    # Check if any test requires sudo and cache credentials once
+    if [[ "$run_all" == "true" ]] || [[ "$run_workflows" == "true" ]]; then
+        # Some tests need sudo (e.g., end-to-end installation tests)
+        export ENABLE_SUDO=true
+        cache_sudo_credentials
+    fi
+    
     # Show header
     echo -e "${YELLOW}=================================================${NC}"
     echo -e "${YELLOW}          Spinbox Unified Test Runner           ${NC}"

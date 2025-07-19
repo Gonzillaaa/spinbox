@@ -93,7 +93,7 @@ function print_error() {
 }
 
 function print_info() {
-  echo -e "${BLUE}[i] $1${NC}"
+  echo -e "${BLUE}[i] $1${NC}" 2>/dev/null || true
   log_info "$1"
 }
 
