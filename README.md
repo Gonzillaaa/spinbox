@@ -10,6 +10,7 @@ Spinbox is a **global CLI tool** for creating customizable prototyping environme
 
 - **Global CLI Tool**: Simple commands like `spinbox create myproject --profile web-app`
 - **DevContainer-First**: Every project includes DevContainer configuration for VS Code, Cursor, and other editors
+- **Automatic Dependencies**: Use `--with-deps` flag to automatically manage Python and Node.js packages
 - **Modular Components**: Mix and match languages, frameworks, and databases
 - **Predefined Profiles**: 6 curated profiles for common development scenarios
 - **Security Built-in**: Virtual environments, .env templates, and security best practices
@@ -77,6 +78,22 @@ spinbox create api --fastapi --redis
 spinbox create webapp --fastapi --nextjs --postgresql
 ```
 
+**With automatic dependency management:**
+
+```bash
+# FastAPI project with automatic dependencies
+spinbox create myapi --fastapi --with-deps
+
+# Full-stack with all dependencies included
+spinbox create webapp --fastapi --nextjs --postgresql --with-deps
+
+# AI/LLM project with comprehensive dependencies
+spinbox create ai-project --fastapi --chroma --with-deps
+
+# Add components with dependencies to existing project
+spinbox add --redis --mongodb --with-deps
+```
+
 ### 3. Start Development
 
 ```bash
@@ -140,6 +157,50 @@ spinbox profiles
 spinbox profiles web-app
 ```
 
+## 📦 Automatic Dependency Management
+
+Spinbox supports automatic dependency management for Python and Node.js projects using the `--with-deps` flag.
+
+### Supported Components
+
+**Python Components:**
+- **FastAPI**: fastapi, uvicorn, pydantic, python-dotenv
+- **PostgreSQL**: sqlalchemy, asyncpg, alembic, psycopg2-binary
+- **Redis**: redis, celery
+- **Chroma**: chromadb, sentence-transformers
+- **MongoDB**: beanie, motor
+- **AI/LLM**: openai, anthropic, langchain, llama-index, tiktoken
+
+**Node.js Components:**
+- **Next.js**: next, react, react-dom, axios, @types/node, typescript, eslint
+- **Express**: express, cors, helmet, morgan, @types/express
+- **TailwindCSS**: tailwindcss, autoprefixer, postcss
+
+### Example Usage
+
+```bash
+# Create FastAPI project with automatic dependencies
+spinbox create myapi --fastapi --with-deps
+# Result: Creates requirements.txt with FastAPI dependencies
+
+# Full-stack with all dependencies
+spinbox create webapp --fastapi --nextjs --postgresql --with-deps
+# Result: Python and Node.js dependencies automatically configured
+
+# Add components with dependencies
+spinbox add --redis --chroma --with-deps
+# Result: Adds Redis and Chroma packages to existing project
+```
+
+After creation, install dependencies:
+```bash
+# Python projects
+pip install -r requirements.txt
+
+# Node.js projects  
+npm install
+```
+
 ## 🛠️ CLI Commands
 
 ### Project Creation
@@ -151,6 +212,7 @@ spinbox create <name> [options]
   --fastapi, --nextjs       # Application frameworks
   --postgresql, --mongodb   # Databases
   --redis, --chroma         # Additional storage
+  --with-deps               # Automatic dependency management
   --dry-run                 # Preview without creating
 ```
 
@@ -158,7 +220,7 @@ spinbox create <name> [options]
 
 ```bash
 # Add components to existing project
-spinbox add --postgresql --redis
+spinbox add --postgresql --redis --with-deps
 
 # Start services
 spinbox start              # Start all services

@@ -6,6 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
 
 # Generate FastAPI backend component
 function generate_fastapi_component() {
@@ -35,6 +36,14 @@ function generate_fastapi_component() {
     generate_fastapi_database_config "$fastapi_dir"
     generate_fastapi_tests "$fastapi_dir"
     generate_fastapi_env_files "$fastapi_dir"
+    
+    # Manage dependencies if --with-deps flag is enabled
+    manage_component_dependencies "$project_dir" "fastapi"
+    
+    # Generate working examples if --with-examples flag is enabled
+    if [[ "${WITH_EXAMPLES:-false}" == "true" ]]; then
+        generate_fastapi_working_examples "$fastapi_dir"
+    fi
     
     print_status "FastAPI backend component created successfully"
 }
@@ -610,7 +619,7 @@ function generate_fastapi_env_files() {
     local fastapi_dir="$1"
     
     # Use security template for .env.example
-    local template_file="$PROJECT_ROOT/templates/security/fastapi.env.example"
+    local template_file="$SPINBOX_PROJECT_ROOT/templates/security/fastapi.env.example"
     if [[ -f "$template_file" ]]; then
         cp "$template_file" "$fastapi_dir/.env.example"
     else
@@ -643,19 +652,38 @@ EOF
     fi
 
     # Copy virtual environment setup script
-    local setup_venv_template="$PROJECT_ROOT/templates/security/setup_venv.sh"
+    local setup_venv_template="$SPINBOX_PROJECT_ROOT/templates/security/setup_venv.sh"
     if [[ -f "$setup_venv_template" ]]; then
         cp "$setup_venv_template" "$fastapi_dir/setup_venv.sh"
         chmod +x "$fastapi_dir/setup_venv.sh"
     fi
 
     # Copy Python .gitignore
-    local gitignore_template="$PROJECT_ROOT/templates/security/python.gitignore"
+    local gitignore_template="$SPINBOX_PROJECT_ROOT/templates/security/python.gitignore"
     if [[ -f "$gitignore_template" ]]; then
         cp "$gitignore_template" "$fastapi_dir/.gitignore"
     fi
 
     print_debug "Generated environment files with security templates"
+}
+
+# Generate working examples for FastAPI
+function generate_fastapi_working_examples() {
+    local fastapi_dir="$1"
+    local examples_source="$SPINBOX_PROJECT_ROOT/templates/examples/core-components/fastapi"
+    
+    if [[ -d "$examples_source" ]]; then
+        print_debug "Copying FastAPI working examples from $examples_source"
+        
+        # Copy all example files
+        if [[ -d "$examples_source" ]]; then
+            cp -r "$examples_source"/* "$fastapi_dir/" 2>/dev/null || true
+        fi
+        
+        print_info "Added FastAPI working examples"
+    else
+        print_warning "FastAPI examples directory not found: $examples_source"
+    fi
 }
 
 # Main function to create backend component
