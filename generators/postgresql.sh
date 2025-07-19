@@ -6,6 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
 
 # Generate PostgreSQL database component
 function generate_postgresql_component() {
@@ -30,6 +31,9 @@ function generate_postgresql_component() {
     generate_postgresql_config "$postgresql_dir"
     generate_postgresql_scripts "$postgresql_dir"
     generate_postgresql_env_files "$postgresql_dir"
+    
+    # Manage dependencies if --with-deps flag is enabled
+    manage_component_dependencies "$project_dir" "postgresql"
     
     print_status "PostgreSQL database component created successfully"
 }

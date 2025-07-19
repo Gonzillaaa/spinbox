@@ -6,6 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
 
 # Generate minimal Python DevContainer
 function generate_minimal_python_devcontainer() {
@@ -463,6 +464,11 @@ function create_minimal_python_project() {
     
     # Generate project files
     generate_minimal_python_files "$project_dir"
+    
+    # Manage dependencies if --with-deps flag is enabled
+    if [[ -n "$TEMPLATE" ]]; then
+        manage_component_dependencies "$project_dir" "$TEMPLATE"
+    fi
     
     print_status "Minimal Python project created successfully!"
     print_info "Next steps:"

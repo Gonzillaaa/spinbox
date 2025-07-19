@@ -6,6 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
 
 # Generate MongoDB database component
 function generate_mongodb_component() {
@@ -30,6 +31,9 @@ function generate_mongodb_component() {
     generate_mongodb_config "$mongodb_dir"
     generate_mongodb_scripts "$mongodb_dir"
     generate_mongodb_env_files "$mongodb_dir"
+    
+    # Manage dependencies if --with-deps flag is enabled
+    manage_component_dependencies "$project_dir" "mongodb"
     
     print_status "MongoDB database component created successfully"
 }

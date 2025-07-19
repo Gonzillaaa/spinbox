@@ -6,6 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
 
 # Generate minimal Node.js DevContainer
 function generate_minimal_node_devcontainer() {
@@ -494,6 +495,10 @@ function create_minimal_node_project() {
     
     # Generate project files
     generate_minimal_node_files "$project_dir"
+    
+    # Manage dependencies if --with-deps flag is enabled
+    # Note: Minimal Node.js setup doesn't have specific component dependencies
+    # Dependencies are handled in the package.json creation
     
     print_status "Minimal Node.js project created successfully!"
     print_info "Next steps:"

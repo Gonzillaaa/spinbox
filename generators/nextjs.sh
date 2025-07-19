@@ -6,6 +6,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
 
 # Generate Next.js frontend component
 function generate_nextjs_component() {
@@ -34,6 +35,9 @@ function generate_nextjs_component() {
     generate_nextjs_application "$nextjs_dir"
     generate_nextjs_components "$nextjs_dir"
     generate_nextjs_styles "$nextjs_dir"
+    
+    # Manage dependencies if --with-deps flag is enabled
+    manage_component_dependencies "$project_dir" "nextjs"
     
     print_status "Next.js frontend component created successfully"
 }
