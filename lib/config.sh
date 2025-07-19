@@ -305,28 +305,28 @@ function list_config() {
   case "$scope" in
     global|all)
       print_info "Global Configuration:"
-      echo "  PYTHON_VERSION=$PYTHON_VERSION"
-      echo "  NODE_VERSION=$NODE_VERSION"
-      echo "  POSTGRES_VERSION=$POSTGRES_VERSION"
-      echo "  REDIS_VERSION=$REDIS_VERSION"
-      echo "  DOCKER_REGISTRY=$DOCKER_REGISTRY"
-      echo "  PROJECT_AUTHOR=$PROJECT_AUTHOR"
-      echo "  PROJECT_EMAIL=$PROJECT_EMAIL"
-      echo "  PROJECT_LICENSE=$PROJECT_LICENSE"
-      echo "  DEFAULT_COMPONENTS=$DEFAULT_COMPONENTS"
+      echo "  PYTHON_VERSION=$PYTHON_VERSION" 2>/dev/null || true
+      echo "  NODE_VERSION=$NODE_VERSION" 2>/dev/null || true
+      echo "  POSTGRES_VERSION=$POSTGRES_VERSION" 2>/dev/null || true
+      echo "  REDIS_VERSION=$REDIS_VERSION" 2>/dev/null || true
+      echo "  DOCKER_REGISTRY=$DOCKER_REGISTRY" 2>/dev/null || true
+      echo "  PROJECT_AUTHOR=$PROJECT_AUTHOR" 2>/dev/null || true
+      echo "  PROJECT_EMAIL=$PROJECT_EMAIL" 2>/dev/null || true
+      echo "  PROJECT_LICENSE=$PROJECT_LICENSE" 2>/dev/null || true
+      echo "  DEFAULT_COMPONENTS=$DEFAULT_COMPONENTS" 2>/dev/null || true
       ;;
   esac
   
   if [[ "$scope" == "all" ]]; then
-    echo ""
+    echo "" 2>/dev/null || true
   fi
   
   case "$scope" in
     user|all)
       print_info "User Configuration:"
-      echo "  PREFERRED_EDITOR=$PREFERRED_EDITOR"
-      echo "  TERMINAL_THEME=$TERMINAL_THEME"
-      echo "  AUTO_START_SERVICES=$AUTO_START_SERVICES"
+      echo "  PREFERRED_EDITOR=$PREFERRED_EDITOR" 2>/dev/null || true
+      echo "  TERMINAL_THEME=$TERMINAL_THEME" 2>/dev/null || true
+      echo "  AUTO_START_SERVICES=$AUTO_START_SERVICES" 2>/dev/null || true
       echo "  SKIP_CONFIRMATIONS=$SKIP_CONFIRMATIONS"
       ;;
   esac

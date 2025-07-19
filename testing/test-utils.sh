@@ -24,9 +24,50 @@ has_sudo() {
     fi
 }
 
+# Cache sudo credentials for the duration of tests
+cache_sudo_credentials() {
+    if command -v sudo >/dev/null 2>&1; then
+        # Check if we need sudo for this test run
+        if [[ "$ENABLE_SUDO" == "true" ]] || [[ "$1" == "--force" ]]; then
+            log_info "Caching sudo credentials for test run..."
+            # This will prompt for password once and cache it
+            sudo -v
+            if [[ $? -eq 0 ]]; then
+                # Keep sudo credentials alive in background
+                # This will refresh every 50 seconds (sudo timeout is usually 5-15 minutes)
+                (
+                    while true; do
+                        sudo -n true 2>/dev/null || exit
+                        sleep 50
+                    done
+                ) &
+                SUDO_KEEPALIVE_PID=$!
+                export SUDO_KEEPALIVE_PID
+                log_success "Sudo credentials cached successfully"
+                return 0
+            else
+                log_warning "Failed to cache sudo credentials"
+                return 1
+            fi
+        fi
+    fi
+    return 0
+}
+
+# Stop sudo keepalive process
+stop_sudo_keepalive() {
+    if [[ -n "$SUDO_KEEPALIVE_PID" ]]; then
+        kill $SUDO_KEEPALIVE_PID 2>/dev/null || true
+        unset SUDO_KEEPALIVE_PID
+    fi
+}
+
 # Common cleanup function
 cleanup_test_env() {
     echo -e "${BLUE}[Cleanup] Cleaning up test artifacts...${NC}"
+    
+    # Stop sudo keepalive if running
+    stop_sudo_keepalive
     
     # Remove test directories from project root
     echo -e "${BLUE}[Cleanup] Removing test directories from project root...${NC}"
@@ -344,4 +385,4 @@ export -f log_info log_success log_error log_warning log_section
 export -f record_test_result run_test_with_timeout
 export -f assert_true assert_equals assert_contains assert_file_exists assert_directory_exists assert_executable
 export -f show_test_summary setup_test_environment validate_cli_binary validate_profile validate_component_generator
-export -f reset_test_counters
+export -f reset_test_counters has_sudo cache_sudo_credentials stop_sudo_keepalive

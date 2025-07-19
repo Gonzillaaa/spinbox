@@ -1181,11 +1181,11 @@ function execute_status_command() {
     case "$STATUS_TYPE" in
         all)
             print_info "Spinbox Status"
-            echo ""
+            echo "" 2>/dev/null || true
             show_project_status
-            echo ""
+            echo "" 2>/dev/null || true
             show_config_status
-            echo ""
+            echo "" 2>/dev/null || true
             show_components_status
             ;;
         project)
