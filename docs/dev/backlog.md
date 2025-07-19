@@ -4,7 +4,7 @@ This document outlines the roadmap for Spinbox extensions beyond the v0.1 founda
 
 ## 🎉 Implementation Status: v0.1 Complete
 
-**Current Version**: v0.1.0-beta.4 ✅
+**Current Version**: v0.1.0-beta.5 ✅
 
 Spinbox v0.1 implementation is **complete** with all core functionality working:
 - ✅ Global CLI infrastructure with command parsing
@@ -60,9 +60,11 @@ Now that the foundation is solid, the roadmap focuses on developer experience im
 - **Details**: All generators work seamlessly together without examples infrastructure per CLAUDE.md
 
 ### 🥉 **Priority 3: Automatic Dependency Management** (v0.1.0-beta.7)
-- **Goal**: `--with-deps` flag automatically adds packages to requirements.txt/package.json
-- **Impact**: Eliminates manual dependency hunting
-- **Examples**: `spinbox add --chroma --with-deps` → adds chromadb to requirements.txt
+- **Status**: ✅ **COMPLETED** - Automatic dependency management implemented
+- **Achievement**: `--with-deps` flag functionality integrated across all 8 component generators
+- **Result**: Automatic package management for Python (requirements.txt) and Node.js (package.json) projects
+- **Date Completed**: 2025-07-19
+- **Details**: TOML-based dependency templates, setup script generation, and integration with all generators
 
 ### 🏅 **Priority 4: Git Hooks Integration** (v0.1.0-beta.8)
 - **Goal**: Simple quality gates without complexity

@@ -53,6 +53,11 @@ The `PROJECT_PATH` can be either:
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
 
+**Dependency Management:**
+| Option | Description |
+|--------|-------------|
+| `--with-deps` | Automatically add component dependencies to requirements.txt/package.json |
+
 **Version Configuration:**
 | Option | Description |
 |--------|-------------|
@@ -100,6 +105,21 @@ spinbox create api --fastapi --redis
 
 # Frontend with MongoDB
 spinbox create frontend-app --nextjs --mongodb
+```
+
+**With automatic dependency management:**
+```bash
+# FastAPI project with dependencies
+spinbox create myapi --fastapi --with-deps
+
+# Full-stack with all dependencies
+spinbox create webapp --fastapi --nextjs --postgresql --with-deps
+
+# AI/LLM project with comprehensive dependencies
+spinbox create ai-project --fastapi --chroma --with-deps
+
+# Profile with dependencies
+spinbox create data-project --profile data-science --with-deps
 ```
 
 **Version customization:**
@@ -160,6 +180,11 @@ spinbox add [OPTIONS]
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
 
+**Dependency Management:**
+| Option | Description |
+|--------|-------------|
+| `--with-deps` | Automatically add component dependencies to requirements.txt/package.json |
+
 **Version Configuration:**
 | Option | Description |
 |--------|-------------|
@@ -179,11 +204,15 @@ spinbox add --postgresql
 spinbox add --postgresql --redis        # Primary storage + caching layer
 spinbox add --mongodb --chroma        # Alternative storage + vector search
 
+# Add with automatic dependency management
+spinbox add --postgresql --redis --with-deps
+spinbox add --chroma --with-deps
+
 # Add with version specification
 spinbox add --postgresql --postgres-version 14
 
 # Add Next.js to FastAPI-only project
-spinbox add --nextjs --node-version 18
+spinbox add --nextjs --node-version 18 --with-deps
 ```
 
 #### Behavior
@@ -685,6 +714,81 @@ postgres_version = "15"
 
 [templates]
 python_requirements = "api-development"
+```
+
+## Dependency Management
+
+Spinbox supports automatic dependency management for Python and Node.js projects using the `--with-deps` flag.
+
+### How It Works
+
+When `--with-deps` is specified:
+1. **Detects project type**: Python (requirements.txt) or Node.js (package.json)
+2. **Reads component dependencies**: From TOML templates in `templates/dependencies/`
+3. **Adds packages**: Appends to existing files or creates new ones
+4. **Avoids duplicates**: Checks for existing packages before adding
+5. **Generates setup scripts**: Creates installation scripts for easy dependency setup
+
+### Supported Dependencies
+
+#### Python Components
+| Component | Packages Added |
+|-----------|---------------|
+| `fastapi` | fastapi>=0.104.0, uvicorn[standard]>=0.24.0, pydantic>=2.5.0, python-dotenv>=1.0.0 |
+| `postgresql` | sqlalchemy>=2.0.0, asyncpg>=0.29.0, alembic>=1.13.0, psycopg2-binary>=2.9.0 |
+| `redis` | redis>=5.0.0, celery>=5.3.0 |
+| `chroma` | chromadb>=0.4.0, sentence-transformers>=2.2.0 |
+| `mongodb` | beanie>=1.24.0, motor>=3.3.0 |
+
+#### Node.js Components
+| Component | Packages Added |
+|-----------|---------------|
+| `nextjs` | next@^14.0.0, react@^18.0.0, react-dom@^18.0.0, axios@^1.6.0, TypeScript types |
+| `express` | express@^4.18.0, cors@^2.8.5, helmet@^7.0.0, morgan@^1.10.0, TypeScript types |
+| `tailwindcss` | tailwindcss@^3.3.0, autoprefixer@^10.4.0, postcss@^8.4.0 |
+
+#### Template Dependencies
+| Template | Packages Added |
+|----------|---------------|
+| `data-science` | pandas, numpy, matplotlib, seaborn, scikit-learn, jupyter, plotly |
+| `ai-llm` | openai, anthropic, langchain, llama-index, tiktoken, transformers |
+| `web-scraping` | beautifulsoup4, requests, selenium, scrapy, lxml |
+| `api-development` | fastapi, uvicorn, pydantic, httpx, python-multipart |
+
+### Usage Examples
+
+```bash
+# Create project with dependencies
+spinbox create myapi --fastapi --postgresql --with-deps
+
+# Add components with dependencies
+spinbox add --redis --chroma --with-deps
+
+# Profile with dependencies
+spinbox create ai-project --profile ai-llm --with-deps
+```
+
+### Generated Files
+
+#### Python Projects
+- **requirements.txt**: Contains all Python package dependencies
+- **setup-python-deps.sh**: Script for easy installation
+
+#### Node.js Projects  
+- **package.json**: Contains all Node.js dependencies (runtime and dev)
+- **setup-nodejs-deps.sh**: Script for easy installation
+
+### Installation
+
+After project creation:
+```bash
+# Python projects
+./setup-python-deps.sh
+# or manually: pip install -r requirements.txt
+
+# Node.js projects
+./setup-nodejs-deps.sh  
+# or manually: npm install
 ```
 
 ## Environment Variables
