@@ -19,6 +19,19 @@ source testing/test-utils.sh
 # Setup test environment and cleanup
 setup_test_environment "Workflow Scenarios Tests"
 
+# Cleanup function
+cleanup_integration_test() {
+    echo "[Cleanup] Cleaning up test artifacts..."
+    rm -rf test-* 2>/dev/null || true
+    rm -rf ~/test-* 2>/dev/null || true
+    rm -rf /tmp/test-* 2>/dev/null || true
+    ./uninstall.sh --config --force &>/dev/null || true
+    sudo ./uninstall.sh --config --force &>/dev/null || true
+}
+
+# Ensure cleanup runs on exit
+trap cleanup_integration_test EXIT
+
 # Test function
 test_scenario() {
     local name="$1"

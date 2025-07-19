@@ -24,6 +24,19 @@ setup_test_env() {
     export CONFIG_DIR="$TEST_DIR/.config"
 }
 
+# Cleanup test environment
+cleanup_test_env() {
+    rm -rf "$TEST_DIR" 2>/dev/null || true
+    rm -rf "$TEST_PROJECT_NAME" 2>/dev/null || true
+    rm -rf "test-cli-project" 2>/dev/null || true
+    rm -rf "test-fullstack" 2>/dev/null || true
+    rm -rf "test-versions" 2>/dev/null || true
+    rm -rf "perf-test" 2>/dev/null || true
+}
+
+# Ensure cleanup runs on exit
+trap cleanup_test_env EXIT
+
 # CLI Help System Tests
 test_cli_help() {
     echo -e "\n${YELLOW}=== CLI Help System Tests ===${NC}"
