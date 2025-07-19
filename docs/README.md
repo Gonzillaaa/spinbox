@@ -6,6 +6,8 @@ Essential guides for Spinbox users - start here for installation, tutorials, and
 - [`user/installation.md`](./user/installation.md) - Complete installation guide for all platforms
 - [`user/quick-start.md`](./user/quick-start.md) - 5-minute tutorial to get started
 - [`user/cli-reference.md`](./user/cli-reference.md) - Complete command-line interface reference
+- [`user/dependency-management.md`](./user/dependency-management.md) - Automatic dependency management with --with-deps
+- [`user/chroma-usage.md`](./user/chroma-usage.md) - Chroma vector database usage guide
 - [`user/troubleshooting.md`](./user/troubleshooting.md) - Common issues and solutions
 
 ## 🏗️ Development Documentation
@@ -15,7 +17,6 @@ Technical documentation for contributors, component developers, and advanced use
 - [`dev/global-cli-implementation.md`](./dev/global-cli-implementation.md) - Detailed technical implementation
 - [`dev/implementation-strategy.md`](./dev/implementation-strategy.md) - Implementation strategy overview
 - [`dev/adding-components.md`](./dev/adding-components.md) - How to add components to projects
-- [`dev/chroma-usage.md`](./dev/chroma-usage.md) - Chroma vector database usage guide
 - [`dev/bare-bones-projects.md`](./dev/bare-bones-projects.md) - Minimal project specifications
 - [`dev/release-process.md`](./dev/release-process.md) - Release and deployment process
 - [`dev/backlog.md`](./dev/backlog.md) - Development backlog and roadmap

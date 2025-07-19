@@ -6,23 +6,17 @@ Get up and running with Spinbox in 5 minutes! This guide will walk you through i
 
 ### Step 1: Install Spinbox (2 minutes)
 
-**User install (recommended, automatic PATH setup):**
 ```bash
+# Recommended installation (no sudo required)
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
 ```
-- Installs to `~/.local/bin` (no sudo required)
-- Automatically adds to your PATH by detecting shell type
-- Restart terminal or run `source ~/.bashrc` if needed
 
-**System install (if you prefer):**
-```bash
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
-```
+**Need help?** See the [detailed installation guide](./installation.md) for platform-specific instructions and troubleshooting.
 
 **Verify installation:**
 ```bash
 spinbox --version
-# Should output: Spinbox v0.1.0-beta.4
+# Should output: Spinbox v0.1.0-beta.5
 ```
 
 ### Step 2: Explore Available Options (30 seconds)
@@ -343,12 +337,12 @@ code .
 ## Next Steps
 
 ### Explore Documentation
-- **Installation Guide**: [docs/installation.md](./installation.md)
-- **CLI Reference**: [docs/cli-reference.md](./cli-reference.md)
-- **Troubleshooting**: [docs/troubleshooting.md](./troubleshooting.md)
+- **Installation Guide**: [docs/user/installation.md](./installation.md)
+- **CLI Reference**: [docs/user/cli-reference.md](./cli-reference.md)
+- **Troubleshooting**: [docs/user/troubleshooting.md](./troubleshooting.md)
 
 ### Learn More About Components
-- **Adding Components**: [docs/adding-components.md](./adding-components.md)
+- **Adding Components**: [docs/dev/adding-components.md](../dev/adding-components.md)
 - **Backend Development**: Check `backend/README.md` in generated projects
 - **Frontend Development**: Check `frontend/README.md` in generated projects
 

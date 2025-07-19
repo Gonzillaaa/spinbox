@@ -11,6 +11,7 @@ This project uses a **DevContainer-first approach**. All development is designed
 - [Docker Issues](#docker-issues)
 - [Container Issues](#container-issues)
 - [DevContainer Issues](#devcontainer-issues)
+- [Dependency Management Issues](#dependency-management-issues)
 - [Network Issues](#network-issues)
 - [Performance Issues](#performance-issues)
 - [Script Issues](#script-issues)
@@ -299,6 +300,139 @@ DevContainers are the primary prototyping environment for this project. All Pyth
    ```
    Ctrl+Shift+P → Terminal: Kill All Terminals
    ```
+
+## Dependency Management Issues
+
+The `--with-deps` flag automatically manages Python and Node.js dependencies. Here are common issues and solutions.
+
+### Dependencies Not Added to requirements.txt
+
+**Symptoms:**
+- `requirements.txt` exists but is empty or missing expected packages
+- Python packages not available after installation
+
+**Solutions:**
+1. **Verify you used the flag correctly:**
+   ```bash
+   spinbox create myproject --fastapi --with-deps
+   # NOT: spinbox create myproject --fastapi --deps
+   ```
+
+2. **Check component combinations:**
+   - Only specific components support automatic dependencies
+   - See [dependency management guide](./dependency-management.md) for supported components
+
+3. **Manual dependency addition:**
+   ```bash
+   # Add dependencies to existing project
+   spinbox add --redis --with-deps
+   ```
+
+### Dependencies Not Added to package.json
+
+**Symptoms:**
+- `package.json` missing dependencies for Node.js components
+- npm install fails or packages not found
+
+**Solutions:**
+1. **Verify Next.js component was added:**
+   ```bash
+   # Must include Node.js components for package.json generation
+   spinbox create myproject --nextjs --with-deps
+   ```
+
+2. **Check project structure:**
+   ```bash
+   # Verify package.json exists in nextjs/ directory
+   ls nextjs/package.json
+   ```
+
+3. **Reinstall with dependencies:**
+   ```bash
+   cd nextjs/
+   npm install
+   ```
+
+### Dependency Conflicts
+
+**Symptoms:**
+- Installation errors about conflicting versions
+- Some packages not installing correctly
+
+**Solutions:**
+1. **Check for duplicate additions:**
+   ```bash
+   # Avoid adding the same component multiple times
+   spinbox status  # Check what's already added
+   ```
+
+2. **Review generated files:**
+   ```bash
+   # Check requirements.txt for duplicates
+   cat requirements.txt | sort | uniq
+   
+   # Check package.json for conflicts
+   cd nextjs/ && npm list
+   ```
+
+3. **Manual cleanup:**
+   ```bash
+   # Remove duplicates from requirements.txt
+   pip freeze > requirements.txt
+   ```
+
+### Missing Component Dependencies
+
+**Symptoms:**
+- Expected packages not in requirements.txt/package.json
+- Component-specific functionality not working
+
+**Solutions:**
+1. **Verify component support:**
+   - Check [dependency management guide](./dependency-management.md)
+   - Not all components have automatic dependencies
+
+2. **Check TOML templates:**
+   ```bash
+   # Verify component is in dependency templates
+   cat ~/.spinbox/templates/dependencies/python-components.toml
+   ```
+
+3. **Add dependencies manually:**
+   ```bash
+   # Add to requirements.txt
+   echo "missing-package==1.0.0" >> requirements.txt
+   
+   # Add to package.json
+   cd nextjs/ && npm install missing-package
+   ```
+
+### Setup Script Issues
+
+**Symptoms:**
+- `setup_deps.sh` missing or not executable
+- Dependencies not installing in DevContainer
+
+**Solutions:**
+1. **Check script exists:**
+   ```bash
+   ls -la setup_deps.sh
+   chmod +x setup_deps.sh
+   ```
+
+2. **Run script manually:**
+   ```bash
+   # Inside DevContainer
+   ./setup_deps.sh
+   ```
+
+3. **Verify script contents:**
+   ```bash
+   # Check generated installation commands
+   cat setup_deps.sh
+   ```
+
+For more detailed information about automatic dependency management, see the [Dependency Management Guide](./dependency-management.md).
 
 ## Network Issues
 
@@ -671,4 +805,4 @@ For business-critical issues:
 - VS Code Enterprise Support
 - Professional consulting services
 
-Remember to check the [performance optimization guide](./performance.md) for additional tips on improving system performance.
+For additional performance optimization tips, refer to your specific component documentation.

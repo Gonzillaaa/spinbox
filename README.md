@@ -26,23 +26,15 @@ Spinbox is a **global CLI tool** for creating customizable prototyping environme
 
 ### 1. Install Spinbox
 
-**Option A: User install (recommended):**
-
 ```bash
-# Install to ~/.local/bin (no sudo required, automatic PATH setup)
+# User install (recommended - no sudo required)
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
-```
 
-**Note:** The user installation automatically adds `~/.local/bin` to your PATH by detecting your shell and updating the appropriate profile file (.zshrc, .bashrc, etc.). Just restart your terminal or run `source ~/.bashrc` after installation.
-
-**Option B: System install:**
-
-```bash
-# Install to /usr/local/bin (requires sudo)
+# Or system install (requires sudo)
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash
 ```
 
-**Note:** Installs to `/usr/local/bin` (usually in PATH), requires `sudo`, and does not update your shell profile.
+**For detailed installation instructions and troubleshooting, see [Installation Guide](./docs/user/installation.md).**
 
 ### 2. Create Your First Project
 
@@ -320,8 +312,9 @@ spinbox config --set PYTHON_VERSION=3.11
 - [Quick Start Guide](./docs/user/quick-start.md)
 - [CLI Reference](./docs/user/cli-reference.md)
 - [Installation Guide](./docs/user/installation.md)
+- [Dependency Management](./docs/user/dependency-management.md)
 - [Adding Components](./docs/dev/adding-components.md)
-- [Troubleshooting](./docs/troubleshooting.md)
+- [Troubleshooting](./docs/user/troubleshooting.md)
 
 See [docs/README.md](./docs/README.md) for complete documentation index.
 

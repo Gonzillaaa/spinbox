@@ -13,7 +13,7 @@ Before installing Spinbox, ensure you have:
 - **Git**: Required for installation and project initialization
 - **Docker Desktop**: Required for DevContainer support and service orchestration
 - **DevContainer-compatible editor**: VS Code, Cursor, or similar for optimal experience
-- **Bash shell**: macOS and Linux have this by default; Windows users should use WSL2
+- **Bash shell**: macOS and Linux have this by default
 
 ### Platform Requirements
 
@@ -21,7 +21,6 @@ Before installing Spinbox, ensure you have:
 |----------|----------------|-------------|
 | macOS | 10.15 (Catalina) | 12.0+ (Monterey) |
 | Linux | Ubuntu 18.04+ / Similar | Ubuntu 20.04+ |
-| Windows | WSL2 | WSL2 with Ubuntu |
 
 ## Installation
 
@@ -46,7 +45,7 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh |
 **Verify Installation:**
 ```bash
 spinbox --version
-# Should output: Spinbox v0.1.0-beta.4
+# Should output: Spinbox v0.1.0-beta.5
 ```
 
 ### Alternative: Manual Installation
@@ -167,23 +166,6 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh |
 
 **Note:** The user installation automatically configures your shell profile. For system installation, ensure `/usr/local/bin` is in your PATH.
 
-### Windows (WSL2) Installation
-
-**Prerequisites:**
-1. Install WSL2 with Ubuntu distribution
-2. Install Docker Desktop for Windows with WSL2 backend
-
-**In WSL2 Terminal:**
-```bash
-# Update system
-sudo apt update && sudo apt upgrade -y
-
-# Install prerequisites
-sudo apt install -y git curl bash
-
-# Install Spinbox (user installation with automatic PATH setup)
-curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user.sh | bash
-```
 
 ## Docker Desktop Setup
 
@@ -194,10 +176,6 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user
 brew install --cask docker
 # Or download from: https://docs.docker.com/desktop/mac/install/
 ```
-
-**Windows:**
-- Download from: https://docs.docker.com/desktop/windows/install/
-- Ensure WSL2 backend is enabled
 
 **Linux:**
 ```bash
@@ -333,7 +311,7 @@ sudo chown $USER:$USER /usr/local/bin/spinbox
 docker --version
 docker ps
 
-# Start Docker Desktop (macOS/Windows)
+# Start Docker Desktop (macOS)
 open -a Docker  # macOS
 
 # Start Docker service (Linux)
@@ -398,8 +376,8 @@ echo "=== Verification Complete ==="
 
 **Documentation:**
 - Main README: [GitHub Repository](https://github.com/Gonzillaaa/spinbox)
-- Troubleshooting: [docs/troubleshooting.md](./troubleshooting.md)
-- Quick Start: [docs/quick-start.md](./quick-start.md)
+- Troubleshooting: [docs/user/troubleshooting.md](./troubleshooting.md)
+- Quick Start: [docs/user/quick-start.md](./quick-start.md)
 
 **Community:**
 - Issues: [GitHub Issues](https://github.com/Gonzillaaa/spinbox/issues)
@@ -509,7 +487,7 @@ rm -rf ~/.spinbox
 
 After successful installation:
 
-1. **Read Quick Start Guide**: [docs/quick-start.md](./quick-start.md)
+1. **Read Quick Start Guide**: [docs/user/quick-start.md](./quick-start.md)
 2. **Explore Profiles**: `spinbox profiles`
 3. **Create First Project**: `spinbox create myproject --profile web-app`
 4. **Configure Preferences**: `spinbox config --setup`
