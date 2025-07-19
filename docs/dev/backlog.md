@@ -35,7 +35,7 @@ Task-oriented development tracking updated with each commit. All work estimated 
 
 ## ✅ Recently Completed (Last 7 Days)
 
-### Documentation Review & Cleanup (Completed July 19, 2025) - 8 SP Total
+### Documentation Review & Cleanup (Completed July 19, 2025) - 14 SP Total
 - [x] 2.0 SP: Version reference audit and updates
   - Updated 11 files from v0.1.0-beta.4 to v0.1.0-beta.5
   - Fixed docs/releases/README.md, release-process.md, implementation-strategy.md
@@ -55,6 +55,14 @@ Task-oriented development tracking updated with each commit. All work estimated 
   - Simplified installation instructions in README.md and quick-start.md
   - Added comprehensive --with-deps troubleshooting section
   - Clarified chroma-usage.md disclaimer about example implementations
+- [x] 3.0 SP: Documentation process and planning infrastructure
+  - Created systematic documentation-review-process.md methodology
+  - Developed strategic roadmap.md with long-term vision
+  - Restructured backlog.md with granular story point tracking
+- [x] 1.0 SP: File organization and cross-reference cleanup
+  - Moved dependency-management.md and chroma-usage.md to docs/user/
+  - Fixed broken cross-references throughout documentation
+  - Removed redundant project-status document
 
 ### Automatic Dependency Management (Completed July 18, 2025) - 32 SP Total
 - [x] 12 SP: TOML-based dependency template system
@@ -232,6 +240,6 @@ Task-oriented development tracking updated with each commit. All work estimated 
 **Estimation Reviews**: Monthly (recalibrate story point estimates)
 **Priority Reviews**: Bi-weekly (adjust priority based on user feedback)
 
-**Last Updated**: July 19, 2025
+**Last Updated**: July 19, 2025 (Documentation work completed: 14 SP)
 **Next Review**: July 22, 2025 (mid-sprint check)
 **Next Planning**: July 25, 2025 (sprint end + next sprint planning)
