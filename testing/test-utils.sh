@@ -32,12 +32,14 @@ cleanup_test_env() {
     echo -e "${BLUE}[Cleanup] Removing test directories from project root...${NC}"
     rm -rf "$PROJECT_ROOT"/test-* 2>/dev/null || true
     rm -rf "$PROJECT_ROOT"/perf-test* 2>/dev/null || true
+    rm -rf "$PROJECT_ROOT"/perf-check* 2>/dev/null || true
     rm -rf "$PROJECT_ROOT"/smoke-* 2>/dev/null || true
     
     # Remove test directories from home
     echo -e "${BLUE}[Cleanup] Removing test directories from home...${NC}"
     rm -rf ~/test-* 2>/dev/null || true
     rm -rf ~/perf-test* 2>/dev/null || true
+    rm -rf ~/perf-check* 2>/dev/null || true
     rm -rf ~/smoke-* 2>/dev/null || true
     
     # Remove test directories from tmp
@@ -45,6 +47,7 @@ cleanup_test_env() {
     rm -rf /tmp/test-* 2>/dev/null || true
     rm -rf /tmp/spinbox-* 2>/dev/null || true
     rm -rf /tmp/perf-test* 2>/dev/null || true
+    rm -rf /tmp/perf-check* 2>/dev/null || true
     rm -rf /tmp/smoke-* 2>/dev/null || true
     
     # Remove temporary test directory if set
