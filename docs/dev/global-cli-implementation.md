@@ -924,7 +924,7 @@ test_functionality_preservation() {
 - [x] ✅ `docs/installation.md` - New installation methods
 - [x] ✅ `docs/usage.md` - CLI command reference
 - [x] ✅ `docs/migration.md` - Migration guide from template system
-- [x] ✅ `docs/troubleshooting.md` - CLI-specific troubleshooting
+- [x] ✅ `docs/user/troubleshooting.md` - CLI-specific troubleshooting
 
 ### Step 6.2: Release Process
 

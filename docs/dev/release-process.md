@@ -2,7 +2,7 @@
 
 This document outlines the process for creating releases of Spinbox.
 
-**Current Status**: v0.1.0-beta.4 is the latest release with all core functionality implemented.
+**Current Status**: v0.1.0-beta.5 is the latest release with automatic dependency management implemented.
 
 ## Semantic Versioning
 
@@ -42,7 +42,7 @@ git pull origin main
 git checkout -b release/v0.1.0-beta.X
 
 # Update version in main CLI script
-sed -i 's/readonly VERSION=".*"/readonly VERSION="0.1.0-beta.5"/' bin/spinbox
+sed -i 's/readonly VERSION=".*"/readonly VERSION="0.1.0-beta.6"/' bin/spinbox
 
 # Verify version
 ./bin/spinbox --version
@@ -128,12 +128,12 @@ spinbox update --version v0.1.0-beta.X
 
 ### Location
 - **Directory**: `docs/releases/`
-- **Naming**: `v{VERSION}.md` (e.g., `v0.1.0-beta.4.md`)
+- **Naming**: `v{VERSION}.md` (e.g., `v0.1.0-beta.5.md`)
 - **Archive**: Keep all release notes for historical reference
 
 ### Current Releases
-- **Latest**: v0.1.0-beta.4 ✅ **CURRENT** (Bug fixes, update command improvements, test infrastructure)
-- **Previous**: v0.1.0-beta.2 (Foundation release)
+- **Latest**: v0.1.0-beta.5 ✅ **CURRENT** (Automatic dependency management, TOML templates, enhanced ecosystem)
+- **Previous**: v0.1.0-beta.4 (Bug fixes, test infrastructure), v0.1.0-beta.2 (Foundation release)
 - **Status**: All core functionality implemented and working
 
 ## Release Notes Template
@@ -183,8 +183,8 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh |
 ### Creating Test Releases
 
 1. **Create Initial Release**: v0.1.0-beta.1
-2. **Create Newer Release**: v0.1.0-beta.4 (latest)
-3. **Test Update Path**: v0.1.0-beta.1 → v0.1.0-beta.4
+2. **Create Newer Release**: v0.1.0-beta.5 (latest)
+3. **Test Update Path**: v0.1.0-beta.1 → v0.1.0-beta.5
 
 ### Update Testing Scenarios
 

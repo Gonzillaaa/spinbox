@@ -6,7 +6,7 @@ Spinbox has been successfully transformed from a template-based scaffolding syst
 
 ## Implementation Status: Target State Achieved ✅
 
-### Current Workflow (v0.1.0-beta.4 - IMPLEMENTED ✅)
+### Current Workflow (v0.1.0-beta.5 - IMPLEMENTED ✅)
 ```bash
 # One-time global installation
 curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh | sudo bash

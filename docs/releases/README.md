@@ -4,11 +4,11 @@ This directory contains release notes for all Spinbox versions.
 
 ## Latest Release
 
-**[v0.1.0-beta.4](v0.1.0-beta.4.md)** - January 13, 2025
-- 🐛 Fixed critical update command and version parsing errors
-- 🧪 Added comprehensive installation test infrastructure  
-- 🔧 Improved shell compatibility and installation detection
-- ✅ All 64 tests passing
+**[v0.1.0-beta.5](v0.1.0-beta.5.md)** - July 19, 2025
+- 🚀 Automatic dependency management with --with-deps flag
+- 📦 TOML-based dependency templates for Python and Node.js
+- 🎯 Smart conflict detection and setup script generation
+- ✅ All 77 tests passing with enhanced component ecosystem
 
 ## Previous Releases
 
@@ -19,7 +19,7 @@ This directory contains release notes for all Spinbox versions.
 
 ## Installation
 
-**Latest release (v0.1.0-beta.4):**
+**Latest release (v0.1.0-beta.5):**
 
 **User installation (no sudo required):**
 ```bash
@@ -38,6 +38,7 @@ spinbox update
 
 ## Release Archive
 
+- [v0.1.0-beta.5](v0.1.0-beta.5.md) - Automatic dependency management
 - [v0.1.0-beta.4](v0.1.0-beta.4.md) - Bug fixes and test infrastructure
 - v0.1.0-beta.2 - Foundation release (notes not archived)
 
