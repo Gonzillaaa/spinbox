@@ -9,7 +9,7 @@ Chroma is a lightweight vector database that's perfect for storing and searching
 - **Similarity Search**: Find documents similar to a query text
 - **Metadata Support**: Store additional information with each document
 
-> **Note**: This documentation describes the available Chroma features. The specific API endpoints shown below represent example implementations that can be built with the Chroma dependency included in FastAPI projects.
+> **Important**: When you add Chroma to a Spinbox project with `spinbox add --chroma`, you get the Chroma dependency and basic project structure. The API endpoints shown below are **example implementations** that you can build using the included Chroma library - they are not automatically generated or included in your project.
 
 ## Example API Endpoints
 
@@ -222,7 +222,7 @@ When you add Chroma to a Spinbox project with `spinbox add --chroma`, the follow
 - Basic project structure with `chroma_data/` directory
 - `.gitignore` entries for the vector database files
 
-The API endpoints shown above are examples of what you can build with the included Chroma dependency. They represent common patterns for vector database integration with FastAPI.
+**Remember**: The API endpoints shown above are examples you need to implement yourself. Spinbox provides the foundation (dependency, directory structure, configuration), but you build the actual functionality using these patterns.
 
 ## References
 
