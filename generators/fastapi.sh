@@ -68,24 +68,37 @@ function generate_fastapi_dockerhub_config() {
     
     print_debug "Generating FastAPI configuration with Docker Hub image: $image_name"
     
-    # Create minimal Dockerfile.dev that uses the pre-built image
+    # Create minimal Dockerfile.dev that uses the pre-built base image
     cat > "$fastapi_dir/Dockerfile.dev" << EOF
 # FastAPI Development Container (Docker Hub optimized)
-# Uses pre-built image: ${image_name}:latest
+# Uses pre-built base image: ${image_name}:latest
 FROM ${image_name}:latest
 
 WORKDIR /workspace
 
-# The base image already contains:
-# - Python 3.11 with UV package manager
-# - Common FastAPI dependencies (fastapi, uvicorn, sqlalchemy, etc.)
-# - Development tools (zsh, oh-my-zsh, powerlevel10k)
+# The base image contains:
+# - Python 3.11 with UV package manager  
+# - Development tools (git, zsh, oh-my-zsh, powerlevel10k, nano, tree, jq, htop)
 # - Development aliases and environment setup
+# Application dependencies will be installed via requirements.txt
 
-# Copy project-specific requirements if they exist
-# Additional dependencies will be installed via requirements.txt
-COPY requirements.txt* ./
-RUN if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
+# Create virtual environment
+RUN python -m venv venv
+ENV PATH="/workspace/venv/bin:\$PATH"
+
+# Copy requirements and install dependencies using UV
+COPY requirements.txt ./
+RUN uv pip install -r requirements.txt
+
+# Add FastAPI development aliases
+RUN echo '# FastAPI Development aliases' >> ~/.zshrc \\
+    && echo 'alias rs="uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"' >> ~/.zshrc \\
+    && echo 'alias test="pytest"' >> ~/.zshrc \\
+    && echo 'alias uvinstall="uv pip install -r requirements.txt"' >> ~/.zshrc \\
+    && echo 'alias migrate="alembic upgrade head"' >> ~/.zshrc
+
+# Activate virtual environment on shell start
+RUN echo 'if [[ -f /workspace/venv/bin/activate ]]; then source /workspace/venv/bin/activate; fi' >> ~/.zshrc
 
 EXPOSE 8000
 

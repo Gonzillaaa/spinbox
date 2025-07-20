@@ -62,24 +62,31 @@ function generate_nextjs_dockerhub_config() {
     
     print_debug "Generating NextJS configuration with Docker Hub image: $image_name"
     
-    # Create minimal Dockerfile.dev that uses the pre-built image
+    # Create minimal Dockerfile.dev that uses the pre-built base image
     cat > "$nextjs_dir/Dockerfile.dev" << EOF
 # Next.js Development Container (Docker Hub optimized)
-# Uses pre-built image: ${image_name}:latest
+# Uses pre-built base image: ${image_name}:latest
 FROM ${image_name}:latest
 
 WORKDIR /app
 
-# The base image already contains:
-# - Node.js 20 with npm/yarn
-# - Common Next.js dependencies (next, react, typescript, etc.)
-# - Development tools (zsh, oh-my-zsh, powerlevel10k)
+# The base image contains:
+# - Node.js 20 with npm package manager
+# - Development tools (git, zsh, oh-my-zsh, powerlevel10k, nano, tree, jq, htop)
 # - Development aliases and environment setup
+# Application dependencies will be installed via package.json
 
-# Copy project-specific package.json if it exists
-# Additional dependencies will be installed via package.json
-COPY package.json* package-lock.json* ./
-RUN if [ -f package.json ]; then npm install; fi
+# Copy package files and install dependencies using npm
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# Add Next.js development aliases
+RUN echo '# Next.js Development aliases' >> ~/.zshrc \\
+    && echo 'alias dev="npm run dev"' >> ~/.zshrc \\
+    && echo 'alias build="npm run build"' >> ~/.zshrc \\
+    && echo 'alias lint="npm run lint"' >> ~/.zshrc \\
+    && echo 'alias test="npm test"' >> ~/.zshrc \\
+    && echo 'alias type-check="npm run type-check"' >> ~/.zshrc
 
 EXPOSE 3000
 

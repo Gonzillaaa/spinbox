@@ -66,24 +66,38 @@ function generate_python_dockerhub_config() {
 }
 EOF
     
-    # Create minimal Dockerfile that uses the pre-built image
+    # Create minimal Dockerfile that uses the pre-built base image
     cat > "$devcontainer_dir/Dockerfile" << EOF
 # Minimal Python DevContainer (Docker Hub optimized)
-# Uses pre-built image: ${image_name}:latest
+# Uses pre-built base image: ${image_name}:latest
 FROM ${image_name}:latest
 
 WORKDIR /workspace
 
-# The base image already contains:
+# The base image contains:
 # - Python 3.11 with UV package manager
-# - Common Python development tools (pytest, black, isort, mypy, etc.)
-# - Development tools (zsh, oh-my-zsh, powerlevel10k)
+# - Development tools (git, zsh, oh-my-zsh, powerlevel10k, nano, tree, jq, htop)
 # - Development aliases and environment setup
+# Application dependencies will be installed via requirements.txt
 
-# Copy project-specific requirements if they exist
-# Additional dependencies will be installed via requirements.txt
-COPY requirements.txt* ./
-RUN if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
+# Create Python virtual environment
+RUN python -m venv venv
+ENV PATH="/workspace/venv/bin:\$PATH"
+
+# Copy requirements and install dependencies using UV
+COPY requirements.txt ./
+RUN uv pip install -r requirements.txt
+
+# Add Python development aliases
+RUN echo '# Python Development aliases' >> ~/.zshrc \\
+    && echo 'alias venv="source venv/bin/activate"' >> ~/.zshrc \\
+    && echo 'alias pytest-run="pytest"' >> ~/.zshrc \\
+    && echo 'alias format="black . && isort ."' >> ~/.zshrc \\
+    && echo 'alias lint="pylint *.py"' >> ~/.zshrc \\
+    && echo 'alias uvinstall="uv pip install"' >> ~/.zshrc
+
+# Activate virtual environment on shell start
+RUN echo 'if [[ -f /workspace/venv/bin/activate ]]; then source /workspace/venv/bin/activate; fi' >> ~/.zshrc
 
 # Copy and run setup script
 COPY setup.sh /setup.sh
@@ -92,6 +106,9 @@ RUN chmod +x /setup.sh
 # Keep container running for development
 CMD ["zsh", "-c", "while sleep 1000; do :; done"]
 EOF
+
+    # Generate common setup script for both modes
+    generate_python_setup_script "$devcontainer_dir"
 }
 
 # Generate local Docker configuration for Python (fallback mode)
