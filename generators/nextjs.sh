@@ -451,9 +451,6 @@ NEXT_PUBLIC_APP_NAME="Next.js App"
 EOF
     fi
 
-    if [[ ! -f "$nextjs_dir/.env.local" ]]; then
-        cp "$nextjs_dir/.env.local.example" "$nextjs_dir/.env.local"
-    fi
 
     # Copy Next.js .gitignore
     local gitignore_template="$PROJECT_ROOT/templates/security/nextjs.gitignore"
