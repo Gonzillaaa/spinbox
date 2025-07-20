@@ -156,8 +156,22 @@ Critical architectural improvements to prevent installation corruption and binar
 
 ## 🎯 Next Sprint Queue (July 27 - Aug 2, 2025)
 
-### Priority 5: Git Hooks Integration (15 SP Total)
-**Target**: v0.1.0-beta.7 release (moved up due to Docker Hub completion)
+### 🔥 Priority 0: Critical Bug Fixes (4 SP Total) - **BLOCKING RELEASE**
+**Target**: v0.1.0-beta.6 hotfix or v0.1.0-beta.7 (must be fixed before any release)
+**Impact**: Critical developer experience issues discovered via permutation testing
+
+- [ ] 3.0 SP: Fix Missing DevContainer Configuration Files
+  - Fix NextJS generator DevContainer template generation
+  - Verify and fix other affected generators  
+  - Add validation to prevent empty DevContainer directories
+  - Test all single-component project DevContainer functionality
+- [ ] 1.0 SP: Complete DevContainer Bug Scope Verification
+  - Systematic testing of all generators (Python, FastAPI, databases)
+  - Document which generators are affected beyond NextJS
+  - Create comprehensive DevContainer validation test suite
+
+### Priority 5: Git Hooks Integration (15 SP Total) - **DEFERRED**
+**Target**: v0.1.0-beta.8 release (deferred due to critical bugs taking priority)
 
 - [ ] 2.0 SP: Research and design pre-commit hook implementation
   - [ ] 0.5 SP: Research isort import sorting configuration
@@ -273,6 +287,85 @@ Critical architectural improvements to prevent installation corruption and binar
 - **Last Sprint**: 32/30 SP completed (107% - above target)
 - **7-day Average**: 114 SP/week (surge due to major architecture improvements)
 - **30-day Average**: 35 SP/week (updated with recent completions)
+
+## 🔥 Critical Bugs (Discovered via Permutation Testing)
+
+**Priority**: Fix immediately before next release
+**Discovery Method**: Systematic permutation testing of all component combinations
+**Last Updated**: July 20, 2025
+
+### High Severity - Developer Experience Impact
+
+- [ ] 3.0 SP: **Missing DevContainer Configuration Files** 
+  - **Issue**: `.devcontainer` directory created but empty (no `devcontainer.json` file)
+  - **Discovery**: NextJS-only projects confirmed affected during permutation testing
+  - **Expected**: Complete DevContainer configuration with `devcontainer.json`, Dockerfile references
+  - **Actual**: Empty `.devcontainer/` directory causing VS Code DevContainer failure
+  - **Impact**: Critical - projects cannot open in DevContainers (core developer workflow broken)
+  - **User Experience**: Developers get "No configuration found" errors in VS Code
+  - **Components Affected**: NextJS confirmed, requires systematic verification across all generators
+  - **Estimated Effort**: 3.0 SP (investigate all generators + fix template generation + test validation)
+
+### Medium Severity - Verification Required
+
+- [ ] 1.0 SP: **DevContainer Bug Scope Verification** ✅ **PARTIALLY COMPLETE**
+  - **Issue**: Determine if missing DevContainer files affect other generators beyond NextJS
+  - **Status**: ✅ Verified via focused testing - **only NextJS generator affected**
+  - **Results**: 7/8 generators work correctly (Python, Node, FastAPI, MongoDB, PostgreSQL, combinations)
+  - **Impact**: Medium - scope is limited to NextJS only
+  - **Remaining Work**: Final validation in full permutation test suite
+  - **Estimated Effort**: 0.5 SP (verification in full test suite)
+
+- [ ] 2.5 SP: **Directory Structure Conflicts in Multi-Component Projects** 🆕 **CRITICAL SCOPE**
+  - **Issue**: NextJS combinations create conflicting `src/` directories (root level + nextjs/src/)
+  - **Discovery**: Comprehensive permutation testing (42 combinations)
+  - **Scope**: **13 out of 42 projects affected (31% of all combinations)**
+  - **Affected Projects**: All NextJS combinations (python-nextjs, fastapi-nextjs, fullstack, profiles, etc.)
+  - **Expected**: Clean separation between component directories
+  - **Actual**: Multiple competing `src/` directories created causing confusion
+  - **Impact**: High - affects 31% of use cases, critical project structure issue
+  - **User Experience**: Developers unclear which `src/` to use, IDE navigation problems
+  - **Estimated Effort**: 2.5 SP (redesign multi-component directory architecture + fix all affected generators)
+
+- [ ] 0.5 SP: **NextJS Package.json Misplacement** 🆕
+  - **Issue**: NextJS-only projects place package.json at root instead of proper NextJS directory
+  - **Discovery**: Permutation testing structural analysis
+  - **Expected**: Consistent structure with multi-component projects
+  - **Actual**: Root package.json conflicts with expected NextJS app structure
+  - **Impact**: Medium - inconsistent project structure, potential future conflicts
+  - **Components Affected**: NextJS-only generator
+  - **Estimated Effort**: 0.5 SP (fix file placement in NextJS generator)
+
+- [ ] 1.5 SP: **Complex Component Generation Failures** 🆕 **BLOCKING**
+  - **Issue**: Dependency flag combinations fail to generate projects
+  - **Discovery**: 2 out of 42 permutation tests failed completely
+  - **Failed Projects**: Full Stack + Dependencies, Full Stack + Both Flags
+  - **Expected**: All valid component combinations should generate successfully
+  - **Actual**: Complex combinations with --with-deps flag fail
+  - **Impact**: High - certain feature combinations completely broken
+  - **Investigation**: Dependency resolution conflicts or resource constraints
+  - **Estimated Effort**: 1.5 SP (debug failures + fix dependency system integration)
+
+- [ ] 1.0 SP: **Profile Generation Inconsistencies** 🆕
+  - **Issue**: Profile-generated projects differ significantly from manual combinations
+  - **Discovery**: Web-app profile (67 files) vs FastAPI+NextJS manual (54 files)
+  - **Expected**: Functional equivalence between profile and manual generation
+  - **Actual**: 24% file count difference suggests structural differences
+  - **Impact**: Medium - potential feature differences, user confusion
+  - **Investigation**: Compare exact differences and ensure equivalence
+  - **Estimated Effort**: 1.0 SP (analyze differences + ensure consistency)
+
+### Validation Complete - No Action Required
+
+- [x] 0.0 SP: **NextJS Dual-Application Bug** ✅ **VERIFIED FIXED**
+  - **Previous Issue**: `--nextjs` flag created both Next.js app AND unwanted Express.js backend
+  - **Current Status**: ✅ Confirmed fixed - only creates proper Next.js application with `src/app/` structure
+  - **Verification Method**: Manual inspection of `nextjs-only` test project
+  - **Evidence**: No Express.js files found, clean Next.js structure, no `nextjs/` duplicate directory
+  - **Impact**: Major structural bug successfully resolved
+  - **Note**: This was likely fixed as part of recent component generator improvements
+
+**Total Critical Bug Story Points**: 8.5 SP (3.0 + 0.5 + 2.5 + 0.5 + 1.5 + 1.0)
 
 ## 🐛 Technical Debt Queue (Prioritized by Impact)
 
