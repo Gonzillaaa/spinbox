@@ -12,7 +12,16 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/docker-hub.sh"
 # Generate Next.js frontend component
 function generate_nextjs_component() {
     local project_dir="$1"
-    local nextjs_dir="$project_dir/nextjs"
+    
+    # Determine target directory based on component configuration
+    local nextjs_dir
+    if [[ "$USE_FASTAPI" == false && "$USE_NODE" == false && "$USE_PYTHON" == false ]]; then
+        # Next.js is the only component - generate at root level
+        nextjs_dir="$project_dir"
+    else
+        # Multi-component project - generate in subdirectory
+        nextjs_dir="$project_dir/nextjs"
+    fi
     
     if [[ "$DRY_RUN" == true ]]; then
         print_info "DRY RUN: Would generate Next.js frontend component"
@@ -785,7 +794,11 @@ function create_nextjs_component() {
     
     print_status "Next.js frontend component created successfully!"
     print_info "Next steps:"
-    echo "  1. cd $(basename "$project_dir")/frontend"
+    if [[ "$USE_FASTAPI" == false && "$USE_NODE" == false && "$USE_PYTHON" == false ]]; then
+        echo "  1. cd $(basename "$project_dir")"
+    else
+        echo "  1. cd $(basename "$project_dir")/nextjs"
+    fi
     echo "  2. Install dependencies: npm install"
     echo "  3. Start development server: npm run dev"
     echo "  4. Open http://localhost:3000 in your browser"

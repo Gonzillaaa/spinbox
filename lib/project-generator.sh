@@ -43,7 +43,6 @@ function parse_component_flags() {
                 ;;
             --nextjs)
                 USE_NEXTJS=true
-                USE_NODE=true    # Next.js requires Node
                 SELECTED_COMPONENTS+=("nextjs")
                 ;;
             --postgresql)
@@ -126,7 +125,8 @@ function create_project_directory() {
         safe_create_dir "$project_dir/fastapi"
     fi
     
-    if [[ "$USE_NEXTJS" == true ]]; then
+    if [[ "$USE_NEXTJS" == true ]] && [[ "$USE_FASTAPI" == true || "$USE_NODE" == true || "$USE_PYTHON" == true ]]; then
+        # Only create nextjs subdirectory for multi-component projects
         safe_create_dir "$project_dir/nextjs"
     fi
     
@@ -854,7 +854,11 @@ function create_project() {
         echo "  4. Set up Python environment: cd fastapi && ./setup_venv.sh"
     fi
     if [[ "$USE_NEXTJS" == true ]]; then
-        echo "  4. Install Node.js dependencies: cd nextjs && npm install"
+        if [[ "$USE_FASTAPI" == false && "$USE_NODE" == false && "$USE_PYTHON" == false ]]; then
+            echo "  4. Install Node.js dependencies: npm install"
+        else
+            echo "  4. Install Node.js dependencies: cd nextjs && npm install"
+        fi
     fi
     if [[ "$USE_POSTGRESQL" == true ]] || [[ "$USE_REDIS" == true ]] || [[ "$USE_MONGODB" == true ]] || [[ "$USE_CHROMA" == true ]]; then
         echo "  5. Start services: docker-compose up -d"
