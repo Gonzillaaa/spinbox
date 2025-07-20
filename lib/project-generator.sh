@@ -80,6 +80,13 @@ function validate_project_directory() {
     
     if [[ -d "$project_dir" ]]; then
         if [[ "$FORCE" == true ]]; then
+            # Safety check: validate path before any destructive operations
+            if ! validate_path_safety "$project_dir" "force removal"; then
+                print_error "Cannot force remove directory for safety reasons"
+                print_info "Choose a different project name or location"
+                exit 1
+            fi
+            
             print_warning "Directory $project_dir already exists - force mode enabled, will overwrite"
             if [[ "$DRY_RUN" != true ]]; then
                 rm -rf "$project_dir"

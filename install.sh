@@ -7,6 +7,8 @@ set -e
 REPO_URL="https://github.com/Gonzillaaa/spinbox.git"
 INSTALL_DIR="/usr/local/bin"
 CONFIG_DIR="$HOME/.spinbox"
+RUNTIME_DIR="$HOME/.spinbox/runtime"
+CACHE_DIR="$HOME/.spinbox/cache"
 TEMP_DIR="/tmp/spinbox-install"
 
 # Colors for output
@@ -76,24 +78,32 @@ install_spinbox() {
     # Make spinbox executable
     chmod +x bin/spinbox
     
-    # Install libraries to centralized user location
-    print_status "Installing libraries to $CONFIG_DIR/source..."
+    # Install runtime files to stable location
+    print_status "Installing runtime files to $RUNTIME_DIR..."
     if [[ -n "${SUDO_USER:-}" ]]; then
-        # Running with sudo - create directory as the actual user
-        sudo -u "$SUDO_USER" mkdir -p "$CONFIG_DIR/source"
-        sudo -u "$SUDO_USER" cp -r lib "$CONFIG_DIR/source/"
-        sudo -u "$SUDO_USER" cp -r generators "$CONFIG_DIR/source/"
+        # Running with sudo - create directories as the actual user
+        sudo -u "$SUDO_USER" mkdir -p "$RUNTIME_DIR"
+        sudo -u "$SUDO_USER" mkdir -p "$CACHE_DIR"
+        sudo -u "$SUDO_USER" cp -r lib "$RUNTIME_DIR/"
+        sudo -u "$SUDO_USER" cp -r generators "$RUNTIME_DIR/"
         if [ -d "templates" ]; then
-            sudo -u "$SUDO_USER" cp -r templates "$CONFIG_DIR/source/"
+            sudo -u "$SUDO_USER" cp -r templates "$RUNTIME_DIR/"
         fi
+        
+        # Copy source to cache for updates
+        sudo -u "$SUDO_USER" cp -r . "$CACHE_DIR/source"
     else
         # Running directly as user
-        mkdir -p "$CONFIG_DIR/source"
-        cp -r lib "$CONFIG_DIR/source/"
-        cp -r generators "$CONFIG_DIR/source/"
+        mkdir -p "$RUNTIME_DIR"
+        mkdir -p "$CACHE_DIR"
+        cp -r lib "$RUNTIME_DIR/"
+        cp -r generators "$RUNTIME_DIR/"
         if [ -d "templates" ]; then
-            cp -r templates "$CONFIG_DIR/source/"
+            cp -r templates "$RUNTIME_DIR/"
         fi
+        
+        # Copy source to cache for updates
+        cp -r . "$CACHE_DIR/source"
     fi
     
     # Install binary to system location (uses centralized source via detection)

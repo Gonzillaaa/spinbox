@@ -7,7 +7,9 @@ set -e
 REPO_URL="https://github.com/Gonzillaaa/spinbox.git"
 INSTALL_DIR="$HOME/.local/bin"
 CONFIG_DIR="$HOME/.spinbox"
-TEMP_DIR="$HOME/.spinbox/source"
+RUNTIME_DIR="$HOME/.spinbox/runtime"
+CACHE_DIR="$HOME/.spinbox/cache"
+TEMP_DIR="$CACHE_DIR/source"
 
 # Colors for output
 RED='\033[0;31m'
@@ -64,30 +66,66 @@ check_prerequisites() {
     print_status "Prerequisites check passed."
 }
 
+# Migrate legacy installation to new directory structure
+migrate_legacy_installation() {
+    local legacy_source="$HOME/.spinbox/source"
+    
+    # Check if legacy installation exists
+    if [[ -d "$legacy_source" ]] && [[ ! -d "$RUNTIME_DIR/lib" ]]; then
+        print_status "Migrating existing installation to new directory structure..."
+        
+        # Copy existing files to runtime directory if they exist
+        if [[ -d "$legacy_source/lib" ]]; then
+            cp -r "$legacy_source/lib" "$RUNTIME_DIR/" 2>/dev/null || true
+        fi
+        if [[ -d "$legacy_source/generators" ]]; then
+            cp -r "$legacy_source/generators" "$RUNTIME_DIR/" 2>/dev/null || true
+        fi
+        if [[ -d "$legacy_source/templates" ]]; then
+            cp -r "$legacy_source/templates" "$RUNTIME_DIR/" 2>/dev/null || true
+        fi
+        
+        print_status "Migration completed. Legacy installation preserved."
+    fi
+}
+
 # Download and install Spinbox
 install_spinbox() {
     print_status "Downloading Spinbox..."
     
-    # Clean up any existing source directory
+    # Create directory structure
+    mkdir -p "$RUNTIME_DIR"
+    mkdir -p "$CACHE_DIR"
+    mkdir -p "$CONFIG_DIR"
+    
+    # Clean up any existing cache directory (safe to delete)
     if [ -d "$TEMP_DIR" ]; then
         chmod -R u+w "$TEMP_DIR" 2>/dev/null || true
         rm -rf "$TEMP_DIR" 2>/dev/null || true
     fi
     
-    # Clone repository directly to centralized source location
+    # Clone repository to cache location (separate from runtime)
     git clone "$REPO_URL" "$TEMP_DIR"
     cd "$TEMP_DIR"
     
     # Make spinbox executable
     chmod +x bin/spinbox
     
-    # No need to copy files since we cloned directly to the centralized location
-    print_status "Setting up configuration..."
+    # Install runtime files to stable location (never deleted during operations)
+    print_status "Installing runtime files to $RUNTIME_DIR..."
+    cp -r lib "$RUNTIME_DIR/"
+    cp -r generators "$RUNTIME_DIR/"
+    if [ -d "templates" ]; then
+        cp -r templates "$RUNTIME_DIR/"
+    fi
     
-    # Install binary to user location (uses centralized source via detection)
+    # Install binary to user location
     print_status "Installing to $INSTALL_DIR..."
     cp bin/spinbox "$INSTALL_DIR/spinbox"
     chmod +x "$INSTALL_DIR/spinbox"
+    
+    # Migrate existing installation if present
+    migrate_legacy_installation
     
     # Make sure the binary was installed correctly
     if [ -x "$INSTALL_DIR/spinbox" ]; then
@@ -97,6 +135,7 @@ install_spinbox() {
         exit 1
     fi
     
+    print_status "Runtime files installed to $RUNTIME_DIR"
     print_status "Configuration directory created at $CONFIG_DIR"
 }
 

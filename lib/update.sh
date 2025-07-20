@@ -79,20 +79,53 @@ rollback_update() {
         cp "$backup_dir/spinbox" "$(which spinbox)"
     fi
     
-    # Restore support files
+    # Restore support files atomically
+    local runtime_dir="$HOME/.spinbox/runtime"
+    
     if [[ -d "$backup_dir/lib" ]]; then
-        rm -rf "$HOME/.spinbox/lib"
-        cp -r "$backup_dir/lib" "$HOME/.spinbox/"
+        # Atomic restore to runtime directory
+        cp -r "$backup_dir/lib" "$runtime_dir/lib.restored"
+        if [[ -d "$runtime_dir/lib" ]]; then
+            mv "$runtime_dir/lib" "$runtime_dir/lib.failed"
+        fi
+        mv "$runtime_dir/lib.restored" "$runtime_dir/lib"
+        rm -rf "$runtime_dir/lib.failed" 2>/dev/null || true
+        
+        # Legacy support
+        if [[ -d "$HOME/.spinbox/source" ]]; then
+            rm -rf "$HOME/.spinbox/lib" 2>/dev/null || true
+            cp -r "$backup_dir/lib" "$HOME/.spinbox/" 2>/dev/null || true
+        fi
     fi
     
     if [[ -d "$backup_dir/generators" ]]; then
-        rm -rf "$HOME/.spinbox/generators"
-        cp -r "$backup_dir/generators" "$HOME/.spinbox/"
+        cp -r "$backup_dir/generators" "$runtime_dir/generators.restored"
+        if [[ -d "$runtime_dir/generators" ]]; then
+            mv "$runtime_dir/generators" "$runtime_dir/generators.failed"
+        fi
+        mv "$runtime_dir/generators.restored" "$runtime_dir/generators"
+        rm -rf "$runtime_dir/generators.failed" 2>/dev/null || true
+        
+        # Legacy support
+        if [[ -d "$HOME/.spinbox/source" ]]; then
+            rm -rf "$HOME/.spinbox/generators" 2>/dev/null || true
+            cp -r "$backup_dir/generators" "$HOME/.spinbox/" 2>/dev/null || true
+        fi
     fi
     
     if [[ -d "$backup_dir/templates" ]]; then
-        rm -rf "$HOME/.spinbox/templates"
-        cp -r "$backup_dir/templates" "$HOME/.spinbox/"
+        cp -r "$backup_dir/templates" "$runtime_dir/templates.restored"
+        if [[ -d "$runtime_dir/templates" ]]; then
+            mv "$runtime_dir/templates" "$runtime_dir/templates.failed"
+        fi
+        mv "$runtime_dir/templates.restored" "$runtime_dir/templates"
+        rm -rf "$runtime_dir/templates.failed" 2>/dev/null || true
+        
+        # Legacy support
+        if [[ -d "$HOME/.spinbox/source" ]]; then
+            rm -rf "$HOME/.spinbox/templates" 2>/dev/null || true
+            cp -r "$backup_dir/templates" "$HOME/.spinbox/" 2>/dev/null || true
+        fi
     fi
     
     print_status "Rollback completed successfully."
@@ -153,20 +186,66 @@ install_update() {
     # Replace main executable
     cp "$temp_dir/bin/spinbox" "$spinbox_path"
     
-    # Update support files
+    # Update support files atomically to prevent broken states
+    local runtime_dir="$HOME/.spinbox/runtime"
+    local cache_dir="$HOME/.spinbox/cache"
+    
+    # Create directories if they don't exist (migration support)
+    mkdir -p "$runtime_dir"
+    mkdir -p "$cache_dir"
+    
+    # Update cache first (safe to replace)
+    if [[ -d "$cache_dir/source" ]]; then
+        rm -rf "$cache_dir/source"
+    fi
+    cp -r "$temp_dir" "$cache_dir/source"
+    
+    # Atomic update of runtime files
     if [[ -d "$temp_dir/lib" ]]; then
-        rm -rf "$HOME/.spinbox/lib"
-        cp -r "$temp_dir/lib" "$HOME/.spinbox/"
+        # Create new runtime in temporary location
+        cp -r "$temp_dir/lib" "$runtime_dir/lib.new"
+        # Atomic swap
+        if [[ -d "$runtime_dir/lib" ]]; then
+            mv "$runtime_dir/lib" "$runtime_dir/lib.backup"
+        fi
+        mv "$runtime_dir/lib.new" "$runtime_dir/lib"
+        # Remove backup on success
+        rm -rf "$runtime_dir/lib.backup" 2>/dev/null || true
     fi
     
     if [[ -d "$temp_dir/generators" ]]; then
-        rm -rf "$HOME/.spinbox/generators"
-        cp -r "$temp_dir/generators" "$HOME/.spinbox/"
+        cp -r "$temp_dir/generators" "$runtime_dir/generators.new"
+        if [[ -d "$runtime_dir/generators" ]]; then
+            mv "$runtime_dir/generators" "$runtime_dir/generators.backup"
+        fi
+        mv "$runtime_dir/generators.new" "$runtime_dir/generators"
+        rm -rf "$runtime_dir/generators.backup" 2>/dev/null || true
     fi
     
     if [[ -d "$temp_dir/templates" ]]; then
-        rm -rf "$HOME/.spinbox/templates"
-        cp -r "$temp_dir/templates" "$HOME/.spinbox/"
+        cp -r "$temp_dir/templates" "$runtime_dir/templates.new"
+        if [[ -d "$runtime_dir/templates" ]]; then
+            mv "$runtime_dir/templates" "$runtime_dir/templates.backup"
+        fi
+        mv "$runtime_dir/templates.new" "$runtime_dir/templates"
+        rm -rf "$runtime_dir/templates.backup" 2>/dev/null || true
+    fi
+    
+    # Legacy support: also update old location if it exists
+    if [[ -d "$HOME/.spinbox/source" ]]; then
+        print_info "Updating legacy source location for compatibility..."
+        if [[ -d "$temp_dir/lib" ]]; then
+            rm -rf "$HOME/.spinbox/lib" 2>/dev/null || true
+            cp -r "$temp_dir/lib" "$HOME/.spinbox/" 2>/dev/null || true
+        fi
+        if [[ -d "$temp_dir/generators" ]]; then
+            rm -rf "$HOME/.spinbox/generators" 2>/dev/null || true
+            cp -r "$temp_dir/generators" "$HOME/.spinbox/" 2>/dev/null || true
+        fi
+        if [[ -d "$temp_dir/templates" ]]; then
+            rm -rf "$HOME/.spinbox/templates" 2>/dev/null || true
+            cp -r "$temp_dir/templates" "$HOME/.spinbox/" 2>/dev/null || true
+        fi
     fi
     
     print_status "Update installed successfully."

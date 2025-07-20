@@ -18,6 +18,17 @@ if [[ -z "${BACKUP_DIR:-}" ]]; then
     readonly BACKUP_DIR="$PROJECT_ROOT/.backups"
 fi
 
+# Installation stability constants (avoid conflicts with multiple sourcing)
+if [[ -z "${SPINBOX_LOCK_FILE:-}" ]]; then
+    readonly SPINBOX_LOCK_FILE="$CONFIG_DIR/.spinbox.lock"
+fi
+if [[ -z "${RUNTIME_DIR:-}" ]]; then
+    readonly RUNTIME_DIR="$CONFIG_DIR/runtime"
+fi
+if [[ -z "${CACHE_DIR:-}" ]]; then
+    readonly CACHE_DIR="$CONFIG_DIR/cache"
+fi
+
 # Color codes for output (avoid conflicts with multiple sourcing)
 if [[ -z "${GREEN:-}" ]]; then
     readonly GREEN='\033[0;32m'
@@ -409,6 +420,135 @@ function show_help() {
   echo "  -h, --help       Show this help message"
 }
 
+# Installation state validation and locking functions
+function validate_installation_state() {
+    local operation="${1:-operation}"
+    
+    # Check basic installation structure
+    if [[ ! -d "$RUNTIME_DIR" ]]; then
+        print_error "Runtime directory missing: $RUNTIME_DIR"
+        print_info "Please reinstall Spinbox or run migration"
+        return 1
+    fi
+    
+    # Check critical runtime files
+    if [[ ! -d "$RUNTIME_DIR/lib" ]]; then
+        print_error "Runtime libraries missing: $RUNTIME_DIR/lib"
+        return 1
+    fi
+    
+    # Check binary exists and is executable
+    local binary_paths=("$HOME/.local/bin/spinbox" "/usr/local/bin/spinbox")
+    local binary_found=false
+    
+    for path in "${binary_paths[@]}"; do
+        if [[ -x "$path" ]]; then
+            binary_found=true
+            break
+        fi
+    done
+    
+    if [[ "$binary_found" != true ]]; then
+        print_error "Spinbox binary not found or not executable"
+        return 1
+    fi
+    
+    print_debug "Installation state validation passed for: $operation"
+    return 0
+}
+
+function acquire_spinbox_lock() {
+    local operation="${1:-operation}"
+    local timeout="${2:-30}"
+    local waited=0
+    
+    # Create config directory if it doesn't exist
+    mkdir -p "$CONFIG_DIR"
+    
+    # Wait for existing lock to clear
+    while [[ -f "$SPINBOX_LOCK_FILE" ]] && [[ $waited -lt $timeout ]]; do
+        if [[ $waited -eq 0 ]]; then
+            print_info "Waiting for concurrent Spinbox operation to complete..."
+        fi
+        sleep 1
+        ((waited++))
+    done
+    
+    # Check if we timed out
+    if [[ -f "$SPINBOX_LOCK_FILE" ]] && [[ $waited -ge $timeout ]]; then
+        print_error "Timeout waiting for lock. Another Spinbox operation may be stuck."
+        print_info "If no other operations are running, remove: $SPINBOX_LOCK_FILE"
+        return 1
+    fi
+    
+    # Create lock file with process info
+    echo "$$:$operation:$(date)" > "$SPINBOX_LOCK_FILE"
+    
+    # Verify we got the lock (handle race conditions)
+    local lock_content
+    lock_content=$(cat "$SPINBOX_LOCK_FILE" 2>/dev/null || echo "")
+    if [[ "$lock_content" != "$$:$operation:"* ]]; then
+        print_error "Failed to acquire lock (race condition)"
+        return 1
+    fi
+    
+    print_debug "Acquired lock for: $operation (PID: $$)"
+    return 0
+}
+
+function release_spinbox_lock() {
+    if [[ -f "$SPINBOX_LOCK_FILE" ]]; then
+        local lock_content
+        lock_content=$(cat "$SPINBOX_LOCK_FILE" 2>/dev/null || echo "")
+        if [[ "$lock_content" == "$$:"* ]]; then
+            rm -f "$SPINBOX_LOCK_FILE"
+            print_debug "Released lock (PID: $$)"
+        else
+            print_warning "Lock file not owned by this process, not removing"
+        fi
+    fi
+}
+
+function validate_path_safety() {
+    local target_path="$1"
+    local operation="${2:-operation}"
+    
+    # Resolve absolute path
+    local abs_path
+    abs_path=$(cd "$(dirname "$target_path")" 2>/dev/null && pwd)/$(basename "$target_path") || return 1
+    
+    # Protected directories that should never be removed
+    local protected_dirs=(
+        "$HOME/.local/bin"
+        "/usr/local/bin"
+        "$HOME/.spinbox/runtime"
+        "$HOME/.local"
+        "$HOME"
+        "/"
+        "/usr"
+        "/usr/local"
+    )
+    
+    for protected in "${protected_dirs[@]}"; do
+        if [[ "$abs_path" == "$protected" ]] || [[ "$abs_path" == "$protected"/* ]]; then
+            print_error "Refusing $operation on protected directory: $abs_path"
+            print_info "Protected path detected: $protected"
+            return 1
+        fi
+    done
+    
+    print_debug "Path safety validation passed: $abs_path"
+    return 0
+}
+
+# Auto-cleanup lock on script exit
+function cleanup_lock_on_exit() {
+    release_spinbox_lock
+}
+
+# Install exit trap for lock cleanup
+trap cleanup_lock_on_exit EXIT
+
 # Export functions for use in other scripts
 export -f print_status print_warning print_error print_info print_debug
 export -f log_info log_warn log_error log_debug
@@ -420,3 +560,5 @@ export -f handle_error rollback
 export -f load_config save_config
 export -f confirm retry cleanup
 export -f setup_error_handling parse_common_args show_help
+export -f validate_installation_state acquire_spinbox_lock release_spinbox_lock
+export -f validate_path_safety cleanup_lock_on_exit

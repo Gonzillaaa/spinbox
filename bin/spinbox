@@ -7,14 +7,19 @@ set -euo pipefail
 # Get the directory where this script is located
 SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Determine project root location (simplified architecture)
+# Determine project root location (stable architecture)
 # Check if we're running from development directory
 if [[ -f "$(dirname "$SPINBOX_SCRIPT_DIR")/lib/utils.sh" ]]; then
     # Development mode - running from project directory
     PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"
 else
-    # Production mode - use centralized source location
-    PROJECT_ROOT="$HOME/.spinbox/source"
+    # Production mode - use stable runtime location (never deleted during operations)
+    PROJECT_ROOT="$HOME/.spinbox/runtime"
+    
+    # Migration fallback: if new runtime doesn't exist but old source does, use source
+    if [[ ! -d "$PROJECT_ROOT/lib" ]] && [[ -d "$HOME/.spinbox/source/lib" ]]; then
+        PROJECT_ROOT="$HOME/.spinbox/source"
+    fi
 fi
 
 # Source required libraries
