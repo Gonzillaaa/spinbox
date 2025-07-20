@@ -55,6 +55,39 @@ function get_effective_redis_version() {
     fi
 }
 
+# Docker Hub configuration getters (configurable hierarchy)
+function get_effective_docker_hub_username() {
+    if [[ -n "$DOCKER_HUB_USERNAME" ]]; then
+        echo "$DOCKER_HUB_USERNAME"
+    else
+        echo "$DEFAULT_DOCKER_HUB_USERNAME"
+    fi
+}
+
+function get_effective_docker_hub_registry() {
+    if [[ -n "$DOCKER_HUB_REGISTRY" ]]; then
+        echo "$DOCKER_HUB_REGISTRY"
+    else
+        echo "$DEFAULT_DOCKER_HUB_REGISTRY"
+    fi
+}
+
+function get_effective_python_base_image() {
+    if [[ -n "$SPINBOX_PYTHON_BASE_IMAGE" ]]; then
+        echo "$SPINBOX_PYTHON_BASE_IMAGE"
+    else
+        echo "$DEFAULT_SPINBOX_PYTHON_BASE_IMAGE"
+    fi
+}
+
+function get_effective_node_base_image() {
+    if [[ -n "$SPINBOX_NODE_BASE_IMAGE" ]]; then
+        echo "$SPINBOX_NODE_BASE_IMAGE"
+    else
+        echo "$DEFAULT_SPINBOX_NODE_BASE_IMAGE"
+    fi
+}
+
 # Set version from CLI flags (called by main CLI parser)
 function set_cli_python_version() {
     CLI_PYTHON_VERSION="$1"
@@ -362,6 +395,8 @@ function reset_cli_overrides() {
 # Export functions for use in other scripts
 export -f get_effective_python_version get_effective_node_version
 export -f get_effective_postgres_version get_effective_redis_version
+export -f get_effective_docker_hub_username get_effective_docker_hub_registry
+export -f get_effective_python_base_image get_effective_node_base_image
 export -f set_cli_python_version set_cli_node_version
 export -f set_cli_postgres_version set_cli_redis_version
 export -f set_cli_docker_hub get_effective_docker_hub

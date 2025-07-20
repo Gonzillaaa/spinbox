@@ -4,16 +4,10 @@
 
 # Source required libraries
 source "$(dirname "${BASH_SOURCE[0]}")/utils.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/version-config.sh"
 
-# Configuration
+# Configuration (timeout is static, others are configurable)
 DOCKER_HUB_TIMEOUT=5
-DOCKER_HUB_REGISTRY="registry-1.docker.io/v2"
-DOCKER_HUB_USERNAME="gonzillaaa"
-
-# Docker Hub image names
-SPINBOX_FASTAPI_IMAGE="${DOCKER_HUB_USERNAME}/spinbox-fastapi"
-SPINBOX_NEXTJS_IMAGE="${DOCKER_HUB_USERNAME}/spinbox-nextjs"
-SPINBOX_PYTHON_DEV_IMAGE="${DOCKER_HUB_USERNAME}/spinbox-python-dev"
 
 # Check Docker Hub connectivity
 function check_docker_hub_connectivity() {
@@ -24,8 +18,11 @@ function check_docker_hub_connectivity() {
         return 1
     fi
     
+    # Get configured registry
+    local docker_registry=$(get_effective_docker_hub_registry)
+    
     # Quick connectivity test with timeout
-    if curl -s --max-time "$DOCKER_HUB_TIMEOUT" "https://${DOCKER_HUB_REGISTRY}" >/dev/null 2>&1; then
+    if curl -s --max-time "$DOCKER_HUB_TIMEOUT" "https://${docker_registry}" >/dev/null 2>&1; then
         print_debug "Docker Hub connectivity confirmed"
         return 0
     else
@@ -46,8 +43,11 @@ function verify_image_exists() {
     
     print_debug "Checking if image exists: ${image_name}:${tag}"
     
+    # Get configured registry
+    local docker_registry=$(get_effective_docker_hub_registry)
+    
     # Check image manifest exists
-    local manifest_url="https://${DOCKER_HUB_REGISTRY}/${image_name}/manifests/${tag}"
+    local manifest_url="https://${docker_registry}/${image_name}/manifests/${tag}"
     
     if curl -s --max-time "$DOCKER_HUB_TIMEOUT" \
        -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
@@ -126,14 +126,11 @@ function get_component_image() {
     local component="$1"
     
     case "$component" in
-        "fastapi")
-            echo "$SPINBOX_FASTAPI_IMAGE"
+        "fastapi"|"python"|"minimal-python")
+            echo "$(get_effective_python_base_image)"
             ;;
-        "nextjs")
-            echo "$SPINBOX_NEXTJS_IMAGE"
-            ;;
-        "python"|"minimal-python")
-            echo "$SPINBOX_PYTHON_DEV_IMAGE"
+        "nextjs"|"node")
+            echo "$(get_effective_node_base_image)"
             ;;
         *)
             print_error "Unknown component: $component"
