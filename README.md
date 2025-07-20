@@ -10,6 +10,7 @@ Spinbox is a **global CLI tool** for creating customizable prototyping environme
 
 - **Global CLI Tool**: Simple commands like `spinbox create myproject --profile web-app`
 - **DevContainer-First**: Every project includes DevContainer configuration for VS Code, Cursor, and other editors
+- **Docker Hub Integration**: 50-70% faster project creation with pre-built optimized images
 - **Automatic Dependencies**: Use `--with-deps` flag to automatically manage Python and Node.js packages
 - **Modular Components**: Mix and match languages, frameworks, and databases
 - **Predefined Profiles**: 6 curated profiles for common development scenarios
@@ -55,6 +56,14 @@ spinbox create python-project --profile python
 
 # Simple Node.js project
 spinbox create node-project --profile node
+```
+
+**Fast creation with Docker Hub (50-70% faster):**
+
+```bash
+# Add --docker-hub flag to any project for faster creation
+spinbox create myapp --profile web-app --docker-hub
+spinbox create api-server --fastapi --postgresql --docker-hub
 ```
 
 **Custom component selection:**

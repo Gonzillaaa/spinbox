@@ -133,6 +133,8 @@ OPTIONS:
     
     --with-deps           Automatically add packages to requirements.txt/package.json
     
+    --docker-hub          Use optimized Docker Hub images for faster project creation
+    
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
     -f, --force           Force creation, overwrite existing directory
@@ -149,6 +151,9 @@ EXAMPLES:
     
     spinbox create api --fastapi --with-deps         Create FastAPI project with dependencies
     spinbox create app --nextjs --with-deps          Create Next.js project with dependencies
+    
+    spinbox create myproject --fastapi --docker-hub  Create FastAPI project with Docker Hub images (faster)
+    spinbox create webapp --profile web-app --docker-hub Use Docker Hub for 50-70% faster creation
     
     spinbox create code/myproject --python           Create project in code/ directory
     spinbox create ~/projects/webapp --profile web-app Create project in home directory

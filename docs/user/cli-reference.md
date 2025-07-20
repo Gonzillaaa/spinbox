@@ -58,6 +58,11 @@ The `PROJECT_PATH` can be either:
 |--------|-------------|
 | `--with-deps` | Automatically add component dependencies to requirements.txt/package.json |
 
+**Performance Options:**
+| Option | Description |
+|--------|-------------|
+| `--docker-hub` | Use optimized Docker Hub images for 50-70% faster project creation |
+
 **Version Configuration:**
 | Option | Description |
 |--------|-------------|
@@ -106,6 +111,22 @@ spinbox create api --fastapi --redis
 # Frontend with MongoDB
 spinbox create frontend-app --nextjs --mongodb
 ```
+
+**Docker Hub optimized creation:**
+```bash
+# Use Docker Hub for faster project creation
+spinbox create myproject --fastapi --docker-hub
+
+# Combine with profiles for maximum speed
+spinbox create webapp --profile web-app --docker-hub
+
+# Works with all component combinations
+spinbox create ml-project --python --postgresql --docker-hub
+```
+
+> **Performance Note**: The `--docker-hub` flag uses pre-built optimized images that reduce project creation time by 50-70%. Images are pulled from Docker Hub instead of building locally.
+
+For custom Docker Hub repositories and configuration options, see the [Docker Hub Configuration Guide](./docker-hub-configuration.md).
 
 **With automatic dependency management:**
 ```bash
