@@ -22,6 +22,7 @@ source "$SPINBOX_PROJECT_ROOT/lib/config.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/profiles.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/version.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/version-config.sh"
+source "$SPINBOX_PROJECT_ROOT/lib/docker-hub.sh"
 source "$SPINBOX_PROJECT_ROOT/lib/update.sh"
 
 # Script information
@@ -614,6 +615,10 @@ function parse_create_args() {
                 ;;
             --with-deps)
                 WITH_DEPS=true
+                shift
+                ;;
+            --docker-hub)
+                set_cli_docker_hub
                 shift
                 ;;
             -v|--verbose)

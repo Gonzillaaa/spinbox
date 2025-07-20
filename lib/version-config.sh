@@ -12,6 +12,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/config.sh"
 : "${CLI_NODE_VERSION:=""}"
 : "${CLI_POSTGRES_VERSION:=""}"
 : "${CLI_REDIS_VERSION:=""}"
+: "${CLI_USE_DOCKER_HUB:=""}"
 
 # Configuration override hierarchy: CLI flags > config file > defaults
 function get_effective_python_version() {
@@ -73,6 +74,24 @@ function set_cli_postgres_version() {
 function set_cli_redis_version() {
     CLI_REDIS_VERSION="$1"
     validate_redis_version "$CLI_REDIS_VERSION"
+}
+
+# Set Docker Hub flag from CLI
+function set_cli_docker_hub() {
+    CLI_USE_DOCKER_HUB="true"
+    export USE_DOCKER_HUB="true"
+    print_debug "Docker Hub mode enabled via CLI flag"
+}
+
+# Get effective Docker Hub setting
+function get_effective_docker_hub() {
+    if [[ "$CLI_USE_DOCKER_HUB" == "true" ]]; then
+        echo "true"
+    elif [[ "${USE_DOCKER_HUB:-false}" == "true" ]]; then
+        echo "true"
+    else
+        echo "false"
+    fi
 }
 
 # Version validation functions
@@ -268,6 +287,10 @@ function parse_version_overrides() {
                 set_cli_redis_version "$2"
                 shift 2
                 ;;
+            --docker-hub)
+                set_cli_docker_hub
+                shift
+                ;;
             *)
                 # Unknown flag, return remaining arguments
                 break
@@ -331,6 +354,8 @@ function reset_cli_overrides() {
     CLI_NODE_VERSION=""
     CLI_POSTGRES_VERSION=""
     CLI_REDIS_VERSION=""
+    CLI_USE_DOCKER_HUB=""
+    USE_DOCKER_HUB="false"
     print_debug "Reset all CLI version overrides"
 }
 
@@ -339,6 +364,7 @@ export -f get_effective_python_version get_effective_node_version
 export -f get_effective_postgres_version get_effective_redis_version
 export -f set_cli_python_version set_cli_node_version
 export -f set_cli_postgres_version set_cli_redis_version
+export -f set_cli_docker_hub get_effective_docker_hub
 export -f validate_python_version validate_node_version
 export -f validate_postgres_version validate_redis_version
 export -f get_all_effective_versions show_version_configuration
