@@ -11,7 +11,7 @@ function get_project_config_path() { echo "$CONFIG_DIR/project.conf"; }
 function get_user_config_path() { echo "$CONFIG_DIR/user.conf"; }
 
 # Default configuration values
-DEFAULT_PYTHON_VERSION="3.12"
+DEFAULT_PYTHON_VERSION="3.11"
 DEFAULT_NODE_VERSION="20"
 DEFAULT_POSTGRES_VERSION="15"
 DEFAULT_REDIS_VERSION="7"

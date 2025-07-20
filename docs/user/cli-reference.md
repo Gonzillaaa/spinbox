@@ -61,7 +61,7 @@ The `PROJECT_PATH` can be either:
 **Version Configuration:**
 | Option | Description |
 |--------|-------------|
-| `--python-version <ver>` | Python version (default: 3.12) |
+| `--python-version <ver>` | Python version (default: 3.11) |
 | `--node-version <ver>` | Node.js version (default: 20) |
 | `--postgres-version <ver>` | PostgreSQL version (default: 15) |
 | `--redis-version <ver>` | Redis version (default: 7) |
@@ -421,7 +421,7 @@ spinbox config [OPTIONS]
 **Global Configuration:**
 | Key | Description | Default |
 |-----|-------------|---------|
-| `PYTHON_VERSION` | Default Python version | `3.12` |
+| `PYTHON_VERSION` | Default Python version | `3.11` |
 | `NODE_VERSION` | Default Node.js version | `20` |
 | `POSTGRES_VERSION` | Default PostgreSQL version | `15` |
 | `REDIS_VERSION` | Default Redis version | `7` |
