@@ -7,6 +7,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/docker-hub.sh"
 
 # Generate FastAPI backend component
 function generate_fastapi_component() {
@@ -51,9 +52,84 @@ function generate_fastapi_component() {
 # Generate Docker configuration for backend
 function generate_fastapi_dockerfiles() {
     local fastapi_dir="$1"
+    
+    # Check if we should use Docker Hub optimized images
+    if should_use_docker_hub "fastapi"; then
+        generate_fastapi_dockerhub_config "$fastapi_dir"
+    else
+        generate_fastapi_local_dockerfiles "$fastapi_dir"
+    fi
+}
+
+# Generate Docker Hub configuration for FastAPI
+function generate_fastapi_dockerhub_config() {
+    local fastapi_dir="$1"
+    local image_name=$(get_component_image "fastapi")
+    
+    print_debug "Generating FastAPI configuration with Docker Hub image: $image_name"
+    
+    # Create minimal Dockerfile.dev that uses the pre-built image
+    cat > "$fastapi_dir/Dockerfile.dev" << EOF
+# FastAPI Development Container (Docker Hub optimized)
+# Uses pre-built image: ${image_name}:latest
+FROM ${image_name}:latest
+
+WORKDIR /workspace
+
+# The base image already contains:
+# - Python 3.11 with UV package manager
+# - Common FastAPI dependencies (fastapi, uvicorn, sqlalchemy, etc.)
+# - Development tools (zsh, oh-my-zsh, powerlevel10k)
+# - Development aliases and environment setup
+
+# Copy project-specific requirements if they exist
+# Additional dependencies will be installed via requirements.txt
+COPY requirements.txt* ./
+RUN if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
+
+EXPOSE 8000
+
+# Keep container running for development
+CMD ["zsh", "-c", "while sleep 1000; do :; done"]
+EOF
+
+    # Production Dockerfile (still uses local build for production)
+    local python_version=$(get_effective_python_version)
+    cat > "$fastapi_dir/Dockerfile" << EOF
+FROM python:${python_version}-slim
+
+WORKDIR /app
+
+# Install UV for dependency management
+RUN pip install --no-cache-dir uv
+
+# Create and activate virtual environment
+RUN python -m venv venv
+ENV PATH="/app/venv/bin:\$PATH"
+
+# Copy and install dependencies
+COPY requirements.txt .
+RUN uv pip install --no-cache -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Run the application
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+EOF
+
+    # Generate common .dockerignore file
+    generate_fastapi_dockerignore "$fastapi_dir"
+}
+
+# Generate local Docker configuration for FastAPI (fallback mode)
+function generate_fastapi_local_dockerfiles() {
+    local fastapi_dir="$1"
     local python_version=$(get_effective_python_version)
     
-    # Development Dockerfile
+    print_debug "Generating FastAPI configuration with local builds"
+    
+    # Development Dockerfile (original implementation)
     cat > "$fastapi_dir/Dockerfile.dev" << EOF
 FROM python:${python_version}-slim
 
@@ -125,6 +201,14 @@ COPY . .
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 EOF
 
+    # Generate common .dockerignore file
+    generate_fastapi_dockerignore "$fastapi_dir"
+}
+
+# Generate .dockerignore file for FastAPI projects
+function generate_fastapi_dockerignore() {
+    local fastapi_dir="$1"
+    
     # Docker ignore file
     cat > "$fastapi_dir/.dockerignore" << 'EOF'
 venv/
