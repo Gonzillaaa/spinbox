@@ -5,3 +5,4 @@ test_*
 .log*
 .backup*
 results.txt
+future*

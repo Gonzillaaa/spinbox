@@ -149,6 +149,40 @@ function create_project_directory() {
     print_status "Created project directory structure"
 }
 
+# Generate project-specific DevContainer based on components
+function generate_project_devcontainer() {
+    local project_dir="$1"
+    
+    # Count active components
+    local component_count=0
+    [[ "$USE_PYTHON" == true ]] && ((component_count++))
+    [[ "$USE_FASTAPI" == true ]] && ((component_count++))
+    [[ "$USE_NEXTJS" == true ]] && ((component_count++))
+    [[ "$USE_NODE" == true ]] && ((component_count++))
+    [[ "$USE_MONGODB" == true ]] && ((component_count++))
+    [[ "$USE_REDIS" == true ]] && ((component_count++))
+    [[ "$USE_CHROMA" == true ]] && ((component_count++))
+    
+    # Use component-specific DevContainer generators for single-component projects
+    if [[ $component_count -eq 1 ]]; then
+        if [[ "$USE_PYTHON" == true ]]; then
+            if source "$PROJECT_ROOT/generators/minimal-python.sh" 2>/dev/null; then
+                generate_minimal_python_devcontainer "$project_dir"
+                return 0
+            fi
+        elif [[ "$USE_FASTAPI" == true ]]; then
+            # FastAPI has its own DevContainer generation within the generator
+            return 0
+        elif [[ "$USE_NEXTJS" == true ]]; then
+            # NextJS has its own DevContainer generation within the generator  
+            return 0
+        fi
+    fi
+    
+    # Fall back to generic multi-component DevContainer
+    generate_devcontainer_config "$project_dir"
+}
+
 # Generate DevContainer configuration
 function generate_devcontainer_config() {
     local project_dir="$1"
@@ -806,7 +840,7 @@ function create_project() {
     create_project_directory "$PROJECT_PATH"
     
     # Generate configurations
-    generate_devcontainer_config "$PROJECT_PATH"
+    generate_project_devcontainer "$PROJECT_PATH"
     generate_docker_compose "$PROJECT_PATH"
     generate_component_files "$PROJECT_PATH"
     save_project_configuration "$PROJECT_PATH"
@@ -868,7 +902,7 @@ function add_components() {
     print_status "Adding components to $PROJECT_NAME..."
     
     create_project_directory "$PROJECT_PATH"  # Creates only missing directories
-    generate_devcontainer_config "$PROJECT_PATH"  # Updates DevContainer
+    generate_project_devcontainer "$PROJECT_PATH"  # Updates DevContainer
     generate_docker_compose "$PROJECT_PATH"  # Updates or creates Compose
     generate_component_files "$PROJECT_PATH"  # Adds new component files
     save_project_configuration "$PROJECT_PATH"  # Updates config
@@ -879,6 +913,6 @@ function add_components() {
 
 # Export functions for use in other scripts
 export -f parse_component_flags validate_project_directory
-export -f create_project_directory generate_devcontainer_config
+export -f create_project_directory generate_project_devcontainer generate_devcontainer_config
 export -f generate_docker_compose generate_component_files
 export -f save_project_configuration create_project add_components

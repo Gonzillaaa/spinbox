@@ -12,6 +12,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/config.sh"
 : "${CLI_NODE_VERSION:=""}"
 : "${CLI_POSTGRES_VERSION:=""}"
 : "${CLI_REDIS_VERSION:=""}"
+: "${CLI_USE_DOCKER_HUB:=""}"
 
 # Configuration override hierarchy: CLI flags > config file > defaults
 function get_effective_python_version() {
@@ -54,6 +55,39 @@ function get_effective_redis_version() {
     fi
 }
 
+# Docker Hub configuration getters (configurable hierarchy)
+function get_effective_docker_hub_username() {
+    if [[ -n "$DOCKER_HUB_USERNAME" ]]; then
+        echo "$DOCKER_HUB_USERNAME"
+    else
+        echo "$DEFAULT_DOCKER_HUB_USERNAME"
+    fi
+}
+
+function get_effective_docker_hub_registry() {
+    if [[ -n "$DOCKER_HUB_REGISTRY" ]]; then
+        echo "$DOCKER_HUB_REGISTRY"
+    else
+        echo "$DEFAULT_DOCKER_HUB_REGISTRY"
+    fi
+}
+
+function get_effective_python_base_image() {
+    if [[ -n "$SPINBOX_PYTHON_BASE_IMAGE" ]]; then
+        echo "$SPINBOX_PYTHON_BASE_IMAGE"
+    else
+        echo "$DEFAULT_SPINBOX_PYTHON_BASE_IMAGE"
+    fi
+}
+
+function get_effective_node_base_image() {
+    if [[ -n "$SPINBOX_NODE_BASE_IMAGE" ]]; then
+        echo "$SPINBOX_NODE_BASE_IMAGE"
+    else
+        echo "$DEFAULT_SPINBOX_NODE_BASE_IMAGE"
+    fi
+}
+
 # Set version from CLI flags (called by main CLI parser)
 function set_cli_python_version() {
     CLI_PYTHON_VERSION="$1"
@@ -73,6 +107,24 @@ function set_cli_postgres_version() {
 function set_cli_redis_version() {
     CLI_REDIS_VERSION="$1"
     validate_redis_version "$CLI_REDIS_VERSION"
+}
+
+# Set Docker Hub flag from CLI
+function set_cli_docker_hub() {
+    CLI_USE_DOCKER_HUB="true"
+    export USE_DOCKER_HUB="true"
+    print_debug "Docker Hub mode enabled via CLI flag"
+}
+
+# Get effective Docker Hub setting
+function get_effective_docker_hub() {
+    if [[ "$CLI_USE_DOCKER_HUB" == "true" ]]; then
+        echo "true"
+    elif [[ "${USE_DOCKER_HUB:-false}" == "true" ]]; then
+        echo "true"
+    else
+        echo "false"
+    fi
 }
 
 # Version validation functions
@@ -268,6 +320,10 @@ function parse_version_overrides() {
                 set_cli_redis_version "$2"
                 shift 2
                 ;;
+            --docker-hub)
+                set_cli_docker_hub
+                shift
+                ;;
             *)
                 # Unknown flag, return remaining arguments
                 break
@@ -331,14 +387,19 @@ function reset_cli_overrides() {
     CLI_NODE_VERSION=""
     CLI_POSTGRES_VERSION=""
     CLI_REDIS_VERSION=""
+    CLI_USE_DOCKER_HUB=""
+    USE_DOCKER_HUB="false"
     print_debug "Reset all CLI version overrides"
 }
 
 # Export functions for use in other scripts
 export -f get_effective_python_version get_effective_node_version
 export -f get_effective_postgres_version get_effective_redis_version
+export -f get_effective_docker_hub_username get_effective_docker_hub_registry
+export -f get_effective_python_base_image get_effective_node_base_image
 export -f set_cli_python_version set_cli_node_version
 export -f set_cli_postgres_version set_cli_redis_version
+export -f set_cli_docker_hub get_effective_docker_hub
 export -f validate_python_version validate_node_version
 export -f validate_postgres_version validate_redis_version
 export -f get_all_effective_versions show_version_configuration

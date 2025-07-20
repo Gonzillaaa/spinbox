@@ -16,6 +16,12 @@ DEFAULT_NODE_VERSION="20"
 DEFAULT_POSTGRES_VERSION="15"
 DEFAULT_REDIS_VERSION="7"
 
+# Docker Hub configuration (configurable via global.conf)
+DEFAULT_DOCKER_HUB_USERNAME="gonzillaaa"
+DEFAULT_DOCKER_HUB_REGISTRY="registry-1.docker.io/v2"
+DEFAULT_SPINBOX_PYTHON_BASE_IMAGE="${DEFAULT_DOCKER_HUB_USERNAME}/spinbox-python-base"
+DEFAULT_SPINBOX_NODE_BASE_IMAGE="${DEFAULT_DOCKER_HUB_USERNAME}/spinbox-node-base"
+
 # Global configuration variables
 # Only initialize if not already set (preserve values from parent process)
 : "${PYTHON_VERSION:=""}"
@@ -26,6 +32,13 @@ DEFAULT_REDIS_VERSION="7"
 : "${PROJECT_AUTHOR:=""}"
 : "${PROJECT_EMAIL:=""}"
 : "${PROJECT_LICENSE:="MIT"}"
+
+# Docker Hub configuration variables (configurable via global.conf)
+: "${DOCKER_HUB_USERNAME:=""}"
+: "${DOCKER_HUB_REGISTRY:=""}"
+: "${SPINBOX_PYTHON_BASE_IMAGE:=""}"
+: "${SPINBOX_NODE_BASE_IMAGE:=""}"
+
 DEFAULT_COMPONENTS=""
 
 # Project-specific configuration variables (preserve existing values)

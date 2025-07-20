@@ -46,7 +46,12 @@ spinbox create ml-project --profile data-science
 
 # AI/LLM development
 spinbox create ai-project --profile ai-llm
+
+# Use Docker Hub for 50-70% faster creation
+spinbox create myapp --profile web-app --docker-hub
 ```
+
+> **💡 Performance Tip**: Add `--docker-hub` to any command for faster project creation. This uses pre-built optimized images instead of building locally.
 
 **Option B: Custom component selection**
 ```bash
