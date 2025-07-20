@@ -716,7 +716,7 @@ function generate_fastapi_env_files() {
     local fastapi_dir="$1"
     
     # Use security template for .env.example
-    local template_file="$SPINBOX_PROJECT_ROOT/templates/security/fastapi.env.example"
+    local template_file="$PROJECT_ROOT/templates/security/fastapi.env.example"
     if [[ -f "$template_file" ]]; then
         cp "$template_file" "$fastapi_dir/.env.example"
     else
@@ -749,14 +749,14 @@ EOF
     fi
 
     # Copy virtual environment setup script
-    local setup_venv_template="$SPINBOX_PROJECT_ROOT/templates/security/setup_venv.sh"
+    local setup_venv_template="$PROJECT_ROOT/templates/security/setup_venv.sh"
     if [[ -f "$setup_venv_template" ]]; then
         cp "$setup_venv_template" "$fastapi_dir/setup_venv.sh"
         chmod +x "$fastapi_dir/setup_venv.sh"
     fi
 
     # Copy Python .gitignore
-    local gitignore_template="$SPINBOX_PROJECT_ROOT/templates/security/python.gitignore"
+    local gitignore_template="$PROJECT_ROOT/templates/security/python.gitignore"
     if [[ -f "$gitignore_template" ]]; then
         cp "$gitignore_template" "$fastapi_dir/.gitignore"
     fi
@@ -767,7 +767,7 @@ EOF
 # Generate working examples for FastAPI
 function generate_fastapi_working_examples() {
     local fastapi_dir="$1"
-    local examples_source="$SPINBOX_PROJECT_ROOT/templates/examples/core-components/fastapi"
+    local examples_source="$PROJECT_ROOT/templates/examples/core-components/fastapi"
     
     if [[ -d "$examples_source" ]]; then
         print_debug "Copying FastAPI working examples from $examples_source"

@@ -189,8 +189,8 @@ feat: implement entire CLI foundation (too broad)
 ## 4. CLI-Specific Guidelines
 
 ### Spinbox CLI Architecture
-- **Entry Point**: `bin/spinbox` - Main CLI executable with command routing and development/production mode detection
-- **Centralized Source**: `~/.spinbox/source/` - Single source of truth for all installations (production mode)
+- **Entry Point**: `bin/spinbox` - Main CLI executable with command routing  
+- **Centralized Source**: `~/.spinbox/source/` - Single source of truth for all installations
 - **Libraries**: `lib/` directory contains reusable modules:
   - `utils.sh` - Common utilities and error handling
   - `config.sh` - Configuration management with variable preservation

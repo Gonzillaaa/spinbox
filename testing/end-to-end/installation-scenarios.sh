@@ -535,6 +535,58 @@ if [[ "$RUN_ALL" == "true" ]]; then
     echo ""
 fi
 
+# Test: Production Mode Architecture Verification
+echo "Testing Production Mode Architecture (Simplified Installation)..."
+echo ""
+
+# Test that installations always use production mode architecture
+test_production_mode_architecture() {
+    log_info "Testing production mode architecture consistency..."
+    
+    # Test user installation
+    run_test "user_production_install" "$PROJECT_ROOT/install-user.sh"
+    
+    if command -v spinbox >/dev/null 2>&1; then
+        # Check that binary uses production mode paths
+        if [[ -d "$HOME/.spinbox/source/lib" ]]; then
+            record_test "user_production_mode" "PASS" "User installation uses production mode architecture"
+            
+            # Verify Python 3.11 default
+            python_version=$(spinbox config --get PYTHON_VERSION 2>/dev/null || echo "unknown")
+            if [[ "$python_version" == "3.11" ]]; then
+                record_test "python_3_11_default" "PASS" "Python 3.11 is default version"
+            else
+                record_test "python_3_11_default" "FAIL" "Python version is $python_version, expected 3.11"
+            fi
+            
+            # Test Docker Hub functionality with simplified architecture
+            if spinbox create test-arch --python --docker-hub --dry-run >/dev/null 2>&1; then
+                record_test "docker_hub_simplified" "PASS" "Docker Hub works with simplified architecture"
+            else
+                record_test "docker_hub_simplified" "FAIL" "Docker Hub fails with simplified architecture"
+            fi
+            
+            # Clean up test project
+            rm -rf test-arch 2>/dev/null || true
+            
+        else
+            record_test "user_production_mode" "FAIL" "User installation missing production mode files"
+            record_test "python_3_11_default" "SKIP" "Skipped due to architecture failure"
+            record_test "docker_hub_simplified" "SKIP" "Skipped due to architecture failure"
+        fi
+        
+        # Clean up
+        spinbox uninstall --config --force >/dev/null 2>&1 || true
+    else
+        record_test "user_production_mode" "FAIL" "User installation failed"
+        record_test "python_3_11_default" "SKIP" "Skipped due to install failure"
+        record_test "docker_hub_simplified" "SKIP" "Skipped due to install failure"
+    fi
+}
+
+test_production_mode_architecture
+echo ""
+
 # Final Report
 echo "============================================="
 echo "Test Suite Results"

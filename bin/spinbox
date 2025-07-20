@@ -7,23 +7,24 @@ set -euo pipefail
 # Get the directory where this script is located
 SPINBOX_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Detect development vs production mode
+# Determine project root location (simplified architecture)
+# Check if we're running from development directory
 if [[ -f "$(dirname "$SPINBOX_SCRIPT_DIR")/lib/utils.sh" ]]; then
-    # Development mode - use local files
-    SPINBOX_PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"
+    # Development mode - running from project directory
+    PROJECT_ROOT="$(dirname "$SPINBOX_SCRIPT_DIR")"
 else
-    # Production mode - use centralized source
-    SPINBOX_PROJECT_ROOT="$HOME/.spinbox/source"
+    # Production mode - use centralized source location
+    PROJECT_ROOT="$HOME/.spinbox/source"
 fi
 
 # Source required libraries
-source "$SPINBOX_PROJECT_ROOT/lib/utils.sh"
-source "$SPINBOX_PROJECT_ROOT/lib/config.sh"
-source "$SPINBOX_PROJECT_ROOT/lib/profiles.sh"
-source "$SPINBOX_PROJECT_ROOT/lib/version.sh"
-source "$SPINBOX_PROJECT_ROOT/lib/version-config.sh"
-source "$SPINBOX_PROJECT_ROOT/lib/docker-hub.sh"
-source "$SPINBOX_PROJECT_ROOT/lib/update.sh"
+source "$PROJECT_ROOT/lib/utils.sh"
+source "$PROJECT_ROOT/lib/config.sh"
+source "$PROJECT_ROOT/lib/profiles.sh"
+source "$PROJECT_ROOT/lib/version.sh"
+source "$PROJECT_ROOT/lib/version-config.sh"
+source "$PROJECT_ROOT/lib/docker-hub.sh"
+source "$PROJECT_ROOT/lib/update.sh"
 
 # Script information
 readonly SCRIPT_NAME="spinbox"
@@ -1019,7 +1020,7 @@ function execute_command() {
             
             # Export updated version variables after applying overrides
             export PYTHON_VERSION NODE_VERSION POSTGRES_VERSION REDIS_VERSION
-            source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
+            source "$PROJECT_ROOT/lib/project-generator.sh"
             create_project
             ;;
         add)
@@ -1034,7 +1035,7 @@ function execute_command() {
             
             # Export updated version variables after applying overrides
             export PYTHON_VERSION NODE_VERSION POSTGRES_VERSION REDIS_VERSION
-            source "$SPINBOX_PROJECT_ROOT/lib/project-generator.sh"
+            source "$PROJECT_ROOT/lib/project-generator.sh"
             add_components
             ;;
         start)
