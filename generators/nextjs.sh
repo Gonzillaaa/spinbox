@@ -7,6 +7,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/version-config.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/docker-hub.sh"
 
 # Generate Next.js frontend component
 function generate_nextjs_component() {
@@ -45,9 +46,105 @@ function generate_nextjs_component() {
 # Generate Docker configuration for frontend
 function generate_nextjs_dockerfiles() {
     local nextjs_dir="$1"
+    
+    # Check if we should use Docker Hub optimized images
+    if should_use_docker_hub "nextjs"; then
+        generate_nextjs_dockerhub_config "$nextjs_dir"
+    else
+        generate_nextjs_local_dockerfiles "$nextjs_dir"
+    fi
+}
+
+# Generate Docker Hub configuration for NextJS
+function generate_nextjs_dockerhub_config() {
+    local nextjs_dir="$1"
+    local image_name=$(get_component_image "nextjs")
+    
+    print_debug "Generating NextJS configuration with Docker Hub image: $image_name"
+    
+    # Create minimal Dockerfile.dev that uses the pre-built image
+    cat > "$nextjs_dir/Dockerfile.dev" << EOF
+# Next.js Development Container (Docker Hub optimized)
+# Uses pre-built image: ${image_name}:latest
+FROM ${image_name}:latest
+
+WORKDIR /app
+
+# The base image already contains:
+# - Node.js 20 with npm/yarn
+# - Common Next.js dependencies (next, react, typescript, etc.)
+# - Development tools (zsh, oh-my-zsh, powerlevel10k)
+# - Development aliases and environment setup
+
+# Copy project-specific package.json if it exists
+# Additional dependencies will be installed via package.json
+COPY package.json* package-lock.json* ./
+RUN if [ -f package.json ]; then npm install; fi
+
+EXPOSE 3000
+
+# Keep container running for development
+CMD ["zsh", "-c", "while sleep 1000; do :; done"]
+EOF
+
+    # Production Dockerfile (still uses local build for production)
+    local node_version=$(get_effective_node_version)
+    cat > "$nextjs_dir/Dockerfile" << EOF
+FROM node:${node_version}-alpine AS deps
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production
+
+FROM node:${node_version}-alpine AS builder
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+FROM node:${node_version}-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+
+CMD ["node", "server.js"]
+EOF
+
+    # Generate common .dockerignore file
+    generate_nextjs_dockerignore "$nextjs_dir"
+}
+
+# Generate local Docker configuration for NextJS (fallback mode)
+function generate_nextjs_local_dockerfiles() {
+    local nextjs_dir="$1"
     local node_version=$(get_effective_node_version)
     
-    # Development Dockerfile
+    print_debug "Generating NextJS configuration with local builds"
+    
+    # Development Dockerfile (original implementation)
     cat > "$nextjs_dir/Dockerfile.dev" << EOF
 FROM node:${node_version}-alpine
 
@@ -135,6 +232,14 @@ ENV PORT 3000
 CMD ["node", "server.js"]
 EOF
 
+    # Generate common .dockerignore file
+    generate_nextjs_dockerignore "$nextjs_dir"
+}
+
+# Generate .dockerignore file for NextJS projects
+function generate_nextjs_dockerignore() {
+    local nextjs_dir="$1"
+    
     # Docker ignore file
     cat > "$nextjs_dir/.dockerignore" << 'EOF'
 node_modules
