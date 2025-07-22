@@ -77,6 +77,9 @@ spinbox create api --fastapi --redis
 
 # Full-stack custom
 spinbox create webapp --fastapi --nextjs --postgresql
+
+# Workflow automation
+spinbox create automation --n8n --postgresql
 ```
 
 **With automatic dependency management:**
@@ -130,6 +133,12 @@ Spinbox components are organized into three architectural layers:
 | Redis      | `--redis`      | 6379  | Caching Layer       | High-performance caching and queues           |
 | Chroma     | `--chroma`     | -     | Vector Search       | AI/ML embeddings and similarity search        |
 
+### 4. **Automation Layer** (Workflow & Integration)
+
+| Component | Flag    | Port | Architectural Role    | Best For                                      |
+| --------- | ------- | ---- | --------------------- | --------------------------------------------- |
+| n8n       | `--n8n` | 5678 | Workflow Automation   | API integration, data pipelines, task automation |
+
 ### Component Combinations
 
 **Common patterns:**
@@ -138,6 +147,7 @@ Spinbox components are organized into three architectural layers:
 - `--mongodb --chroma` → Document storage + vector search
 - `--fastapi --nextjs --postgresql` → Full-stack web application
 - `--fastapi --redis` → API with caching/queue support
+- `--n8n --postgresql` → Workflow automation with persistent storage
 
 ## 🎯 Predefined Profiles
 

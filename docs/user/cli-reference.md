@@ -52,6 +52,7 @@ The `PROJECT_PATH` can be either:
 | `--mongodb` | Add MongoDB document database |
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
+| `--n8n` | Add n8n workflow automation platform |
 
 **Dependency Management:**
 | Option | Description |
@@ -110,6 +111,12 @@ spinbox create api --fastapi --redis
 
 # Frontend with MongoDB
 spinbox create frontend-app --nextjs --mongodb
+
+# n8n workflow automation
+spinbox create workflow-app --n8n
+
+# n8n with PostgreSQL integration
+spinbox create workflow-db --n8n --postgresql
 ```
 
 **Docker Hub optimized creation:**
@@ -200,6 +207,7 @@ spinbox add [OPTIONS]
 | `--mongodb` | Add MongoDB document database |
 | `--redis` | Add Redis for caching and queues |
 | `--chroma` | Add Chroma vector database |
+| `--n8n` | Add n8n workflow automation platform |
 
 **Dependency Management:**
 | Option | Description |
@@ -224,6 +232,10 @@ spinbox add --postgresql
 # Add multiple components with clear architectural roles
 spinbox add --postgresql --redis        # Primary storage + caching layer
 spinbox add --mongodb --chroma        # Alternative storage + vector search
+
+# Add workflow automation to existing project
+spinbox add --n8n                   # Add n8n workflow platform
+spinbox add --n8n --postgresql      # Add n8n with PostgreSQL integration
 
 # Add with automatic dependency management
 spinbox add --postgresql --redis --with-deps

@@ -60,6 +60,9 @@ spinbox create myproject --python
 
 # Full-stack with specific components
 spinbox create webapp --python --node --database --redis
+
+# Workflow automation
+spinbox create automation --n8n --postgresql
 ```
 
 ### Step 4: Start Development (30 seconds)
@@ -165,6 +168,32 @@ code .
 - PostgreSQL for data persistence
 - DevContainer optimized for AI prototyping
 
+### Workflow Automation
+
+**Create an n8n workflow automation environment:**
+```bash
+spinbox create automation --n8n --postgresql
+cd automation
+code .
+```
+
+**What you get:**
+- n8n workflow automation platform (port 5678)
+- PostgreSQL database for workflow storage
+- Visual workflow editor accessible at http://localhost:5678
+- Pre-configured with secure authentication
+- DevContainer with automation tools
+
+**Start n8n and access the web interface:**
+```bash
+# Start services
+spinbox start
+
+# Access n8n web interface
+# Open http://localhost:5678 in your browser
+# Login: admin / changeme (change password immediately)
+```
+
 ## Essential Commands
 
 ### Project Creation
@@ -183,6 +212,9 @@ spinbox create <name> --profile web-app --python-version 3.11
 ```bash
 # Add components to existing project
 spinbox add --database --redis
+
+# Add workflow automation
+spinbox add --n8n --postgresql
 
 # Start project services
 spinbox start                    # Background
