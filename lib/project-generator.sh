@@ -21,6 +21,7 @@ USE_POSTGRESQL=false
 USE_MONGODB=false
 USE_REDIS=false
 USE_CHROMA=false
+USE_N8N=false
 
 # Parse component flags from arguments
 function parse_component_flags() {
@@ -60,6 +61,10 @@ function parse_component_flags() {
             --chroma)
                 USE_CHROMA=true
                 SELECTED_COMPONENTS+=("chroma")
+                ;;
+            --n8n)
+                USE_N8N=true
+                SELECTED_COMPONENTS+=("n8n")
                 ;;
         esac
     done
@@ -639,6 +644,14 @@ function generate_component_files() {
             generate_chroma_component "$project_dir"
         else
             print_warning "Chroma generator not found"
+        fi
+    fi
+    
+    if [[ "$USE_N8N" == true ]]; then
+        if source "$PROJECT_ROOT/generators/n8n.sh" 2>/dev/null; then
+            generate_n8n_component "$project_dir"
+        else
+            print_warning "n8n generator not found"
         fi
     fi
     

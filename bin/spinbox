@@ -129,6 +129,7 @@ OPTIONS:
     --mongodb              Add MongoDB document database
     --redis                Add Redis for caching and queues
     --chroma               Add Chroma vector database
+    --n8n                  Add n8n workflow automation platform
     
     --python-version VER   Python version (default: 3.12)
     --node-version VER     Node.js version (default: 20)
@@ -604,7 +605,7 @@ function parse_create_args() {
                 show_create_help
                 exit 0
                 ;;
-            --python|--node|--fastapi|--nextjs|--postgresql|--mongodb|--redis|--chroma)
+            --python|--node|--fastapi|--nextjs|--postgresql|--mongodb|--redis|--chroma|--n8n)
                 # Component flags - will be handled by project generator
                 COMPONENTS+=" $1"
                 shift
@@ -1424,6 +1425,7 @@ function show_components_status() {
     echo "  --mongodb      MongoDB document database"
     echo "  --redis        Redis for caching and queues"
     echo "  --chroma       Chroma vector database for embeddings"
+    echo "  --n8n          n8n workflow automation platform"
 }
 
 # Main execution
