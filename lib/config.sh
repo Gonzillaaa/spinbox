@@ -49,10 +49,12 @@ DEFAULT_COMPONENTS=""
 : "${USE_FRONTEND:=""}"
 : "${USE_DATABASE:=""}"
 : "${USE_REDIS:=""}"
+: "${USE_N8N:=""}"
 : "${BACKEND_PORT:="8000"}"
 : "${FRONTEND_PORT:="3000"}"
 : "${DATABASE_PORT:="5432"}"
 : "${REDIS_PORT:="6379"}"
+: "${N8N_PORT:="5678"}"
 
 # User preferences
 PREFERRED_EDITOR="code"
@@ -178,10 +180,12 @@ function save_project_config() {
     "USE_FRONTEND"
     "USE_DATABASE"
     "USE_REDIS"
+    "USE_N8N"
     "BACKEND_PORT"
     "FRONTEND_PORT"
     "DATABASE_PORT"
     "REDIS_PORT"
+    "N8N_PORT"
   )
   
   save_config "$config_file" "${vars[@]}"
@@ -294,7 +298,7 @@ function set_config_value() {
       fi
       ;;
     project)
-      if [[ " PROJECT_NAME PROJECT_DESCRIPTION USE_BACKEND USE_FRONTEND USE_DATABASE USE_REDIS BACKEND_PORT FRONTEND_PORT DATABASE_PORT REDIS_PORT " =~ " $key " ]]; then
+      if [[ " PROJECT_NAME PROJECT_DESCRIPTION USE_BACKEND USE_FRONTEND USE_DATABASE USE_REDIS USE_N8N BACKEND_PORT FRONTEND_PORT DATABASE_PORT REDIS_PORT N8N_PORT " =~ " $key " ]]; then
         # Set the variable globally (compatible with older bash versions)
         eval "$key=\"\$value\""
         save_project_config
@@ -354,10 +358,12 @@ function list_config() {
     echo "  USE_FRONTEND=$USE_FRONTEND"
     echo "  USE_DATABASE=$USE_DATABASE"
     echo "  USE_REDIS=$USE_REDIS"
+    echo "  USE_N8N=$USE_N8N"
     echo "  BACKEND_PORT=$BACKEND_PORT"
     echo "  FRONTEND_PORT=$FRONTEND_PORT"
     echo "  DATABASE_PORT=$DATABASE_PORT"
     echo "  REDIS_PORT=$REDIS_PORT"
+    echo "  N8N_PORT=$N8N_PORT"
   fi
 }
 
@@ -470,7 +476,7 @@ function validate_config() {
   fi
   
   # Validate ports
-  for port_var in BACKEND_PORT FRONTEND_PORT DATABASE_PORT REDIS_PORT; do
+  for port_var in BACKEND_PORT FRONTEND_PORT DATABASE_PORT REDIS_PORT N8N_PORT; do
     local port="${!port_var}"
     if [[ -n "$port" ]] && [[ ! "$port" =~ ^[0-9]+$ ]] || [[ "$port" -lt 1 || "$port" -gt 65535 ]]; then
       print_error "Invalid port number for $port_var: $port"

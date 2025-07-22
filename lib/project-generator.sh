@@ -299,6 +299,10 @@ function generate_port_list() {
         ports+=("$REDIS_PORT")
     fi
     
+    if [[ "$USE_N8N" == true ]]; then
+        ports+=("$N8N_PORT")
+    fi
+    
     # Join ports with commas, handle empty array
     if [[ ${#ports[@]} -gt 0 ]]; then
         local IFS=','
@@ -456,7 +460,7 @@ function generate_docker_compose() {
     fi
     
     # Only generate docker-compose if we have services beyond DevContainer
-    if [[ "$USE_POSTGRESQL" == false ]] && [[ "$USE_MONGODB" == false ]] && [[ "$USE_REDIS" == false ]] && [[ "$USE_CHROMA" == false ]]; then
+    if [[ "$USE_POSTGRESQL" == false ]] && [[ "$USE_MONGODB" == false ]] && [[ "$USE_REDIS" == false ]] && [[ "$USE_CHROMA" == false ]] && [[ "$USE_N8N" == false ]]; then
         print_debug "No services required, skipping Docker Compose"
         return 0
     fi
@@ -813,6 +817,7 @@ function save_project_configuration() {
     USE_NEXTJS="$USE_NEXTJS"
     USE_POSTGRESQL="$USE_POSTGRESQL"
     USE_REDIS="$USE_REDIS"
+    USE_N8N="$USE_N8N"
     
     # Save project-specific config
     save_project_config "$project_dir"
@@ -880,7 +885,7 @@ function create_project() {
             echo "  4. Install Node.js dependencies: cd nextjs && npm install"
         fi
     fi
-    if [[ "$USE_POSTGRESQL" == true ]] || [[ "$USE_REDIS" == true ]] || [[ "$USE_MONGODB" == true ]] || [[ "$USE_CHROMA" == true ]]; then
+    if [[ "$USE_POSTGRESQL" == true ]] || [[ "$USE_REDIS" == true ]] || [[ "$USE_MONGODB" == true ]] || [[ "$USE_CHROMA" == true ]] || [[ "$USE_N8N" == true ]]; then
         echo "  5. Start services: docker-compose up -d"
     fi
     echo ""
