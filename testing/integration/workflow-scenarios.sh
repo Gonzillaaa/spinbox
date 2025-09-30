@@ -86,10 +86,10 @@ test_scenario "New User Installation" \
     # Install locally
     ./install-user.sh &&
     export PATH="$HOME/.local/bin:$PATH" &&
-    
+
     # Verify installation
     which spinbox | grep -q ".local/bin" &&
-    [[ -d "$HOME/.spinbox/source" ]] &&
+    [[ -d "$HOME/.spinbox/runtime" ]] &&
     
     # Create first project
     cd /tmp && spinbox create test-first-project --profile python --dry-run && cd - >/dev/null &&
@@ -110,7 +110,7 @@ test_scenario "System Administrator" \
         sudo ./install.sh &&
         # Verify global installation
         which spinbox | grep -q "/usr/local/bin" &&
-        [[ -d "$HOME/.spinbox/source" ]] &&
+        [[ -d "$HOME/.spinbox/runtime" ]] &&
         # Test as regular user
         spinbox --version &&
         [[ $(spinbox profiles | grep -E "^  [a-z-]+" | wc -l) -eq 6 ]] &&

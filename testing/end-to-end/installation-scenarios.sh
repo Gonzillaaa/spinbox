@@ -300,19 +300,19 @@ if [[ "$RUN_ALL" == "true" || "$RUN_LOCAL" == "true" ]]; then
         record_test "local_binary_installed" "FAIL" "Local binary not found"
     fi
     
-    if [[ -d "$HOME/.spinbox/source" ]]; then
-        record_test "local_source_created" "PASS" "Centralized source created"
-        
-        # Check source contents
+    if [[ -d "$HOME/.spinbox/runtime" ]]; then
+        record_test "local_runtime_created" "PASS" "Centralized runtime created"
+
+        # Check runtime contents
         for dir in lib generators templates; do
-            if [[ -d "$HOME/.spinbox/source/$dir" ]]; then
-                record_test "local_source_${dir}" "PASS" "$dir directory exists in source"
+            if [[ -d "$HOME/.spinbox/runtime/$dir" ]]; then
+                record_test "local_runtime_${dir}" "PASS" "$dir directory exists in runtime"
             else
-                record_test "local_source_${dir}" "FAIL" "$dir directory missing from source"
+                record_test "local_runtime_${dir}" "FAIL" "$dir directory missing from runtime"
             fi
         done
     else
-        record_test "local_source_created" "FAIL" "Centralized source missing"
+        record_test "local_runtime_created" "FAIL" "Centralized runtime missing"
     fi
     
     # Test installed binary
@@ -375,10 +375,10 @@ if [[ "$RUN_ALL" == "true" || "$RUN_GLOBAL" == "true" ]]; then
             record_test "global_binary_installed" "FAIL" "Global binary not found"
         fi
         
-        if [[ -d "$HOME/.spinbox/source" ]]; then
-            record_test "global_source_created" "PASS" "Centralized source created"
+        if [[ -d "$HOME/.spinbox/runtime" ]]; then
+            record_test "global_runtime_created" "PASS" "Centralized runtime created"
         else
-            record_test "global_source_created" "FAIL" "Centralized source missing"
+            record_test "global_runtime_created" "FAIL" "Centralized runtime missing"
         fi
         
         # Test installed binary
@@ -548,7 +548,7 @@ test_production_mode_architecture() {
     
     if command -v spinbox >/dev/null 2>&1; then
         # Check that binary uses production mode paths
-        if [[ -d "$HOME/.spinbox/source/lib" ]]; then
+        if [[ -d "$HOME/.spinbox/runtime/lib" ]]; then
             record_test "user_production_mode" "PASS" "User installation uses production mode architecture"
             
             # Verify Python 3.11 default

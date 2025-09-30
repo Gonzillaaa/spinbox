@@ -833,7 +833,9 @@ function create_project() {
     # Show configuration
     print_info "Creating project: $PROJECT_NAME"
     print_info "Location: $PROJECT_PATH"
-    print_info "Components: ${SELECTED_COMPONENTS[*]}"
+    if [[ ${#SELECTED_COMPONENTS[@]} -gt 0 ]]; then
+        print_info "Components: ${SELECTED_COMPONENTS[*]}"
+    fi
     show_version_configuration
     
     # Validate and create project
