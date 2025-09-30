@@ -242,8 +242,8 @@ Critical architectural improvements to prevent installation corruption and binar
 
 **Version Information:**
 - **Current Version**: v0.1.0-beta.6
-- **Last Release**: July 20, 2025
-- **Next Release Target**: v0.1.0-beta.7 (Git Hooks Integration) - July 27, 2025
+- **Last Release**: September 30, 2025
+- **Next Release Target**: v0.1.0-beta.7 (Git Hooks Integration) - October 7, 2025
 
 **Quality Metrics:**
 - **Test Suite**: 77/77 tests passing (100%)
