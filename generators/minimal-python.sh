@@ -570,7 +570,7 @@ function create_minimal_python_project() {
     if [[ -n "$TEMPLATE" ]]; then
         manage_component_dependencies "$project_dir" "$TEMPLATE"
     fi
-    
+
     print_status "Minimal Python project created successfully!"
     print_info "Next steps:"
     echo "  1. cd $(basename "$project_dir")"

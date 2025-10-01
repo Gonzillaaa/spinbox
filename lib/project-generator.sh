@@ -862,6 +862,23 @@ function create_project() {
     generate_component_files "$PROJECT_PATH"
     save_project_configuration "$PROJECT_PATH"
 
+    # Install git hooks unless --no-hooks flag is set
+    if [[ "${NO_HOOKS:-false}" != true ]] && [[ "$DRY_RUN" != true ]]; then
+        # Determine language for hooks based on components
+        local hook_language=""
+        if [[ "$USE_PYTHON" == true ]] || [[ "$USE_FASTAPI" == true ]]; then
+            hook_language="python"
+        elif [[ "$USE_NODE" == true ]] || [[ "$USE_NEXTJS" == true ]]; then
+            hook_language="node"
+        fi
+
+        if [[ -n "$hook_language" ]]; then
+            if source "$PROJECT_ROOT/lib/git-hooks.sh" 2>/dev/null; then
+                install_git_hooks "$PROJECT_PATH" "$hook_language"
+            fi
+        fi
+    fi
+
     # Show appropriate completion message based on mode
     if [[ "$DRY_RUN" == true ]]; then
         print_status "Dry run completed - no files were created"

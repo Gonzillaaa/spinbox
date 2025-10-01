@@ -12,6 +12,7 @@ Spinbox is a **global CLI tool** for creating customizable prototyping environme
 - **DevContainer-First**: Every project includes DevContainer configuration for VS Code, Cursor, and other editors
 - **Docker Hub Integration**: 50-70% faster project creation with pre-built optimized images
 - **Automatic Dependencies**: Use `--with-deps` flag to automatically manage Python and Node.js packages
+- **Git Hooks**: Automatic code quality checks (black, isort, flake8) and pre-push testing for Python projects
 - **Modular Components**: Mix and match languages, frameworks, and databases
 - **Predefined Profiles**: 6 curated profiles for common development scenarios
 - **Security Built-in**: Virtual environments, .env templates, and security best practices
