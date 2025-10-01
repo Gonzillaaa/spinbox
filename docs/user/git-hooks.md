@@ -102,6 +102,68 @@ cp ~/.spinbox/runtime/templates/git-hooks/pre-push-python.sh .git/hooks/pre-push
 chmod +x .git/hooks/pre-commit .git/hooks/pre-push
 ```
 
+## Real-World Examples
+
+### Example 1: Commit with Formatting Issues
+
+```bash
+$ git add myfile.py
+$ git commit -m "Add new feature"
+
+Running pre-commit checks...
+Checking myfile.py
+1. Checking code formatting (black)...
+❌ Code formatting issues found!
+   Fix with: black myfile.py
+```
+
+**Fix and retry:**
+```bash
+$ black myfile.py
+reformatted myfile.py
+$ git add myfile.py
+$ git commit -m "Add new feature"
+
+Running pre-commit checks...
+✅ All pre-commit checks passed!
+[main abc1234] Add new feature
+```
+
+### Example 2: Push with Failing Tests
+
+```bash
+$ git push origin main
+
+Running pre-push tests...
+Running pytest...
+=================== test session starts ====================
+tests/test_feature.py F                               [100%]
+
+========================= FAILURES =========================
+❌ Tests failed! Push aborted.
+   Fix the failing tests before pushing.
+```
+
+**Fix tests and retry:**
+```bash
+$ # Fix the failing test
+$ pytest tests/  # Verify tests pass
+$ git push origin main
+
+Running pre-push tests...
+✅ All tests passed!
+[Push successful]
+```
+
+### Example 3: Quick Commit (Skip Hooks)
+
+Sometimes you need to commit work-in-progress code:
+
+```bash
+$ git commit --no-verify -m "WIP: debugging feature"
+[main def5678] WIP: debugging feature
+```
+
 ## Benefits
 
 - **Catch errors early** - Before they're committed or pushed
@@ -109,6 +171,48 @@ chmod +x .git/hooks/pre-commit .git/hooks/pre-push
 - **Prevent broken builds** - Tests run before pushing
 - **Team collaboration** - Everyone follows the same standards
 - **Zero configuration** - Works out of the box
+
+## Customizing Hooks
+
+Spinbox hooks are simple bash scripts that you can customize to fit your workflow.
+
+### Location
+
+Hooks are installed in your project's `.git/hooks/` directory:
+- `.git/hooks/pre-commit` - Pre-commit hook
+- `.git/hooks/pre-push` - Pre-push hook
+
+### Modify Hook Behavior
+
+Edit the hook files directly to customize checks:
+
+```bash
+# Example: Skip isort in pre-commit
+vim .git/hooks/pre-commit
+# Comment out the isort section
+```
+
+### Add Additional Checks
+
+Add your own checks to the hooks:
+
+```bash
+# Example: Add mypy type checking to pre-commit
+echo "" >> .git/hooks/pre-commit
+echo "# Run mypy type checking" >> .git/hooks/pre-commit
+echo "if command -v mypy &> /dev/null; then" >> .git/hooks/pre-commit
+echo "    mypy $STAGED_PY_FILES" >> .git/hooks/pre-commit
+echo "fi" >> .git/hooks/pre-commit
+```
+
+### Shared Team Hooks
+
+To share customized hooks with your team:
+
+1. Create a `hooks/` directory in your repo
+2. Copy customized hooks there
+3. Add installation script to your README
+4. Team members run the script to install hooks
 
 ## Troubleshooting
 
