@@ -189,14 +189,78 @@ Critical architectural improvements to prevent installation corruption and binar
 
 ## 🎯 Next Sprint Queue (October 2-8, 2025)
 
-### Priority 6: Beta 7 Release & Testing (3 SP Total)
-**Target**: v0.1.0-beta.7 release (git hooks feature)
+### Priority 6: Complete Beta 6 Tightening (4.5 SP Total)
+**Target**: Finish beta 6 quality improvements before final release
+**Status**: In Progress - 8.5 SP already delivered, 4.5 SP remaining
 
-- [ ] 1.0 SP: Run full test suite and verify all 77 tests pass
+#### Security Audit (2.0 SP)
+- [ ] 0.5 SP: Review .env file handling across all generators
+  - Check default values and security warnings
+  - Verify .env files are in .gitignore
+  - Audit template credential patterns
+- [ ] 0.5 SP: Check file permissions on generated files
+  - Verify scripts are executable (755)
+  - Check config files are readable (644)
+  - Review directory permissions (755)
+- [ ] 0.5 SP: Audit credential management in templates
+  - Review placeholder passwords/keys
+  - Check Docker Compose credential handling
+  - Verify database default credentials
+- [ ] 0.5 SP: Docker security best practices review
+  - Review base image security
+  - Check for exposed ports
+  - Audit volume mount permissions
+
+#### Performance Research (1.5 SP)
+- [ ] 0.5 SP: Profile project creation operations
+  - Time each generator function
+  - Identify slowest operations
+  - Document current benchmarks
+- [ ] 0.5 SP: Investigate template caching possibilities
+  - Research file caching strategies
+  - Evaluate trade-offs (complexity vs speed)
+  - Document recommendations
+- [ ] 0.5 SP: Memory usage and optimization analysis
+  - Measure memory during creation
+  - Identify optimization opportunities
+  - Document findings for future work
+
+#### Edge Cases Testing (1.0 SP)
+- [ ] 0.3 SP: Test network failure scenarios
+  - Docker Hub unavailable (already handled)
+  - GitHub API failures during updates
+  - DNS resolution issues
+- [ ] 0.3 SP: Test disk space handling
+  - Insufficient space during creation
+  - /tmp directory full scenarios
+  - Error message clarity
+- [ ] 0.4 SP: Test interrupted operation recovery
+  - Ctrl+C during project creation
+  - Cleanup verification
+  - Rollback mechanism testing
+
+### Priority 7: Beta 6 Final Release (2.0 SP Total)
+**Target**: v0.1.0-beta.6 final release
+**Depends on**: Priority 6 completion
+
+- [ ] 1.0 SP: Final testing and verification
+  - Run full test suite (all tests must pass)
+  - Manual testing of all profiles
+  - Verify all documentation is current
+- [ ] 1.0 SP: Create release and publish
+  - Create comprehensive release notes
+  - Tag v0.1.0-beta.6
+  - Create GitHub release with changelog
+
+### Priority 8: Beta 7 Release with Git Hooks (3 SP Total)
+**Target**: v0.1.0-beta.7 release (git hooks feature)
+**Depends on**: Priority 7 completion
+
+- [ ] 1.0 SP: Merge PR #27 (git hooks integration)
 - [ ] 1.0 SP: Update version to beta.7 and create release notes
 - [ ] 1.0 SP: Create GitHub release and push to repository
 
-### Priority 7: Homebrew Tap Repository (8 SP Total)
+### Priority 9: Homebrew Tap Repository (8 SP Total)
 **Target**: v0.1.0-beta.8 release (moved down one release)
 
 - [ ] 2.0 SP: Create gonzillaaa/homebrew-spinbox repository
