@@ -861,7 +861,15 @@ function create_project() {
     generate_docker_compose "$PROJECT_PATH"
     generate_component_files "$PROJECT_PATH"
     save_project_configuration "$PROJECT_PATH"
-    
+
+    # Show appropriate completion message based on mode
+    if [[ "$DRY_RUN" == true ]]; then
+        print_status "Dry run completed - no files were created"
+        print_info "Run without --dry-run to create the project:"
+        echo "  spinbox create $PROJECT_NAME${COMPONENTS:+ $COMPONENTS}"
+        return 0
+    fi
+
     print_status "Project $PROJECT_NAME created successfully!"
     print_info "Next steps:"
     echo "  1. cd $PROJECT_NAME"
