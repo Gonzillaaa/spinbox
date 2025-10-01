@@ -161,6 +161,15 @@ function validate_project_name() {
     return 1
   fi
 
+  # Check length (max 50 characters for filesystem compatibility)
+  if [[ ${#name} -gt 50 ]]; then
+    print_error "Project name too long: '$name' (${#name} characters)"
+    print_info "Project names must be 50 characters or less"
+    print_info "Current length: ${#name} characters"
+    print_info "Try a shorter name like: ${name:0:50}"
+    return 1
+  fi
+
   # Check format
   if [[ ! "$name" =~ ^[a-z0-9][a-z0-9_-]*$ ]]; then
     print_error "Invalid project name: '$name'"
@@ -560,6 +569,49 @@ function cleanup_lock_on_exit() {
     release_spinbox_lock
 }
 
+# Check if sufficient disk space is available
+# Usage: check_disk_space <path> <required_kb>
+# Returns: 0 if sufficient space, 1 if insufficient
+function check_disk_space() {
+    local target_path="$1"
+    local required_kb="${2:-10240}"  # Default: 10MB minimum
+
+    # Get parent directory if path doesn't exist yet
+    local check_path="$target_path"
+    if [[ ! -d "$check_path" ]]; then
+        check_path=$(dirname "$target_path")
+    fi
+
+    # Get available space in KB
+    local available_kb
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS: df -k returns KB
+        available_kb=$(df -k "$check_path" | awk 'NR==2 {print $4}')
+    else
+        # Linux: df -k returns KB
+        available_kb=$(df -k "$check_path" | awk 'NR==2 {print $4}')
+    fi
+
+    # Check if we got a valid number
+    if [[ ! "$available_kb" =~ ^[0-9]+$ ]]; then
+        print_warning "Could not determine available disk space"
+        return 0  # Don't block on error
+    fi
+
+    # Compare available vs required
+    if [[ $available_kb -lt $required_kb ]]; then
+        local available_mb=$((available_kb / 1024))
+        local required_mb=$((required_kb / 1024))
+        print_error "Insufficient disk space"
+        print_info "Available: ${available_mb}MB"
+        print_info "Required: ${required_mb}MB (minimum)"
+        print_info "Free up space and try again"
+        return 1
+    fi
+
+    return 0
+}
+
 # Install exit trap for lock cleanup
 trap cleanup_lock_on_exit EXIT
 
@@ -575,4 +627,4 @@ export -f load_config save_config
 export -f confirm retry cleanup
 export -f setup_error_handling parse_common_args show_help
 export -f validate_installation_state acquire_spinbox_lock release_spinbox_lock
-export -f validate_path_safety cleanup_lock_on_exit
+export -f validate_path_safety cleanup_lock_on_exit check_disk_space
