@@ -16,7 +16,7 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install-user
 **Verify installation:**
 ```bash
 spinbox --version
-# Should output: Spinbox v0.1.0-beta.6
+# Should output: Spinbox v0.1.0-beta.8
 ```
 
 ### Step 2: Explore Available Options (30 seconds)
@@ -59,7 +59,7 @@ spinbox create myapp --profile web-app --docker-hub
 spinbox create myproject --python
 
 # Full-stack with specific components
-spinbox create webapp --python --node --database --redis
+spinbox create webapp --python --node --postgresql --redis
 ```
 
 ### Step 4: Start Development (30 seconds)
@@ -130,7 +130,7 @@ code .
 - FastAPI backend with async support
 - PostgreSQL database
 - Redis for caching and queues
-- DevContainer with Python 3.12+
+- DevContainer with Python 3.11 (configurable)
 - Pre-configured prototyping environment
 
 ### Data Science Project
@@ -143,7 +143,7 @@ code .
 ```
 
 **What you get:**
-- Python 3.12+ with data science libraries
+- Python 3.11+ with data science libraries
 - Jupyter notebook support
 - pandas, numpy, matplotlib, scikit-learn
 - PostgreSQL for data storage
@@ -173,7 +173,7 @@ code .
 spinbox create <name> --profile <profile-name>
 
 # With custom components
-spinbox create <name> --python --node --database
+spinbox create <name> --python --node --postgresql
 
 # With version overrides
 spinbox create <name> --profile web-app --python-version 3.11
@@ -182,7 +182,7 @@ spinbox create <name> --profile web-app --python-version 3.11
 ### Project Management
 ```bash
 # Add components to existing project
-spinbox add --database --redis
+spinbox add --postgresql --redis
 
 # Start project services
 spinbox start                    # Background
@@ -307,13 +307,13 @@ docker-compose down
 ### Learning New Technologies
 ```bash
 # Try out FastAPI
-spinbox create fastapi-test --backend
+spinbox create fastapi-test --fastapi
 
 # Experiment with Next.js
-spinbox create nextjs-test --frontend
+spinbox create nextjs-test --nextjs
 
 # Test full-stack integration
-spinbox create fullstack-test --backend --frontend --database
+spinbox create fullstack-test --fastapi --nextjs --postgresql
 ```
 
 ### Prototyping

@@ -112,7 +112,7 @@ Spinbox components are organized into three architectural layers:
 
 | Component | Flag       | Description                                        |
 | --------- | ---------- | -------------------------------------------------- |
-| Python    | `--python` | Python 3.12+ DevContainer with virtual environment |
+| Python    | `--python` | Python 3.11+ DevContainer with virtual environment |
 | Node.js   | `--node`   | Node.js 20+ DevContainer with TypeScript           |
 
 ### 2. **Application Layer** (API & UI)

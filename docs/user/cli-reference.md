@@ -657,8 +657,8 @@ spinbox help profiles
 
 **Format:**
 ```bash
-# Software versions
-PYTHON_VERSION="3.12"
+# Software versions (defaults shown)
+PYTHON_VERSION="3.11"
 NODE_VERSION="20"
 POSTGRES_VERSION="15"
 REDIS_VERSION="7"
