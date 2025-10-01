@@ -8,6 +8,7 @@ This project uses a **DevContainer-first approach**. All development is designed
 
 ## Table of Contents
 
+- [Common Spinbox CLI Errors](#common-spinbox-cli-errors)
 - [Docker Issues](#docker-issues)
 - [Container Issues](#container-issues)
 - [DevContainer Issues](#devcontainer-issues)
@@ -17,6 +18,123 @@ This project uses a **DevContainer-first approach**. All development is designed
 - [Script Issues](#script-issues)
 - [Component-Specific Issues](#component-specific-issues)
 - [Getting Help](#getting-help)
+
+## Common Spinbox CLI Errors
+
+### Project Name Validation Errors
+
+**Symptom:**
+```
+[-] Invalid project name: 'My Project'
+```
+
+**Cause:**
+Project names must follow specific naming conventions for filesystem and Docker compatibility.
+
+**Solution:**
+Project names must:
+- Start with a lowercase letter or number
+- Contain only lowercase letters, numbers, hyphens (-) and underscores (_)
+- No spaces, special characters, or uppercase letters
+
+**Valid Examples:**
+```bash
+spinbox create myproject --python
+spinbox create my-app --profile web-app
+spinbox create web_app_v2 --fastapi
+```
+
+### Directory Already Exists
+
+**Symptom:**
+```
+[-] Project directory already exists: ./myproject
+```
+
+**Cause:**
+A directory with that name already exists in the target location.
+
+**Solutions:**
+1. Use `--force` to overwrite (deletes existing directory):
+   ```bash
+   spinbox create myproject --force --python
+   ```
+
+2. Choose a different name:
+   ```bash
+   spinbox create myproject-v2 --python
+   ```
+
+3. Create in a different location:
+   ```bash
+   spinbox create ~/projects/myproject --python
+   ```
+
+### Permission Denied
+
+**Symptom:**
+```
+[-] Permission denied: Cannot create project in /some/directory
+```
+
+**Cause:**
+Your user doesn't have write permissions for the target directory.
+
+**Solutions:**
+1. Create in your home directory:
+   ```bash
+   spinbox create ~/myproject --python
+   ```
+
+2. Create in current directory:
+   ```bash
+   spinbox create myproject --python
+   ```
+
+3. Check and fix permissions:
+   ```bash
+   ls -la /parent/directory
+   chmod u+w /parent/directory  # If you own it
+   ```
+
+### Empty Project Name
+
+**Symptom:**
+```
+[-] Project name cannot be empty
+```
+
+**Cause:**
+No project name provided to the create command.
+
+**Solution:**
+Always provide a project name:
+```bash
+spinbox create <PROJECT_NAME> [OPTIONS]
+spinbox create myproject --python
+```
+
+### Unknown Option Error
+
+**Symptom:**
+```
+[-] Unknown option for create: --invalid
+```
+
+**Cause:**
+Used an option that doesn't exist or typo in option name.
+
+**Solution:**
+1. Check available options:
+   ```bash
+   spinbox create --help
+   ```
+
+2. Common valid options:
+   - `--python`, `--node`, `--fastapi`, `--nextjs`
+   - `--postgresql`, `--mongodb`, `--redis`, `--chroma`
+   - `--profile`, `--with-deps`, `--docker-hub`
+   - `--force`, `--dry-run`, `--verbose`
 
 ## Docker Issues
 
