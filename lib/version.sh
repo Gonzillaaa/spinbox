@@ -10,23 +10,65 @@ get_current_version() {
 get_latest_version() {
     local repo_url="https://api.github.com/repos/Gonzillaaa/spinbox/releases"
     local latest_version
-    
+    local http_code
+
     # Try to get latest version from GitHub API (including prereleases)
     if command -v curl &> /dev/null; then
-        latest_version=$(curl -s "$repo_url" | grep '"tag_name"' | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+        # Use curl with error handling and timeout
+        local response
+        response=$(curl -s -w "\n%{http_code}" --max-time 10 --connect-timeout 5 "$repo_url" 2>/dev/null)
+        http_code=$(echo "$response" | tail -n1)
+
+        # Check for network/DNS errors (empty response)
+        if [[ -z "$http_code" ]]; then
+            print_error "Unable to check for updates"
+            print_info "→ Check your internet connection"
+            print_info "→ Try again in a few moments"
+            print_info "→ Current version: $VERSION"
+            return 1
+        fi
+
+        # Check HTTP status code
+        if [[ "$http_code" -ne 200 ]]; then
+            print_error "Failed to fetch release information (HTTP $http_code)"
+            if [[ "$http_code" -eq 404 ]]; then
+                print_info "→ Repository releases not found"
+            elif [[ "$http_code" -eq 403 ]]; then
+                print_info "→ GitHub API rate limit reached"
+                print_info "→ Try again later"
+            else
+                print_info "→ GitHub may be temporarily unavailable"
+                print_info "→ Current version: $VERSION"
+            fi
+            return 1
+        fi
+
+        latest_version=$(echo "$response" | head -n-1 | grep '"tag_name"' | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
     elif command -v wget &> /dev/null; then
-        latest_version=$(wget -qO- "$repo_url" | grep '"tag_name"' | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+        # Use wget with error handling and timeout
+        local temp_file="/tmp/spinbox-version-$$"
+        if wget -q --timeout=10 -O "$temp_file" "$repo_url" 2>/dev/null; then
+            latest_version=$(grep '"tag_name"' "$temp_file" | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+            rm -f "$temp_file"
+        else
+            rm -f "$temp_file"
+            print_error "Unable to check for updates"
+            print_info "→ Check your internet connection"
+            print_info "→ Current version: $VERSION"
+            return 1
+        fi
     else
-        print_error "Neither curl nor wget is available. Cannot check for updates."
+        print_error "Neither curl nor wget is available"
+        print_info "→ Install curl or wget to check for updates"
         return 1
     fi
-    
+
     # If no releases found, fallback to current version (development mode)
     if [[ -z "$latest_version" ]]; then
         print_warning "No releases found. Using current version as latest."
         latest_version="$VERSION"
     fi
-    
+
     echo "$latest_version"
 }
 

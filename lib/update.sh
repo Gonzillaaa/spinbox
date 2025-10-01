@@ -144,20 +144,41 @@ download_update() {
     # Create temporary directory
     mkdir -p "$temp_dir"
     
-    # Download the update
+    # Download the update with error handling
+    local download_success=false
+
     if command -v curl &> /dev/null; then
-        curl -sL "$download_url" | tar -xz -C "$temp_dir" --strip-components=1
+        # Use curl with timeout and progress
+        if curl -sL --max-time 60 --connect-timeout 10 "$download_url" 2>/dev/null | tar -xz -C "$temp_dir" --strip-components=1 2>/dev/null; then
+            download_success=true
+        fi
     elif command -v wget &> /dev/null; then
-        wget -qO- "$download_url" | tar -xz -C "$temp_dir" --strip-components=1
+        # Use wget with timeout
+        if wget -qO- --timeout=60 "$download_url" 2>/dev/null | tar -xz -C "$temp_dir" --strip-components=1 2>/dev/null; then
+            download_success=true
+        fi
     else
-        print_error "Neither curl nor wget is available. Cannot download update." >&2
+        print_error "Neither curl nor wget is available" >&2
+        print_info "→ Install curl or wget to download updates" >&2
         rm -rf "$temp_dir"
         return 1
     fi
-    
+
+    # Check if download was successful
+    if [[ "$download_success" != "true" ]]; then
+        print_error "Failed to download update" >&2
+        print_info "→ Check your internet connection" >&2
+        print_info "→ GitHub may be temporarily unavailable" >&2
+        print_info "→ Try again in a few moments" >&2
+        rm -rf "$temp_dir"
+        return 1
+    fi
+
     # Verify download
     if [[ ! -f "$temp_dir/bin/spinbox" ]]; then
-        print_error "Download failed or incomplete. Missing main executable." >&2
+        print_error "Download incomplete or corrupted" >&2
+        print_info "→ Missing main executable file" >&2
+        print_info "→ Check network connection and try again" >&2
         rm -rf "$temp_dir"
         return 1
     fi
