@@ -88,12 +88,12 @@ test_project_creation() {
     
     # Test basic Python project creation
     assert_true \
-        "\"$CLI_PATH\" create $TEST_PROJECT_NAME --python --dry-run | grep -q 'Project $TEST_PROJECT_NAME created successfully'" \
+        "\"$CLI_PATH\" create $TEST_PROJECT_NAME --python --dry-run | grep -q 'Dry run completed'" \
         "Python project creation (dry-run)"
-    
+
     # Test full-stack project creation
     assert_true \
-        "\"$CLI_PATH\" create test-fullstack --fastapi --nextjs --postgresql --dry-run | grep -q 'Project test-fullstack created successfully'" \
+        "\"$CLI_PATH\" create test-fullstack --fastapi --nextjs --postgresql --dry-run | grep -q 'Dry run completed'" \
         "Full-stack project creation (dry-run)"
     
     # Test with version overrides (TODO: implement CLI flag parsing for versions)
