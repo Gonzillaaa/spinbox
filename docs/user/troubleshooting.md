@@ -1,6 +1,6 @@
 # Troubleshooting Guide
 
-This guide helps you resolve common issues when using the project template.
+This guide helps you resolve common issues when using Spinbox.
 
 ## Important Note
 

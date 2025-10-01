@@ -646,7 +646,8 @@ function parse_create_args() {
                 ;;
             *)
                 print_error "Unknown option for create: $1"
-                echo "Use 'spinbox create --help' for usage information."
+                print_info "Use 'spinbox create --help' to see all available options"
+                print_info "Common options: --python, --node, --fastapi, --nextjs, --profile, --with-deps"
                 exit 1
                 ;;
         esac

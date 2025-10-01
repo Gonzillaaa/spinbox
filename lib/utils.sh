@@ -152,8 +152,22 @@ function spinner() {
 # Input validation functions
 function validate_project_name() {
   local name="$1"
+
+  # Check for empty name
+  if [[ -z "$name" ]]; then
+    print_error "Project name cannot be empty"
+    print_info "Usage: spinbox create <PROJECT_NAME> [OPTIONS]"
+    print_info "Example: spinbox create myproject --python"
+    return 1
+  fi
+
+  # Check format
   if [[ ! "$name" =~ ^[a-z0-9][a-z0-9_-]*$ ]]; then
-    print_error "Invalid project name. Use lowercase letters, numbers, hyphens and underscores only."
+    print_error "Invalid project name: '$name'"
+    print_info "Project names must:"
+    print_info "  • Start with a lowercase letter or number"
+    print_info "  • Contain only lowercase letters, numbers, hyphens (-) and underscores (_)"
+    print_info "Valid examples: myproject, my-app, web_app_v2"
     return 1
   fi
   return 0

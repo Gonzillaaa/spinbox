@@ -95,8 +95,11 @@ function validate_project_directory() {
                 print_info "DRY RUN: Would remove existing directory $project_dir"
             fi
         else
-            print_error "Directory $project_dir already exists"
-            print_info "Use --force to overwrite or choose a different name/location"
+            print_error "Project directory already exists: $project_dir"
+            print_info "Options:"
+            print_info "  • Use --force flag to overwrite: spinbox create $(basename "$project_dir") --force [options]"
+            print_info "  • Choose a different name: spinbox create my-new-project [options]"
+            print_info "  • Use a different location: spinbox create ~/projects/$(basename "$project_dir") [options]"
             exit 1
         fi
     fi
@@ -104,7 +107,12 @@ function validate_project_directory() {
     # Check if parent directory is writable
     local parent_dir=$(dirname "$project_dir")
     if [[ ! -w "$parent_dir" ]]; then
-        print_error "Cannot create project in $parent_dir (permission denied)"
+        print_error "Permission denied: Cannot create project in $parent_dir"
+        print_info "The directory is not writable by your user"
+        print_info "Solutions:"
+        print_info "  • Choose a location in your home directory: spinbox create ~/projects/$(basename "$project_dir") [options]"
+        print_info "  • Use your current directory: spinbox create $(basename "$project_dir") [options]"
+        print_info "  • Check directory permissions: ls -la $(dirname "$parent_dir")"
         exit 1
     fi
     
