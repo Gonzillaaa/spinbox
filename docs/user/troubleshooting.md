@@ -35,6 +35,7 @@ Project names must follow specific naming conventions for filesystem and Docker 
 Project names must:
 - Start with a lowercase letter or number
 - Contain only lowercase letters, numbers, hyphens (-) and underscores (_)
+- Be 50 characters or less
 - No spaces, special characters, or uppercase letters
 
 **Valid Examples:**
@@ -43,6 +44,57 @@ spinbox create myproject --python
 spinbox create my-app --profile web-app
 spinbox create web_app_v2 --fastapi
 ```
+
+### Project Name Too Long
+
+**Symptom:**
+```
+[-] Project name too long: 'very-long-name...' (68 characters)
+[i] Project names must be 50 characters or less
+```
+
+**Cause:**
+Project names are limited to 50 characters for filesystem compatibility.
+
+**Solution:**
+Use a shorter, more concise name:
+```bash
+# Too long (68 chars)
+spinbox create this-is-a-very-long-project-name-that-exceeds-fifty-characters-limit --python
+
+# Better (shorter alternative)
+spinbox create long-project-name --python
+```
+
+### Insufficient Disk Space
+
+**Symptom:**
+```
+[-] Insufficient disk space
+[i] Available: 5MB
+[i] Required: 10MB (minimum)
+```
+
+**Cause:**
+Less than 10MB of free disk space available.
+
+**Solution:**
+1. Free up disk space:
+   ```bash
+   # Check disk usage
+   df -h
+
+   # Clean up old projects
+   rm -rf ~/old-projects
+
+   # Clean Docker resources
+   docker system prune -a
+   ```
+
+2. Create project on different volume with more space:
+   ```bash
+   spinbox create /Volumes/External/myproject --python
+   ```
 
 ### Directory Already Exists
 
@@ -554,6 +606,53 @@ For more detailed information about automatic dependency management, see the [De
 
 ## Network Issues
 
+### Update Check Failures
+
+**Symptoms:**
+```
+[-] Unable to check for updates
+[i] → Check your internet connection
+```
+
+**Causes:**
+- No internet connection
+- DNS resolution failures
+- GitHub API temporarily unavailable
+- Firewall blocking requests
+
+**Solutions:**
+
+1. **Verify internet connection:**
+   ```bash
+   # Test basic connectivity
+   ping -c 3 github.com
+
+   # Test HTTPS access
+   curl -I https://api.github.com
+   ```
+
+2. **Check firewall settings:**
+   ```bash
+   # Ensure curl/wget can access GitHub
+   curl -v https://api.github.com/repos/Gonzillaaa/spinbox/releases
+   ```
+
+3. **GitHub API rate limiting:**
+   ```
+   [-] Failed to fetch release information (HTTP 403)
+   [i] → GitHub API rate limit reached
+   [i] → Try again later
+   ```
+   Wait 1 hour for rate limit to reset, or authenticate with GitHub token.
+
+4. **Try again later:**
+   If GitHub is temporarily unavailable, wait a few minutes and retry.
+
+5. **Check current version without update:**
+   ```bash
+   spinbox --version
+   ```
+
 ### Service Discovery Problems
 
 **Symptoms:**
@@ -584,7 +683,7 @@ For more detailed information about automatic dependency management, see the [De
      database:
        networks:
          - app-network
-   
+
    networks:
      app-network:
        driver: bridge

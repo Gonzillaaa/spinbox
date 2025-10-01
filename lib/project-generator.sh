@@ -115,7 +115,12 @@ function validate_project_directory() {
         print_info "  • Check directory permissions: ls -la $(dirname "$parent_dir")"
         exit 1
     fi
-    
+
+    # Check if sufficient disk space is available (10MB minimum)
+    if ! check_disk_space "$project_dir" 10240; then
+        exit 1
+    fi
+
     return 0
 }
 
