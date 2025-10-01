@@ -23,7 +23,7 @@ Spinbox provides the simplest possible way to create containerized prototyping e
 **Major Accomplishments:**
 - **Global CLI Infrastructure** (45 SP)
   - Standard Unix command conventions and help systems
-  - Centralized installation architecture with ~/.spinbox/source/
+  - Centralized installation architecture with ~/.spinbox/runtime/
   - Configuration management with variable preservation
   - Cross-platform compatibility (macOS, Linux)
 

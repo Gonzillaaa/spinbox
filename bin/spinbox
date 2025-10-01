@@ -119,7 +119,7 @@ USAGE:
     spinbox create <PROJECT_PATH> [OPTIONS]
 
 OPTIONS:
-    --profile NAME         Use predefined project profile (web-app, api-only, data-science, ai-llm, minimal)
+    --profile NAME         Use predefined project profile (web-app, api-only, data-science, ai-llm, python, node)
     
     --python               Create Python DevContainer environment
     --node                 Create Node.js DevContainer environment
@@ -130,7 +130,7 @@ OPTIONS:
     --redis                Add Redis for caching and queues
     --chroma               Add Chroma vector database
     
-    --python-version VER   Python version (default: 3.12)
+    --python-version VER   Python version (default: 3.11)
     --node-version VER     Node.js version (default: 20)
     --postgres-version VER PostgreSQL version (default: 15)
     --redis-version VER    Redis version (default: 7)
@@ -192,7 +192,7 @@ OPTIONS:
     --redis                Add Redis for caching and queues
     --chroma               Add Chroma vector database
     
-    --python-version VER   Python version (default: current or 3.12)
+    --python-version VER   Python version (default: current or 3.11)
     --node-version VER     Node.js version (default: current or 20)
     --postgres-version VER PostgreSQL version (default: current or 15)
     --redis-version VER    Redis version (default: current or 7)

@@ -45,7 +45,7 @@ curl -sSL https://raw.githubusercontent.com/Gonzillaaa/spinbox/main/install.sh |
 **Verify Installation:**
 ```bash
 spinbox --version
-# Should output: Spinbox v0.1.0-beta.5
+# Should output: Spinbox v0.1.0-beta.6
 ```
 
 ### Alternative: Manual Installation
@@ -81,10 +81,11 @@ rm -rf spinbox
 ### What Gets Installed
 
 **Core Components:**
-- `/usr/local/bin/spinbox` - Main CLI executable
+- `/usr/local/bin/spinbox` (or `~/.local/bin/spinbox` for user install) - Main CLI executable
 - `~/.spinbox/` - Configuration directory
+- `~/.spinbox/runtime/` - Runtime files (libraries, generators, templates)
+- `~/.spinbox/cache/` - Temporary cache directory
 - `~/.spinbox/config/` - Configuration files
-- `~/.spinbox/cache/` - Cache directory
 
 **Installation Verification:**
 ```bash
@@ -474,9 +475,10 @@ rm -rf ~/.spinbox
 - `~/.local/bin/spinbox` (user installations)
 
 **Configuration Files (if --config used):**
-- `~/.spinbox/config/` - All configuration files
+- `~/.spinbox/runtime/` - Runtime files
 - `~/.spinbox/cache/` - Cache directory
-- `~/.spinbox/` - Entire configuration directory
+- `~/.spinbox/config/` - Configuration files
+- `~/.spinbox/` - Entire Spinbox directory
 
 **Preserved by Default:**
 - Project files created with Spinbox
