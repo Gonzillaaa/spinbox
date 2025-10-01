@@ -4,13 +4,20 @@ This directory contains release notes for all Spinbox versions.
 
 ## Latest Release
 
-**[v0.1.0-beta.6](v0.1.0-beta.6.md)** - September 30, 2025
-- 🐛 Fixed node profile array handling bug
-- ✅ Updated test suite to match new directory structure
-- 📊 100% test success rate (77/77 passing)
-- 🎯 Enhanced stability and error handling
+**[v0.1.0-beta.7](v0.1.0-beta.7.md)** - October 1, 2025
+- 🎯 Git hooks integration (pre-commit, pre-push)
+- ✅ Automatic code quality gates for Python projects
+- 🔒 Security audit complete (A- rating)
+- ⚡ Performance analysis (A+ rating, 0.26-0.47s creation)
+- 📊 100% test success rate (106/106 passing)
 
 ## Previous Releases
+
+**[v0.1.0-beta.6](v0.1.0-beta.6.md)** - October 1, 2025
+- 🎯 Git hooks feature (15 SP) + quality improvements (13 SP)
+- 🔒 Comprehensive security audit
+- ⚡ Exceptional performance profiling
+- 📝 Edge cases testing and documentation
 
 **[v0.1.0-beta.5](v0.1.0-beta.5.md)** - July 19, 2025
 - 🚀 Automatic dependency management with --with-deps flag
@@ -24,7 +31,7 @@ This directory contains release notes for all Spinbox versions.
 
 ## Installation
 
-**Latest release (v0.1.0-beta.6):**
+**Latest release (v0.1.0-beta.7):**
 
 **User installation (no sudo required):**
 ```bash
@@ -43,7 +50,8 @@ spinbox update
 
 ## Release Archive
 
-- [v0.1.0-beta.6](v0.1.0-beta.6.md) - Stability and bug fixes
+- [v0.1.0-beta.7](v0.1.0-beta.7.md) - Git hooks integration
+- [v0.1.0-beta.6](v0.1.0-beta.6.md) - Quality improvements and comprehensive testing
 - [v0.1.0-beta.5](v0.1.0-beta.5.md) - Automatic dependency management
 - [v0.1.0-beta.4](v0.1.0-beta.4.md) - Bug fixes and test infrastructure
 - v0.1.0-beta.2 - Foundation release (notes not archived)
