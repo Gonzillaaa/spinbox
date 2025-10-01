@@ -39,9 +39,9 @@ if [[ -z "${GREEN:-}" ]]; then
     readonly NC='\033[0m' # No Color
 fi
 
-# Global variables
-VERBOSE=false
-DRY_RUN=false
+# Global variables (use conditional assignment to preserve existing values)
+: "${VERBOSE:=false}"
+: "${DRY_RUN:=false}"
 LOG_FILE=""
 ROLLBACK_ACTIONS=()
 

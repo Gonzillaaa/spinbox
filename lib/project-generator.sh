@@ -824,17 +824,17 @@ function create_project() {
     if [[ -n "${COMPONENTS:-}" ]]; then
         parse_component_flags $COMPONENTS
     fi
-    
+
     # Apply version overrides
     apply_version_overrides
-    
+
     # Determine project path
     if [[ -n "$PROJECT_DIR" ]]; then
         PROJECT_PATH="$PROJECT_DIR/$PROJECT_NAME"
     else
         PROJECT_PATH="./$PROJECT_NAME"
     fi
-    
+
     # Export component flags for version configuration display
     export USE_PYTHON USE_NODE USE_POSTGRESQL USE_REDIS
     

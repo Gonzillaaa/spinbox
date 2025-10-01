@@ -13,7 +13,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/docker-hub.sh"
 function generate_minimal_python_devcontainer() {
     local project_dir="$1"
     local devcontainer_dir="$project_dir/.devcontainer"
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         print_info "DRY RUN: Would generate minimal Python DevContainer"
         return 0
