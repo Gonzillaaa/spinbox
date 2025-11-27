@@ -43,7 +43,8 @@ get_latest_version() {
             return 1
         fi
 
-        latest_version=$(echo "$response" | head -n-1 | grep '"tag_name"' | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+        # Remove last line (http_code) using sed instead of head -n-1 for macOS compatibility
+        latest_version=$(echo "$response" | sed '$d' | grep '"tag_name"' | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
     elif command -v wget &> /dev/null; then
         # Use wget with error handling and timeout
         local temp_file="/tmp/spinbox-version-$$"
