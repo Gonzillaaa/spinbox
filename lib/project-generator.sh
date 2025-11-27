@@ -43,6 +43,7 @@ function parse_component_flags() {
                 ;;
             --nextjs)
                 USE_NEXTJS=true
+                USE_NODE=true  # Next.js requires Node.js
                 SELECTED_COMPONENTS+=("nextjs")
                 ;;
             --postgresql)
@@ -278,7 +279,11 @@ RUN sh -c "\$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/ins
 
 # Set up Zsh configuration
 RUN echo 'ZSH_THEME="powerlevel10k/powerlevel10k"' >> ~/.zshrc \\
-    && echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc
+    && echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc \\
+    && echo '' >> ~/.zshrc \\
+    && echo '# Auto-activate Python virtual environment if it exists' >> ~/.zshrc \\
+    && echo 'if [[ -f /workspace/venv/bin/activate ]]; then source /workspace/venv/bin/activate; fi' >> ~/.zshrc \\
+    && echo 'if [[ -f /workspace/fastapi/venv/bin/activate ]]; then source /workspace/fastapi/venv/bin/activate; fi' >> ~/.zshrc
 
 # Set up Zsh as default shell
 USER root
@@ -357,7 +362,7 @@ function generate_vscode_extensions() {
         extensions+=("\"ms-python.black-formatter\"")
     fi
     
-    if [[ "$USE_NODE" == true ]]; then
+    if [[ "$USE_NODE" == true ]] || [[ "$USE_NEXTJS" == true ]]; then
         extensions+=("\"ms-vscode.vscode-typescript-next\"")
         extensions+=("\"esbenp.prettier-vscode\"")
         extensions+=("\"bradlc.vscode-tailwindcss\"")
@@ -381,7 +386,7 @@ function generate_dockerfile_content() {
     local python_image=$(get_python_image_tag)
     local node_image=$(get_node_image_tag)
     
-    if [[ "$USE_PYTHON" == true ]] && [[ "$USE_NODE" == true ]]; then
+    if [[ "$USE_PYTHON" == true ]] && [[ "$USE_NODE" == true || "$USE_NEXTJS" == true ]]; then
         # Multi-stage build for both Python and Node
         cat << EOF
 FROM $node_image as node-base
@@ -470,12 +475,15 @@ fi
 EOF
     fi
     
-    if [[ "$USE_NODE" == true ]]; then
+    if [[ "$USE_NODE" == true ]] || [[ "$USE_NEXTJS" == true ]]; then
         cat << 'EOF'
 # Install Node.js dependencies
 if [ -f "package.json" ]; then
     echo "Installing Node.js dependencies..."
     npm install
+elif [ -d "nextjs" ] && [ -f "nextjs/package.json" ]; then
+    echo "Installing Next.js dependencies..."
+    cd nextjs && npm install && cd ..
 fi
 
 EOF
