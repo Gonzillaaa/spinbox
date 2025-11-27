@@ -68,16 +68,36 @@ function generate_nextjs_dockerfiles() {
 function generate_nextjs_dockerhub_config() {
     local nextjs_dir="$1"
     local image_name=$(get_component_image "nextjs")
-    
+
     print_debug "Generating NextJS configuration with Docker Hub image: $image_name"
-    
+
     # Create minimal Dockerfile.dev that uses the pre-built base image
     cat > "$nextjs_dir/Dockerfile.dev" << EOF
 # Next.js Development Container (Docker Hub optimized)
 # Uses pre-built base image: ${image_name}:latest
 FROM ${image_name}:latest
 
+# Create non-root user for development
+ARG USERNAME=developer
+ARG USER_UID=1000
+ARG USER_GID=\$USER_UID
+
+RUN groupadd --gid \$USER_GID \$USERNAME \\
+    && useradd --uid \$USER_UID --gid \$USER_GID -m \$USERNAME -s /bin/zsh \\
+    && apt-get update && apt-get install -y sudo \\
+    && echo \$USERNAME ALL=\\(root\\) NOPASSWD:ALL > /etc/sudoers.d/\$USERNAME \\
+    && chmod 0440 /etc/sudoers.d/\$USERNAME \\
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up Oh My Zsh and shell config for non-root user
+RUN cp -r /root/.oh-my-zsh /home/\$USERNAME/.oh-my-zsh \\
+    && cp /root/.zshrc /home/\$USERNAME/.zshrc \\
+    && chown -R \$USERNAME:\$USERNAME /home/\$USERNAME/.oh-my-zsh \\
+    && chown \$USERNAME:\$USERNAME /home/\$USERNAME/.zshrc \\
+    && sed -i "s|/root|/home/\$USERNAME|g" /home/\$USERNAME/.zshrc
+
 WORKDIR /app
+RUN chown \$USERNAME:\$USERNAME /app
 
 # The base image contains:
 # - Node.js 20 with npm package manager
@@ -86,7 +106,8 @@ WORKDIR /app
 # Application dependencies will be installed via package.json
 
 # Copy package files and install dependencies using npm
-COPY package.json package-lock.json* ./
+COPY --chown=\$USERNAME:\$USERNAME package.json package-lock.json* ./
+USER \$USERNAME
 RUN npm install
 
 # Add Next.js development aliases
@@ -157,14 +178,12 @@ EOF
 function generate_nextjs_local_dockerfiles() {
     local nextjs_dir="$1"
     local node_version=$(get_effective_node_version)
-    
+
     print_debug "Generating NextJS configuration with local builds"
-    
+
     # Development Dockerfile (original implementation)
     cat > "$nextjs_dir/Dockerfile.dev" << EOF
 FROM node:${node_version}-alpine
-
-WORKDIR /app
 
 # Install system dependencies including Zsh
 RUN apk add --no-cache \\
@@ -172,9 +191,21 @@ RUN apk add --no-cache \\
     zsh \\
     curl \\
     shadow \\
-    util-linux
+    util-linux \\
+    sudo
 
-# Install Oh My Zsh and Powerlevel10k
+# Create non-root user for development
+ARG USERNAME=developer
+ARG USER_UID=1000
+ARG USER_GID=\$USER_UID
+
+RUN addgroup -g \$USER_GID \$USERNAME \\
+    && adduser -D -u \$USER_UID -G \$USERNAME -s /bin/zsh \$USERNAME \\
+    && echo "\$USERNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/\$USERNAME \\
+    && chmod 0440 /etc/sudoers.d/\$USERNAME
+
+# Install Oh My Zsh and Powerlevel10k for non-root user
+USER \$USERNAME
 RUN sh -c "\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \\
     && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
 
@@ -194,10 +225,18 @@ RUN echo '# Development aliases' >> ~/.zshrc \\
     && echo 'alias lint="npm run lint"' >> ~/.zshrc \\
     && echo 'alias test="npm test"' >> ~/.zshrc
 
+# Create app directory with correct ownership
+USER root
+WORKDIR /app
+RUN chown \$USERNAME:\$USERNAME /app
+
 EXPOSE 3000
 
 # Set Zsh as default shell
 SHELL ["/bin/zsh", "-c"]
+
+# Set default user
+USER \$USERNAME
 
 # Keep container running for development
 CMD ["zsh", "-c", "npm run dev"]

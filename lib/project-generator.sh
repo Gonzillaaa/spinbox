@@ -190,11 +190,16 @@ function generate_project_devcontainer() {
                 generate_minimal_python_devcontainer "$project_dir"
                 return 0
             fi
+        elif [[ "$USE_NODE" == true ]]; then
+            if source "$PROJECT_ROOT/generators/minimal-node.sh" 2>/dev/null; then
+                generate_minimal_node_devcontainer "$project_dir"
+                return 0
+            fi
         elif [[ "$USE_FASTAPI" == true ]]; then
             # FastAPI has its own DevContainer generation within the generator
             return 0
         elif [[ "$USE_NEXTJS" == true ]]; then
-            # NextJS has its own DevContainer generation within the generator  
+            # NextJS has its own DevContainer generation within the generator
             return 0
         fi
     fi
@@ -207,20 +212,22 @@ function generate_project_devcontainer() {
 function generate_devcontainer_config() {
     local project_dir="$1"
     local devcontainer_dir="$project_dir/.devcontainer"
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         print_info "DRY RUN: Would generate DevContainer configuration"
         return 0
     fi
-    
+
     # Generate devcontainer.json
     local python_version=$(get_effective_python_version)
     local node_version=$(get_effective_node_version)
-    
+
     cat > "$devcontainer_dir/devcontainer.json" << EOF
 {
     "name": "$PROJECT_NAME",
     "dockerFile": "Dockerfile",
+    "remoteUser": "developer",
+    "containerUser": "developer",
     "forwardPorts": [$(generate_port_list)],
     "postCreateCommand": "bash .devcontainer/setup.sh",
     "customizations": {
@@ -238,7 +245,7 @@ function generate_devcontainer_config() {
     "shutdownAction": "stopContainer"
 }
 EOF
-    
+
     # Generate Dockerfile
     cat > "$devcontainer_dir/Dockerfile" << EOF
 # Multi-stage DevContainer for $PROJECT_NAME
@@ -246,27 +253,48 @@ EOF
 
 $(generate_dockerfile_content)
 
-# Install Zsh and Powerlevel10k
+# Install system dependencies including sudo
 RUN apt-get update && apt-get install -y \\
     zsh \\
     git \\
     curl \\
+    sudo \\
     && rm -rf /var/lib/apt/lists/*
 
-# Install Oh My Zsh and Powerlevel10k
-RUN sh -c "\$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \\
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \${ZSH_CUSTOM:-\$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+# Create non-root user for development
+ARG USERNAME=developer
+ARG USER_UID=1000
+ARG USER_GID=\$USER_UID
+
+RUN groupadd --gid \$USER_GID \$USERNAME \\
+    && useradd --uid \$USER_UID --gid \$USER_GID -m \$USERNAME -s /bin/zsh \\
+    && echo \$USERNAME ALL=\\(root\\) NOPASSWD:ALL > /etc/sudoers.d/\$USERNAME \\
+    && chmod 0440 /etc/sudoers.d/\$USERNAME
+
+# Install Oh My Zsh and Powerlevel10k for non-root user
+USER \$USERNAME
+RUN sh -c "\$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \\
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
+
+# Set up Zsh configuration
+RUN echo 'ZSH_THEME="powerlevel10k/powerlevel10k"' >> ~/.zshrc \\
+    && echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc
 
 # Set up Zsh as default shell
-RUN chsh -s /bin/zsh
+USER root
+RUN chsh -s /bin/zsh \$USERNAME
 ENV SHELL=/bin/zsh
 
-# Create workspace directory
+# Create workspace directory with correct ownership
 WORKDIR /workspace
+RUN chown \$USERNAME:\$USERNAME /workspace
 
 # Copy setup script
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh
+
+# Set default user
+USER \$USERNAME
 EOF
     
     # Generate setup script

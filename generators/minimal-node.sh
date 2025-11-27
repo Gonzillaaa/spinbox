@@ -28,6 +28,8 @@ function generate_minimal_node_devcontainer() {
 {
     "name": "$PROJECT_NAME - Node.js DevContainer",
     "dockerFile": "Dockerfile",
+    "remoteUser": "developer",
+    "containerUser": "developer",
     "forwardPorts": [3000],
     "customizations": {
         "vscode": {
@@ -66,9 +68,22 @@ RUN apk add --no-cache \\
     build-base \\
     python3 \\
     make \\
-    g++
+    g++ \\
+    sudo \\
+    shadow
 
-# Install Oh My Zsh and Powerlevel10k
+# Create non-root user for development
+ARG USERNAME=developer
+ARG USER_UID=1000
+ARG USER_GID=\$USER_UID
+
+RUN addgroup -g \$USER_GID \$USERNAME \\
+    && adduser -D -u \$USER_UID -G \$USERNAME -s /bin/zsh \$USERNAME \\
+    && echo "\$USERNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/\$USERNAME \\
+    && chmod 0440 /etc/sudoers.d/\$USERNAME
+
+# Install Oh My Zsh and Powerlevel10k for non-root user
+USER \$USERNAME
 RUN sh -c "\$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \\
     && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
 
@@ -77,12 +92,17 @@ RUN echo 'ZSH_THEME="powerlevel10k/powerlevel10k"' >> ~/.zshrc \\
     && echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc \\
     && echo 'source ~/.oh-my-zsh/oh-my-zsh.sh' >> ~/.zshrc
 
-# Create workspace directory
+# Create workspace directory with correct ownership
+USER root
 WORKDIR /workspace
+RUN chown \$USERNAME:\$USERNAME /workspace
 
 # Copy and run setup script
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh
+
+# Set default user
+USER \$USERNAME
 EOF
     
     # Generate setup script

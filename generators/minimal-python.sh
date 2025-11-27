@@ -35,14 +35,16 @@ function generate_minimal_python_devcontainer() {
 function generate_python_dockerhub_config() {
     local devcontainer_dir="$1"
     local image_name=$(get_component_image "python")
-    
+
     print_debug "Generating Python configuration with Docker Hub image: $image_name"
-    
+
     # Generate minimal devcontainer.json
     cat > "$devcontainer_dir/devcontainer.json" << EOF
 {
     "name": "$PROJECT_NAME - Python DevContainer",
     "dockerFile": "Dockerfile",
+    "remoteUser": "developer",
+    "containerUser": "developer",
     "customizations": {
         "vscode": {
             "settings": {
@@ -72,6 +74,25 @@ EOF
 # Uses pre-built base image: ${image_name}:latest
 FROM ${image_name}:latest
 
+# Create non-root user for development
+ARG USERNAME=developer
+ARG USER_UID=1000
+ARG USER_GID=\$USER_UID
+
+RUN groupadd --gid \$USER_GID \$USERNAME \\
+    && useradd --uid \$USER_UID --gid \$USER_GID -m \$USERNAME -s /bin/zsh \\
+    && apt-get update && apt-get install -y sudo \\
+    && echo \$USERNAME ALL=\\(root\\) NOPASSWD:ALL > /etc/sudoers.d/\$USERNAME \\
+    && chmod 0440 /etc/sudoers.d/\$USERNAME \\
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up Oh My Zsh and shell config for non-root user
+RUN cp -r /root/.oh-my-zsh /home/\$USERNAME/.oh-my-zsh \\
+    && cp /root/.zshrc /home/\$USERNAME/.zshrc \\
+    && chown -R \$USERNAME:\$USERNAME /home/\$USERNAME/.oh-my-zsh \\
+    && chown \$USERNAME:\$USERNAME /home/\$USERNAME/.zshrc \\
+    && sed -i "s|/root|/home/\$USERNAME|g" /home/\$USERNAME/.zshrc
+
 WORKDIR /workspace
 
 # The base image contains:
@@ -80,15 +101,16 @@ WORKDIR /workspace
 # - Development aliases and environment setup
 # Application dependencies will be installed via requirements.txt
 
-# Create Python virtual environment
-RUN python -m venv venv
+# Create Python virtual environment with correct ownership
+RUN python -m venv venv && chown -R \$USERNAME:\$USERNAME venv
 ENV PATH="/workspace/venv/bin:\$PATH"
 
 # Copy requirements and install dependencies using UV
 COPY requirements.txt ./
 RUN uv pip install -r requirements.txt
 
-# Add Python development aliases
+# Add Python development aliases for non-root user
+USER \$USERNAME
 RUN echo '# Python Development aliases' >> ~/.zshrc \\
     && echo 'alias venv="source venv/bin/activate"' >> ~/.zshrc \\
     && echo 'alias pytest-run="pytest"' >> ~/.zshrc \\
@@ -99,9 +121,15 @@ RUN echo '# Python Development aliases' >> ~/.zshrc \\
 # Activate virtual environment on shell start
 RUN echo 'if [[ -f /workspace/venv/bin/activate ]]; then source /workspace/venv/bin/activate; fi' >> ~/.zshrc
 
+# Switch back to root for setup script (will run as developer via devcontainer.json)
+USER root
+
 # Copy and run setup script
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh
+
+# Set default user
+USER \$USERNAME
 
 # Keep container running for development
 CMD ["zsh", "-c", "while sleep 1000; do :; done"]
@@ -116,14 +144,16 @@ function generate_python_local_dockerfiles() {
     local devcontainer_dir="$1"
     local python_version=$(get_effective_python_version)
     local python_image=$(get_python_image_tag)
-    
+
     print_debug "Generating Python configuration with local builds"
-    
+
     # Generate minimal devcontainer.json
     cat > "$devcontainer_dir/devcontainer.json" << EOF
 {
     "name": "$PROJECT_NAME - Python DevContainer",
     "dockerFile": "Dockerfile",
+    "remoteUser": "developer",
+    "containerUser": "developer",
     "customizations": {
         "vscode": {
             "settings": {
@@ -146,7 +176,7 @@ function generate_python_local_dockerfiles() {
     "shutdownAction": "stopContainer"
 }
 EOF
-    
+
     # Generate minimal Dockerfile (original implementation)
     cat > "$devcontainer_dir/Dockerfile" << EOF
 # Minimal Python DevContainer
@@ -160,12 +190,24 @@ RUN apt-get update && apt-get install -y \\
     curl \\
     build-essential \\
     zsh \\
+    sudo \\
     && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for development
+ARG USERNAME=developer
+ARG USER_UID=1000
+ARG USER_GID=\$USER_UID
+
+RUN groupadd --gid \$USER_GID \$USERNAME \\
+    && useradd --uid \$USER_UID --gid \$USER_GID -m \$USERNAME -s /bin/zsh \\
+    && echo \$USERNAME ALL=\\(root\\) NOPASSWD:ALL > /etc/sudoers.d/\$USERNAME \\
+    && chmod 0440 /etc/sudoers.d/\$USERNAME
 
 # Install UV for fast Python package management
 RUN pip install --no-cache-dir uv
 
-# Install Oh My Zsh and Powerlevel10k
+# Install Oh My Zsh and Powerlevel10k for non-root user
+USER \$USERNAME
 RUN sh -c "\$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \\
     && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
 
@@ -175,15 +217,20 @@ RUN echo 'ZSH_THEME="powerlevel10k/powerlevel10k"' >> ~/.zshrc \\
     && echo 'source ~/.oh-my-zsh/oh-my-zsh.sh' >> ~/.zshrc
 
 # Set Zsh as default shell
-RUN chsh -s /bin/zsh
+USER root
+RUN chsh -s /bin/zsh \$USERNAME
 ENV SHELL=/bin/zsh
 
-# Create workspace directory
+# Create workspace directory with correct ownership
 WORKDIR /workspace
+RUN chown \$USERNAME:\$USERNAME /workspace
 
 # Copy and run setup script
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh
+
+# Set default user
+USER \$USERNAME
 EOF
 
     # Generate common setup script for both modes
