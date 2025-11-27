@@ -460,14 +460,16 @@ fi
 
 EOF
     
-    if [[ "$USE_PYTHON" == true ]]; then
+    # Only create root-level venv for single-component Python projects
+    # Multi-component projects (FastAPI, etc.) have their own venv in subdirectories
+    if [[ "$USE_PYTHON" == true ]] && [[ "$USE_FASTAPI" == false ]]; then
         cat << 'EOF'
 # Set up Python virtual environment
 if [ ! -d "venv" ]; then
     echo "Creating Python virtual environment..."
     python -m venv venv
     source venv/bin/activate
-    
+
     # Install requirements if they exist
     if [ -f "requirements.txt" ]; then
         echo "Installing Python dependencies..."
@@ -936,19 +938,45 @@ function create_project() {
     echo "  1. cd $PROJECT_NAME"
     echo "  2. Open in your preferred editor (code . or cursor .)"
     echo "  3. Reopen in DevContainer when prompted"
+
+    local step=4
+    if [[ "$USE_POSTGRESQL" == true ]] || [[ "$USE_REDIS" == true ]] || [[ "$USE_MONGODB" == true ]] || [[ "$USE_CHROMA" == true ]]; then
+        echo "  $step. Start database services (on host): docker compose up -d"
+        ((step++))
+    fi
     if [[ "$USE_FASTAPI" == true ]]; then
-        echo "  4. Set up Python environment: cd fastapi && ./setup_venv.sh"
+        echo "  $step. Set up Python environment: cd fastapi && ./setup_venv.sh"
+        ((step++))
     fi
     if [[ "$USE_NEXTJS" == true ]]; then
         if [[ "$USE_FASTAPI" == false && "$USE_NODE" == false && "$USE_PYTHON" == false ]]; then
-            echo "  4. Install Node.js dependencies: npm install"
+            echo "  $step. Install Node.js dependencies: npm install"
         else
-            echo "  4. Install Node.js dependencies: cd nextjs && npm install"
+            echo "  $step. Install Node.js dependencies: cd nextjs && npm install"
+        fi
+        ((step++))
+    fi
+    if [[ "$USE_FASTAPI" == true ]]; then
+        echo "  $step. Start FastAPI server: cd fastapi && uvicorn app.main:app --reload --host 0.0.0.0"
+        ((step++))
+    fi
+    if [[ "$USE_NEXTJS" == true ]]; then
+        if [[ "$USE_FASTAPI" == false && "$USE_NODE" == false && "$USE_PYTHON" == false ]]; then
+            echo "  $step. Start Next.js dev server: npm run dev"
+        else
+            echo "  $step. Start Next.js dev server: cd nextjs && npm run dev"
         fi
     fi
-    if [[ "$USE_POSTGRESQL" == true ]] || [[ "$USE_REDIS" == true ]] || [[ "$USE_MONGODB" == true ]] || [[ "$USE_CHROMA" == true ]]; then
-        echo "  5. Start services: docker compose up -d"
+
+    echo ""
+    if [[ "$USE_POSTGRESQL" == true ]]; then
+        print_info "Database connection (from inside DevContainer):"
+        echo "  • Host: postgres"
+        echo "  • Port: 5432"
+        echo "  • User: postgres"
+        echo "  • Database: app"
     fi
+
     echo ""
     print_info "Security reminders:"
     echo "  • Review and update .env files with your actual credentials"
