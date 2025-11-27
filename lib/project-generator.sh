@@ -387,15 +387,18 @@ function generate_dockerfile_content() {
     local node_image=$(get_node_image_tag)
     
     if [[ "$USE_PYTHON" == true ]] && [[ "$USE_NODE" == true || "$USE_NEXTJS" == true ]]; then
-        # Multi-stage build for both Python and Node
+        # Install both Python and Node.js on Debian-based image
+        local node_major_version=$(echo "$node_image" | grep -oE '[0-9]+' | head -1)
         cat << EOF
-FROM $node_image as node-base
 FROM $python_image
 
-# Copy Node.js from node image
-COPY --from=node-base /usr/local/bin/node /usr/local/bin/
-COPY --from=node-base /usr/local/lib/node_modules /usr/local/lib/node_modules
-RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+# Install Node.js from NodeSource repository
+RUN apt-get update && apt-get install -y ca-certificates curl gnupg \\
+    && mkdir -p /etc/apt/keyrings \\
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \\
+    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${node_major_version}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \\
+    && apt-get update && apt-get install -y nodejs \\
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python and Node.js development tools
 RUN apt-get update && apt-get install -y \\
