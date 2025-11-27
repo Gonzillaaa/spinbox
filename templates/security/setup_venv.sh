@@ -33,27 +33,28 @@ fi
 # Check if Python 3.10+ is available
 check_python_version() {
     local python_cmd=""
-    
+
     # Try different Python commands
     for cmd in python3.12 python3.11 python3.10 python3 python; do
         if command -v "$cmd" >/dev/null 2>&1; then
             local version=$($cmd --version 2>&1 | grep -oE '[0-9]+\.[0-9]+' | head -1)
             local major=$(echo $version | cut -d. -f1)
             local minor=$(echo $version | cut -d. -f2)
-            
+
             if [ "$major" -eq 3 ] && [ "$minor" -ge 10 ]; then
                 python_cmd="$cmd"
-                print_status "Found Python $version at $(which $cmd)"
+                # Print to stderr so it doesn't mix with the return value
+                print_status "Found Python $version at $(which $cmd)" >&2
                 break
             fi
         fi
     done
-    
+
     if [ -z "$python_cmd" ]; then
-        print_error "Python 3.10+ not found. Please install Python 3.10 or later."
+        print_error "Python 3.10+ not found. Please install Python 3.10 or later." >&2
         exit 1
     fi
-    
+
     echo "$python_cmd"
 }
 
