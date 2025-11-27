@@ -143,17 +143,24 @@ test_real_project_creation() {
             
             # Test package.json for Node projects
             if echo "$profile" | grep -E "(node|web-app)" >/dev/null; then
-                if [[ -f "package.json" ]]; then
-                    record_test "${test_name}_package_json" "PASS" "Package.json created"
-                    
+                local package_json_path="package.json"
+
+                # For web-app profile, check in nextjs subdirectory (multi-component project)
+                if [[ "$profile" == "web-app" ]]; then
+                    package_json_path="nextjs/package.json"
+                fi
+
+                if [[ -f "$package_json_path" ]]; then
+                    record_test "${test_name}_package_json" "PASS" "Package.json created at $package_json_path"
+
                     # Validate JSON syntax
-                    if python3 -m json.tool "package.json" >/dev/null 2>&1; then
+                    if python3 -m json.tool "$package_json_path" >/dev/null 2>&1; then
                         record_test "${test_name}_package_json_valid" "PASS" "Package.json is valid JSON"
                     else
                         record_test "${test_name}_package_json_valid" "FAIL" "Package.json is invalid JSON"
                     fi
                 else
-                    record_test "${test_name}_package_json" "FAIL" "Package.json missing for Node project"
+                    record_test "${test_name}_package_json" "FAIL" "Package.json missing at $package_json_path"
                 fi
             fi
             
@@ -302,7 +309,8 @@ log_info "=== Testing Profile-Based Real Project Creation ==="
 test_real_project_creation "python" "python_profile" ".devcontainer src tests requirements.txt"
 
 # Test web-app profile (if it includes multiple components)
-test_real_project_creation "web-app" "webapp_profile" ".devcontainer src requirements.txt package.json"
+# Note: package.json lives in the nextjs/ subdirectory for multi-component projects
+test_real_project_creation "web-app" "webapp_profile" ".devcontainer src requirements.txt nextjs/package.json"
 
 # Test api-only profile
 test_real_project_creation "api-only" "api_profile" ".devcontainer src requirements.txt docker-compose.yml"
