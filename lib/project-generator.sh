@@ -947,7 +947,7 @@ function create_project() {
         fi
     fi
     if [[ "$USE_POSTGRESQL" == true ]] || [[ "$USE_REDIS" == true ]] || [[ "$USE_MONGODB" == true ]] || [[ "$USE_CHROMA" == true ]]; then
-        echo "  5. Start services: docker-compose up -d"
+        echo "  5. Start services: docker compose up -d"
     fi
     echo ""
     print_info "Security reminders:"
