@@ -511,18 +511,24 @@ function generate_docker_compose() {
         return 0
     fi
     
+    # Generate volumes section only if there are named volumes
+    local volumes_section=""
+    local volumes_content=$(generate_compose_volumes)
+    if [[ -n "$volumes_content" ]]; then
+        volumes_section="
+volumes:
+$volumes_content"
+    fi
+
     cat > "$project_dir/docker-compose.yml" << EOF
 services:
 $(generate_compose_services)
-
-volumes:
-$(generate_compose_volumes)
-
+${volumes_section}
 networks:
   default:
     name: ${PROJECT_NAME}_network
 EOF
-    
+
     print_status "Generated Docker Compose configuration"
 }
 
