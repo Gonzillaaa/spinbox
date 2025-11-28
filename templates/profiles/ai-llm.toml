@@ -1,17 +1,18 @@
 [profile]
 name = "ai-llm"
-description = "AI/LLM development environment with OpenAI, Anthropic, LangChain, Transformers, and Chroma vector database"
+description = "AI/LLM development environment with FastAPI, PostgreSQL, Chroma vector database, and AI libraries (OpenAI, Anthropic, LangChain)"
 
 [components]
-fastapi = false
+fastapi = true
 nextjs = false
-postgresql = false
+postgresql = true
 redis = false
 mongodb = false
 chroma = true
 
 [configuration]
 python_version = "3.12"
+postgres_version = "15"
 
 [templates]
 python_requirements = "ai-llm"
