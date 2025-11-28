@@ -452,9 +452,11 @@ class Settings(BaseSettings):
             path=f"/{info.data.get('POSTGRES_DB') or ''}",
         )
 
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
+    model_config = {
+        "case_sensitive": True,
+        "env_file": ".env",
+        "extra": "ignore",  # Allow extra env vars without error
+    }
 
 
 settings = Settings()
