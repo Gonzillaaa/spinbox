@@ -370,14 +370,17 @@ function generate_nextjs_config_files() {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
-  experimental: {
-    appDir: true,
-  },
+  // Note: In Next.js 14, App Router is enabled by default (no experimental flag needed)
   async rewrites() {
+    // Only add API rewrites if BACKEND_URL is configured
+    const backendUrl = process.env.BACKEND_URL
+    if (!backendUrl) {
+      return []
+    }
     return [
       {
         source: '/api/:path*',
-        destination: process.env.BACKEND_URL + '/api/:path*',
+        destination: `${backendUrl}/api/:path*`,
       },
     ]
   },
