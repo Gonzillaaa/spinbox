@@ -70,7 +70,8 @@ RUN apk add --no-cache \\
     make \\
     g++ \\
     sudo \\
-    shadow
+    shadow \\
+    vim
 
 # Create non-root user for development
 ARG USERNAME=developer
