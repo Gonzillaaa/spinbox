@@ -523,10 +523,11 @@ function create_minimal_node_project() {
     print_status "Minimal Node.js project created successfully!"
     print_info "Next steps:"
     echo "  1. cd $(basename "$project_dir")"
-    echo "  2. Open in VS Code: code ."
+    echo "  2. Open in VS Code: code . (or cursor .)"
     echo "  3. Reopen in DevContainer when prompted"
-    echo "  4. Start development server: npm run dev"
-    echo "  5. Visit http://localhost:3000"
+    echo "  4. Install dependencies: npm install"
+    echo "  5. Start development server: npm run dev"
+    echo "  6. Visit http://localhost:3000"
 }
 
 # Export functions for use by project generator

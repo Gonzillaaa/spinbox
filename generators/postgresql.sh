@@ -578,11 +578,15 @@ function create_postgresql_component() {
     
     print_status "PostgreSQL database component created successfully!"
     print_info "Next steps:"
-    echo "  1. cd $(basename "$project_dir")/database"
-    echo "  2. Configure environment: cp .env.example .env"
-    echo "  3. Start PostgreSQL: docker-compose up -d postgres"
-    echo "  4. Run setup: ./scripts/setup.sh"
-    echo "  5. Connect: ./scripts/connect.sh"
+    echo "  1. cd $(basename "$project_dir")"
+    echo "  2. Start PostgreSQL (on host): docker compose up -d"
+    echo "  3. Connect from DevContainer: psql -h postgres -U postgres -d app"
+    echo ""
+    print_info "Connection details (from inside DevContainer):"
+    echo "  • Host: postgres"
+    echo "  • Port: 5432"
+    echo "  • User: postgres"
+    echo "  • Database: app"
 }
 
 # Export functions for use by project generator

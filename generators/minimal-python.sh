@@ -621,10 +621,12 @@ function create_minimal_python_project() {
     print_status "Minimal Python project created successfully!"
     print_info "Next steps:"
     echo "  1. cd $(basename "$project_dir")"
-    echo "  2. Open in VS Code: code ."
+    echo "  2. Open in VS Code: code . (or cursor .)"
     echo "  3. Reopen in DevContainer when prompted"
-    echo "  4. Start coding in main.py"
-    echo "  5. Run tests with: pytest"
+    echo "  4. Virtual environment auto-activates on terminal open"
+    echo "  5. Start coding in main.py"
+    echo "  6. Run your code: python main.py"
+    echo "  7. Run tests: pytest"
 }
 
 # Export functions for use by project generator

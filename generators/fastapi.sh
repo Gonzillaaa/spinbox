@@ -831,11 +831,11 @@ function create_fastapi_component() {
     
     print_status "FastAPI backend component created successfully!"
     print_info "Next steps:"
-    echo "  1. cd $(basename "$project_dir")/backend"
-    echo "  2. Set up environment: cp .env.example .env"
-    echo "  3. Create virtual environment: python -m venv venv"
-    echo "  4. Install dependencies: source venv/bin/activate && uv pip install -r requirements.txt"
-    echo "  5. Run development server: uvicorn app.main:app --reload"
+    echo "  1. cd $(basename "$project_dir")/fastapi"
+    echo "  2. Set up virtual environment: ./setup_venv.sh"
+    echo "  3. Configure environment: cp .env.example .env (and edit as needed)"
+    echo "  4. Run development server: uvicorn app.main:app --reload --host 0.0.0.0"
+    echo "  5. Visit http://localhost:8000/docs for API documentation"
 }
 
 # Export functions for use by project generator

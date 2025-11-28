@@ -832,12 +832,17 @@ function create_nextjs_component() {
     print_info "Next steps:"
     if [[ "$USE_FASTAPI" == false && "$USE_NODE" == false && "$USE_PYTHON" == false ]]; then
         echo "  1. cd $(basename "$project_dir")"
+        echo "  2. Open in VS Code: code ."
+        echo "  3. Reopen in DevContainer when prompted"
+        echo "  4. Install dependencies: npm install"
+        echo "  5. Start development server: npm run dev"
+        echo "  6. Open http://localhost:3000 in your browser"
     else
         echo "  1. cd $(basename "$project_dir")/nextjs"
+        echo "  2. Install dependencies: npm install"
+        echo "  3. Start development server: npm run dev"
+        echo "  4. Open http://localhost:3000 in your browser"
     fi
-    echo "  2. Install dependencies: npm install"
-    echo "  3. Start development server: npm run dev"
-    echo "  4. Open http://localhost:3000 in your browser"
 }
 
 # Export functions for use by project generator
