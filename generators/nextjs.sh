@@ -48,7 +48,13 @@ function generate_nextjs_component() {
     
     # Manage dependencies if --with-deps flag is enabled
     manage_component_dependencies "$project_dir" "nextjs"
-    
+
+    # Copy Powerlevel10k configuration
+    local p10k_template="$PROJECT_ROOT/templates/shell/p10k.zsh"
+    if [[ -f "$p10k_template" ]]; then
+        cp "$p10k_template" "$nextjs_dir/p10k.zsh"
+    fi
+
     print_status "Next.js frontend component created successfully"
 }
 
@@ -95,6 +101,10 @@ RUN cp -r /root/.oh-my-zsh /home/\$USERNAME/.oh-my-zsh \\
     && chown -R \$USERNAME:\$USERNAME /home/\$USERNAME/.oh-my-zsh \\
     && chown \$USERNAME:\$USERNAME /home/\$USERNAME/.zshrc \\
     && sed -i "s|/root|/home/\$USERNAME|g" /home/\$USERNAME/.zshrc
+
+# Copy Powerlevel10k configuration
+COPY --chown=\$USERNAME:\$USERNAME p10k.zsh /home/\$USERNAME/.p10k.zsh
+RUN echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> /home/\$USERNAME/.zshrc
 
 WORKDIR /app
 RUN chown \$USERNAME:\$USERNAME /app
@@ -214,10 +224,11 @@ RUN sh -c "\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/maste
 RUN git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions \\
     && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 
-# Configure Zsh
+# Configure Zsh with Powerlevel10k theme and config
+COPY --chown=\$USERNAME:\$USERNAME p10k.zsh /home/\$USERNAME/.p10k.zsh
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\\/powerlevel10k"/g' ~/.zshrc \\
     && sed -i 's/plugins=(git)/plugins=(git docker npm node)/g' ~/.zshrc \\
-    && echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc
+    && echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> ~/.zshrc
 
 # Add development aliases
 RUN echo '# Development aliases' >> ~/.zshrc \\

@@ -278,9 +278,12 @@ USER \$USERNAME
 RUN sh -c "\$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \\
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
 
-# Configure Zsh with Powerlevel10k theme
+# Configure Zsh with Powerlevel10k theme and config
+COPY --chown=\$USERNAME:\$USERNAME p10k.zsh /home/\$USERNAME/.p10k.zsh
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\\/powerlevel10k"/g' ~/.zshrc \\
-    && echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc \\
+    && echo '' >> ~/.zshrc \\
+    && echo '# Powerlevel10k configuration' >> ~/.zshrc \\
+    && echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> ~/.zshrc \\
     && echo '' >> ~/.zshrc \\
     && echo '# Auto-activate Python virtual environment if it exists' >> ~/.zshrc \\
     && echo 'if [[ -f /workspace/venv/bin/activate ]]; then source /workspace/venv/bin/activate; fi' >> ~/.zshrc \\
@@ -315,9 +318,15 @@ $(generate_setup_script_content)
 
 echo "Development environment setup complete!"
 EOF
-    
+
     chmod +x "$devcontainer_dir/setup.sh"
-    
+
+    # Copy Powerlevel10k configuration
+    local p10k_template="$PROJECT_ROOT/templates/shell/p10k.zsh"
+    if [[ -f "$p10k_template" ]]; then
+        cp "$p10k_template" "$devcontainer_dir/p10k.zsh"
+    fi
+
     print_status "Generated DevContainer configuration"
 }
 

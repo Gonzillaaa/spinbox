@@ -212,9 +212,10 @@ USER \$USERNAME
 RUN sh -c "\$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \\
     && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
 
-# Configure Zsh with Powerlevel10k theme
+# Configure Zsh with Powerlevel10k theme and config
+COPY --chown=\$USERNAME:\$USERNAME p10k.zsh /home/\$USERNAME/.p10k.zsh
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\\/powerlevel10k"/g' ~/.zshrc \\
-    && echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc
+    && echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> ~/.zshrc
 
 # Set Zsh as default shell
 USER root
@@ -328,8 +329,14 @@ echo "  pytest                    # Run tests"
 echo "  black .                   # Format code"
 echo ""
 EOF
-    
+
     chmod +x "$devcontainer_dir/setup.sh"
+
+    # Copy Powerlevel10k configuration
+    local p10k_template="$PROJECT_ROOT/templates/shell/p10k.zsh"
+    if [[ -f "$p10k_template" ]]; then
+        cp "$p10k_template" "$devcontainer_dir/p10k.zsh"
+    fi
 }
 
 # Generate minimal Python project files

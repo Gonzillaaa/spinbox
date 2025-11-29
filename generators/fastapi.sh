@@ -45,7 +45,13 @@ function generate_fastapi_component() {
     if [[ "${WITH_EXAMPLES:-false}" == "true" ]]; then
         generate_fastapi_working_examples "$fastapi_dir"
     fi
-    
+
+    # Copy Powerlevel10k configuration
+    local p10k_template="$PROJECT_ROOT/templates/shell/p10k.zsh"
+    if [[ -f "$p10k_template" ]]; then
+        cp "$p10k_template" "$fastapi_dir/p10k.zsh"
+    fi
+
     print_status "FastAPI backend component created successfully"
 }
 
@@ -92,6 +98,10 @@ RUN cp -r /root/.oh-my-zsh /home/\$USERNAME/.oh-my-zsh \\
     && chown -R \$USERNAME:\$USERNAME /home/\$USERNAME/.oh-my-zsh \\
     && chown \$USERNAME:\$USERNAME /home/\$USERNAME/.zshrc \\
     && sed -i "s|/root|/home/\$USERNAME|g" /home/\$USERNAME/.zshrc
+
+# Copy Powerlevel10k configuration
+COPY --chown=\$USERNAME:\$USERNAME p10k.zsh /home/\$USERNAME/.p10k.zsh
+RUN echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> /home/\$USERNAME/.zshrc
 
 WORKDIR /workspace
 
@@ -194,10 +204,11 @@ USER \$USERNAME
 RUN sh -c "\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \\
     && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
 
-# Configure Zsh
+# Configure Zsh with Powerlevel10k theme and config
+COPY --chown=\$USERNAME:\$USERNAME p10k.zsh /home/\$USERNAME/.p10k.zsh
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\\/powerlevel10k"/g' ~/.zshrc \\
     && sed -i 's/plugins=(git)/plugins=(git docker docker-compose python pip)/g' ~/.zshrc \\
-    && echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc
+    && echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> ~/.zshrc
 
 # Set up virtual environment path
 ENV PATH="/workspace/venv/bin:\$PATH"
