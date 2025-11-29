@@ -991,9 +991,22 @@ function create_project() {
         echo "  • Port: 5432"
         echo "  • User: postgres"
         echo "  • Database: app"
+        echo ""
     fi
 
-    echo ""
+    if [[ "$USE_CHROMA" == true ]]; then
+        print_info "ChromaDB vector database:"
+        echo "  • URL: http://localhost:8000"
+        echo "  • API docs: http://localhost:8000/docs"
+        echo "  • Data stored in: ./chroma_data"
+        echo "  • Example code: ./vector_db/examples/"
+        echo "  • Python usage:"
+        echo "      from vector_db.chroma_config import get_chroma_client"
+        echo "      client = get_chroma_client()"
+        echo "      collection = client.get_or_create_collection('my_docs')"
+        echo ""
+    fi
+
     print_info "Security reminders:"
     echo "  • Review and update .env files with your actual credentials"
     echo "  • Never commit .env files to version control"
