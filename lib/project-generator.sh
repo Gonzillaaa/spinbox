@@ -638,8 +638,8 @@ function generate_component_files() {
         return 0
     fi
     
-    # Generate Python components
-    if [[ "$USE_PYTHON" == true ]]; then
+    # Generate Python components (only if FastAPI is not used, since FastAPI has its own structure)
+    if [[ "$USE_PYTHON" == true ]] && [[ "$USE_FASTAPI" == false ]]; then
         generate_python_requirements "$project_dir"
         # Generate basic Python project structure
         if source "$PROJECT_ROOT/generators/minimal-python.sh" 2>/dev/null; then
@@ -649,8 +649,8 @@ function generate_component_files() {
         fi
     fi
     
-    # Generate Node.js components
-    if [[ "$USE_NODE" == true ]]; then
+    # Generate Node.js components (only if Next.js is not used, since Next.js has its own structure)
+    if [[ "$USE_NODE" == true ]] && [[ "$USE_NEXTJS" == false ]]; then
         generate_node_package_json "$project_dir"
         # Generate basic Node.js project structure
         if source "$PROJECT_ROOT/generators/minimal-node.sh" 2>/dev/null; then
