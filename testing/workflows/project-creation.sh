@@ -127,17 +127,24 @@ test_real_project_creation() {
             
             # Test requirements.txt for Python projects
             if echo "$profile" | grep -E "(python|web-app|api-only|data-science|ai-llm)" >/dev/null; then
-                if [[ -f "requirements.txt" ]]; then
-                    record_test "${test_name}_requirements" "PASS" "Requirements.txt created"
-                    
+                local requirements_path="requirements.txt"
+
+                # For profiles that use FastAPI, requirements.txt is in backend/
+                if echo "$profile" | grep -E "(web-app|api-only|ai-llm)" >/dev/null; then
+                    requirements_path="backend/requirements.txt"
+                fi
+
+                if [[ -f "$requirements_path" ]]; then
+                    record_test "${test_name}_requirements" "PASS" "Requirements.txt created at $requirements_path"
+
                     # Check requirements.txt has content
-                    if [[ -s "requirements.txt" ]]; then
+                    if [[ -s "$requirements_path" ]]; then
                         record_test "${test_name}_requirements_content" "PASS" "Requirements.txt has content"
                     else
                         record_test "${test_name}_requirements_content" "FAIL" "Requirements.txt is empty"
                     fi
                 else
-                    record_test "${test_name}_requirements" "FAIL" "Requirements.txt missing for Python project"
+                    record_test "${test_name}_requirements" "FAIL" "Requirements.txt missing for Python project at $requirements_path"
                 fi
             fi
             
@@ -309,11 +316,12 @@ log_info "=== Testing Profile-Based Real Project Creation ==="
 test_real_project_creation "python" "python_profile" ".devcontainer src tests requirements.txt"
 
 # Test web-app profile (if it includes multiple components)
-# Note: package.json lives in the frontend/ subdirectory for multi-component projects
-test_real_project_creation "web-app" "webapp_profile" ".devcontainer src requirements.txt frontend/package.json"
+# Note: FastAPI files are in backend/, Next.js files in frontend/
+test_real_project_creation "web-app" "webapp_profile" ".devcontainer backend/app backend/requirements.txt frontend/package.json"
 
 # Test api-only profile
-test_real_project_creation "api-only" "api_profile" ".devcontainer src requirements.txt docker-compose.yml"
+# Note: FastAPI files are in backend/ directory
+test_real_project_creation "api-only" "api_profile" ".devcontainer backend/app backend/requirements.txt docker-compose.yml"
 
 echo ""
 
