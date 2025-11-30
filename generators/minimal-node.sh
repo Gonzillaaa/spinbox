@@ -65,6 +65,7 @@ RUN apk add --no-cache \\
     git \\
     curl \\
     zsh \\
+    bash \\
     build-base \\
     python3 \\
     make \\

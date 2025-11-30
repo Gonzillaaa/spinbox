@@ -206,6 +206,7 @@ FROM node:${node_version}-alpine
 RUN apk add --no-cache \\
     git \\
     zsh \\
+    bash \\
     curl \\
     shadow \\
     util-linux \\
