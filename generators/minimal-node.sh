@@ -71,15 +71,16 @@ RUN apk add --no-cache \\
     g++ \\
     sudo \\
     shadow \\
-    vim
+    vim \\
+    procps
 
 # Create non-root user for development
 ARG USERNAME=developer
 ARG USER_UID=1000
 ARG USER_GID=\$USER_UID
 
-RUN addgroup -g \$USER_GID \$USERNAME \\
-    && adduser -D -u \$USER_UID -G \$USERNAME -s /bin/zsh \$USERNAME \\
+RUN (addgroup -g \$USER_GID \$USERNAME 2>/dev/null || addgroup \$USERNAME) \\
+    && (adduser -D -u \$USER_UID -G \$USERNAME -s /bin/zsh \$USERNAME 2>/dev/null || adduser -D -G \$USERNAME -s /bin/zsh \$USERNAME) \\
     && echo "\$USERNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/\$USERNAME \\
     && chmod 0440 /etc/sudoers.d/\$USERNAME
 
