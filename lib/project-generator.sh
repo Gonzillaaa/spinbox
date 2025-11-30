@@ -267,6 +267,7 @@ RUN apt-get update && apt-get install -y \\
     curl \\
     sudo \\
     vim \\
+    procps \\
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for development
