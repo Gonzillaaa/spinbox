@@ -1,164 +1,45 @@
-# Chroma Vector Database Usage
+# Chroma Vector Database
 
-Chroma is a lightweight vector database that's perfect for storing and searching document embeddings. When you add Chroma to your project with `spinbox add --chroma`, it's automatically integrated with your FastAPI backend.
+Chroma is a lightweight vector database for storing and searching document embeddings.
 
-## Features
+## What You Get
 
-- **Persistent Storage**: Vector data is stored in the `chroma/` directory  
-- **Python Integration**: Direct Python API for adding and searching documents
-- **Similarity Search**: Find documents similar to a query text
-- **Metadata Support**: Store additional information with each document
+When you add Chroma with `spinbox add --chroma`:
+- Chroma dependency in `requirements.txt`
+- `chroma/` directory for persistent storage
+- `.gitignore` entries for vector database files
 
-> **Important**: When you add Chroma to a Spinbox project with `spinbox add --chroma`, you get the Chroma dependency and basic project structure. The API endpoints shown below are **example implementations** that you can build using the included Chroma library - they are not automatically generated or included in your project.
+**Note**: The API endpoints below are examples you implement yourself. Spinbox provides the foundation; you build the functionality.
 
-## Example API Endpoints
-
-### Add Document
-```http
-POST /api/vector/add
-Content-Type: application/json
-
-{
-  "id": "doc_1",
-  "content": "This is my document content",
-  "metadata": {
-    "title": "My Document",
-    "category": "example"
-  }
-}
-```
-
-### Search Documents
-```http
-POST /api/vector/search
-Content-Type: application/json
-
-{
-  "query": "find similar documents",
-  "n_results": 10
-}
-```
-
-### List Collections
-```http
-GET /api/vector/collections
-```
-
-### Delete Collection
-```http
-DELETE /api/vector/collection/{collection_name}
-```
-
-## Usage Examples
-
-### Adding Documents with Python
-
-```python
-import requests
-
-# Add a document
-response = requests.post("http://localhost:8000/api/vector/add", json={
-    "id": "doc_1",
-    "content": "Machine learning is a subset of artificial intelligence",
-    "metadata": {
-        "topic": "AI",
-        "date": "2024-01-01"
-    }
-})
-
-print(response.json())
-```
-
-### Searching Documents
-
-```python
-import requests
-
-# Search for similar documents
-response = requests.post("http://localhost:8000/api/vector/search", json={
-    "query": "What is AI?",
-    "n_results": 5
-})
-
-results = response.json()
-print(f"Found {len(results['results']['documents'][0])} similar documents")
-```
-
-### Using with JavaScript/TypeScript
-
-```typescript
-// Add a document
-const addDocument = async (id: string, content: string, metadata: any = {}) => {
-  const response = await fetch('/api/vector/add', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      id,
-      content,
-      metadata,
-    }),
-  });
-  return response.json();
-};
-
-// Search documents
-const searchDocuments = async (query: string, n_results: number = 10) => {
-  const response = await fetch('/api/vector/search', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query,
-      n_results,
-    }),
-  });
-  return response.json();
-};
-```
-
-## Configuration
-
-The Chroma client is initialized in your FastAPI backend with the following settings:
+## Basic Setup
 
 ```python
 import chromadb
 from chromadb.config import Settings
 
-chroma_client = chromadb.Client(Settings(
+client = chromadb.Client(Settings(
     persist_directory="./chroma",
     anonymized_telemetry=False
 ))
-```
 
-## Data Storage
+# Create collection
+collection = client.create_collection("documents")
 
-- **Location**: `chroma/` directory in your project root
-- **Persistence**: Data is automatically saved to disk
-- **Backup**: The directory is excluded from git (in `.gitignore`)
-
-## Advanced Usage
-
-### Creating Custom Collections
-
-```python
-# Create a new collection
-collection = chroma_client.create_collection(
-    name="my_collection",
-    metadata={"description": "My custom collection"}
-)
-
-# Add documents to specific collection
+# Add documents
 collection.add(
-    documents=["Document 1", "Document 2"],
-    metadatas=[{"type": "A"}, {"type": "B"}],
-    ids=["id1", "id2"]
+    documents=["Machine learning is a subset of AI"],
+    metadatas=[{"topic": "AI"}],
+    ids=["doc1"]
+)
+
+# Search
+results = collection.query(
+    query_texts=["What is AI?"],
+    n_results=5
 )
 ```
 
-### Using Custom Embedding Functions
+## Custom Embeddings
 
 ```python
 from chromadb.utils import embedding_functions
@@ -169,16 +50,15 @@ openai_ef = embedding_functions.OpenAIEmbeddingFunction(
     model_name="text-embedding-ada-002"
 )
 
-collection = chroma_client.create_collection(
+collection = client.create_collection(
     name="openai_collection",
     embedding_function=openai_ef
 )
 ```
 
-### Filtering Results
+## Filtering Results
 
 ```python
-# Search with metadata filtering
 results = collection.query(
     query_texts=["AI and machine learning"],
     n_results=5,
@@ -188,44 +68,17 @@ results = collection.query(
 
 ## Best Practices
 
-1. **Unique IDs**: Always use unique document IDs
-2. **Chunking**: Break large documents into smaller chunks
-3. **Metadata**: Use metadata for filtering and organization
-4. **Batch Operations**: Add multiple documents in batches for better performance
-5. **Error Handling**: Always handle API errors gracefully
+1. Use unique document IDs
+2. Break large documents into chunks
+3. Use metadata for filtering
+4. Batch operations for better performance
 
-## Troubleshooting
+## Data Storage
 
-### Common Issues
-
-1. **Port Conflicts**: Ensure port 8000 is available
-2. **Permissions**: Check write permissions for `chroma/` directory
-3. **Memory**: Large collections may require more RAM
-
-### Debugging
-
-```python
-# Check collection info
-print(collection.count())
-print(collection.peek())
-
-# List all collections
-collections = chroma_client.list_collections()
-for col in collections:
-    print(f"Collection: {col.name}")
-```
-
-## Implementation Status
-
-When you add Chroma to a Spinbox project with `spinbox add --chroma`, the following is automatically configured:
-- Chroma Python dependency in requirements.txt
-- Basic project structure with `chroma/` directory
-- `.gitignore` entries for the vector database files
-
-**Remember**: The API endpoints shown above are examples you need to implement yourself. Spinbox provides the foundation (dependency, directory structure, configuration), but you build the actual functionality using these patterns.
+- Location: `chroma/` directory
+- Persistence: Automatic
+- Excluded from git by default
 
 ## References
 
 - [Chroma Documentation](https://docs.trychroma.com/)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [Vector Database Concepts](https://www.pinecone.io/learn/vector-database/)
