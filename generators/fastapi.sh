@@ -12,7 +12,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/docker-hub.sh"
 # Generate FastAPI backend component
 function generate_fastapi_component() {
     local project_dir="$1"
-    local fastapi_dir="$project_dir/fastapi"
+    local fastapi_dir="$project_dir/backend"
     
     if [[ "$DRY_RUN" == true ]]; then
         print_info "DRY RUN: Would generate FastAPI backend component"

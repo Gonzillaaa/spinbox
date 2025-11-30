@@ -14,13 +14,20 @@ function generate_nextjs_component() {
     local project_dir="$1"
     
     # Determine target directory based on component configuration
+    # Check if Next.js is the only primary component (not counting databases)
     local nextjs_dir
-    if [[ "$USE_FASTAPI" == false && "$USE_NODE" == false && "$USE_PYTHON" == false ]]; then
-        # Next.js is the only component - generate at root level
+    local has_backend=false
+    [[ "$USE_FASTAPI" == true ]] && has_backend=true
+    # USE_PYTHON and USE_NODE without specific components means minimal Python/Node project
+    [[ "$USE_PYTHON" == true && "$USE_FASTAPI" == false ]] && has_backend=true
+    # Note: USE_NODE is always true for Next.js, so we don't check it here
+
+    if [[ "$has_backend" == false ]]; then
+        # Next.js is the only primary component - generate at root level
         nextjs_dir="$project_dir"
     else
         # Multi-component project - generate in subdirectory
-        nextjs_dir="$project_dir/nextjs"
+        nextjs_dir="$project_dir/frontend"
     fi
     
     if [[ "$DRY_RUN" == true ]]; then

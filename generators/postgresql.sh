@@ -11,7 +11,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/dependency-manager.sh"
 # Generate PostgreSQL database component
 function generate_postgresql_component() {
     local project_dir="$1"
-    local postgresql_dir="$project_dir/postgresql"
+    local postgresql_dir="$project_dir/database"
     
     if [[ "$DRY_RUN" == true ]]; then
         print_info "DRY RUN: Would generate PostgreSQL database component"

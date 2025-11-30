@@ -145,9 +145,9 @@ test_real_project_creation() {
             if echo "$profile" | grep -E "(node|web-app)" >/dev/null; then
                 local package_json_path="package.json"
 
-                # For web-app profile, check in nextjs subdirectory (multi-component project)
+                # For web-app profile, check in frontend subdirectory (multi-component project)
                 if [[ "$profile" == "web-app" ]]; then
-                    package_json_path="nextjs/package.json"
+                    package_json_path="frontend/package.json"
                 fi
 
                 if [[ -f "$package_json_path" ]]; then
@@ -309,8 +309,8 @@ log_info "=== Testing Profile-Based Real Project Creation ==="
 test_real_project_creation "python" "python_profile" ".devcontainer src tests requirements.txt"
 
 # Test web-app profile (if it includes multiple components)
-# Note: package.json lives in the nextjs/ subdirectory for multi-component projects
-test_real_project_creation "web-app" "webapp_profile" ".devcontainer src requirements.txt nextjs/package.json"
+# Note: package.json lives in the frontend/ subdirectory for multi-component projects
+test_real_project_creation "web-app" "webapp_profile" ".devcontainer src requirements.txt frontend/package.json"
 
 # Test api-only profile
 test_real_project_creation "api-only" "api_profile" ".devcontainer src requirements.txt docker-compose.yml"
