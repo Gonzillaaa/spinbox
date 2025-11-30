@@ -353,7 +353,7 @@ spinbox/
 ### Phase 3: Enhancement ✅ **COMPLETED**
 - [x] ✅ Bare-bones projects
 - [x] ✅ Installation scripts
-- [x] ✅ Direct Homebrew formula URL
+- [ ] ⏳ Homebrew formula (future priority)
 - [x] ✅ Community feedback
 
 ### Phase 4: Polish ✅ **COMPLETED**

@@ -654,56 +654,15 @@ main "$@"
 - [x] ✅ Add error handling and rollback
 - [x] ✅ Test installation on clean system
 
-### Step 3.2: Homebrew Formula
+### Step 3.2: Homebrew Formula (Future)
 
-**File**: `Formula/spinbox.rb`
-```ruby
-class Spinbox < Formula
-  desc "Rapid prototyping environments for developers"
-  homepage "https://github.com/Gonzillaaa/spinbox"
-  url "https://github.com/Gonzillaaa/spinbox/archive/v1.0.0.tar.gz"
-  sha256 "sha256_hash_here"
-  license "MIT"
+**Status**: Not implemented. Homebrew installation is a future priority.
 
-  depends_on "git"
-  depends_on "docker" => :recommended
-
-  def install
-    # Install main executable
-    bin.install "bin/spinbox"
-    
-    # Install support files
-    prefix.install "lib", "generators", "templates"
-    
-    # Create configuration directory
-    (var/"spinbox").mkpath
-  end
-
-  def caveats
-    <<~EOS
-      Spinbox requires Docker Desktop to be installed and running.
-      
-      To get started:
-        spinbox --help
-        spinbox myproject
-    EOS
-  end
-
-  test do
-    system "#{bin}/spinbox", "--version"
-  end
-end
-```
-
-**Installation Strategy**:
-- **Phase 1**: Direct formula URL installation (`brew install https://raw.githubusercontent.com/.../spinbox.rb`)
-- **Phase 2**: Submit to official Homebrew core for simple `brew install spinbox`
-
-**Tasks**:
-- [x] ✅ Create Homebrew formula for direct URL installation
-- [x] ✅ Test direct formula installation
-- [x] ✅ Prepare documentation for Homebrew core submission
-- [x] ✅ Meet Homebrew core requirements (popularity, stability, maintenance)
+**Future Tasks**:
+- [ ] Create `gonzillaaa/homebrew-spinbox` tap repository
+- [ ] Create and test Homebrew formula
+- [ ] Document tap installation process
+- [ ] Consider Homebrew core submission (requires significant adoption)
 
 ## Phase 4: Advanced Features (Weeks 4-5)
 
@@ -996,8 +955,7 @@ test_functionality_preservation() {
 
 ### Phase 3: Installation
 - ✅ Installation script (`install.sh`) - **Status**: Complete (Full installation with prerequisites check and configuration setup)
-- ✅ Homebrew formula (`Formula/spinbox.rb`) - **Status**: Complete (Direct formula URL ready for Phase 1 installation)
-- ✅ Direct formula URL setup - **Status**: Complete (Formula configured for direct URL installation)
+- ⏳ Homebrew formula - **Status**: Not implemented (Future priority)
 - ✅ Configuration directory setup - **Status**: Complete (Uses ~/.spinbox for user configuration)
 
 ### Phase 4: Advanced Features
@@ -1013,9 +971,9 @@ test_functionality_preservation() {
 - ✅ Performance testing - **Status**: Complete (All tests run in < 5 seconds, meets performance criteria)
 
 ### Phase 6: Release
-- ✅ Documentation updates - **Status**: Complete (README modernized, implementation docs updated, Homebrew formula updated)
-- ⏳ Release process - **Status**: Ready to start (All core functionality complete, v1.0.0 tagged)
-- ✅ Homebrew core preparation - **Status**: Complete (Formula updated for CLI implementation with profiles)
+- ✅ Documentation updates - **Status**: Complete (README modernized, implementation docs updated)
+- ⏳ Release process - **Status**: Ready to start (All core functionality complete)
+- ⏳ Homebrew formula - **Status**: Not implemented (Future priority)
 - ❌ Migration guides - **Status**: Not needed (No backward compatibility - clean break from template system)
 
 ## Success Criteria

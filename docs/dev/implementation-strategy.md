@@ -197,7 +197,8 @@ All planned phases successfully completed:
 - [x] ✅ Testing infrastructure
 
 ### Week 5-6: Distribution ✅ **COMPLETED**
-- [x] ✅ Installation script and Homebrew formula
+- [x] ✅ Installation script
+- [ ] ⏳ Homebrew formula (future priority)
 - [x] ✅ Documentation and help system
 - [x] ✅ Performance optimization
 - [x] ✅ Quality assurance
