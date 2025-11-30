@@ -22,7 +22,9 @@ cleanup_test_env() {
     rm -rf "$TEST_DIR" 2>/dev/null || true
     rm -rf "/tmp/$TEST_PROJECT_NAME" 2>/dev/null || true
     rm -rf "/tmp/test-no-hooks" 2>/dev/null || true
+    rm -rf "/tmp/test-no-git" 2>/dev/null || true
     rm -rf "/tmp/test-dryrun-hooks" 2>/dev/null || true
+    rm -rf "/tmp/test-db-only" 2>/dev/null || true
 }
 
 # Ensure cleanup runs on exit
@@ -88,12 +90,17 @@ test_hook_content() {
         "Pre-push hook includes pytest"
 }
 
-# Test 4: --no-hooks flag prevents installation
+# Test 4: --no-hooks flag prevents installation but keeps Git
 test_no_hooks_flag() {
-    echo -e "\n${YELLOW}=== Test: --no-hooks Flag Prevents Installation ===${NC}"
+    echo -e "\n${YELLOW}=== Test: --no-hooks Flag Prevents Hook Installation (Git Still Initialized) ===${NC}"
 
     # Create project with --no-hooks flag
     "$CLI_PATH" create "/tmp/test-no-hooks" --python --no-hooks > /dev/null 2>&1
+
+    # Git should still be initialized
+    assert_true \
+        "[[ -d \"/tmp/test-no-hooks/.git\" ]]" \
+        "Git repository still initialized with --no-hooks"
 
     assert_true \
         "[[ ! -f \"/tmp/test-no-hooks/.git/hooks/pre-commit\" ]]" \
@@ -105,6 +112,27 @@ test_no_hooks_flag() {
 
     # Cleanup
     rm -rf "/tmp/test-no-hooks" 2>/dev/null || true
+}
+
+# Test 4b: --no-git flag prevents Git initialization
+test_no_git_flag() {
+    echo -e "\n${YELLOW}=== Test: --no-git Flag Prevents Git Initialization ===${NC}"
+
+    # Create project with --no-git flag
+    "$CLI_PATH" create "/tmp/test-no-git" --python --no-git > /dev/null 2>&1
+
+    # Git should NOT be initialized
+    assert_true \
+        "[[ ! -d \"/tmp/test-no-git/.git\" ]]" \
+        "Git repository NOT initialized with --no-git"
+
+    # Project should still exist
+    assert_true \
+        "[[ -d \"/tmp/test-no-git\" ]]" \
+        "Project directory created with --no-git"
+
+    # Cleanup
+    rm -rf "/tmp/test-no-git" 2>/dev/null || true
 }
 
 # Test 5: Dry-run doesn't create actual hooks
@@ -171,6 +199,27 @@ test_hooks_only_python() {
     rm -rf "/tmp/test-node-hooks" 2>/dev/null || true
 }
 
+# Test 9: Git initialized for database-only projects
+test_git_init_db_only() {
+    echo -e "\n${YELLOW}=== Test: Git Initialized for Database-Only Projects ===${NC}"
+
+    # Create a PostgreSQL-only project
+    "$CLI_PATH" create "/tmp/test-db-only" --postgresql > /dev/null 2>&1
+
+    # Git should be initialized even without Python/Node
+    assert_true \
+        "[[ -d \"/tmp/test-db-only/.git\" ]]" \
+        "Git repository initialized for database-only project"
+
+    # But no hooks since no Python/Node
+    assert_true \
+        "[[ ! -f \"/tmp/test-db-only/.git/hooks/pre-commit\" ]]" \
+        "No hooks for database-only project (expected)"
+
+    # Cleanup
+    rm -rf "/tmp/test-db-only" 2>/dev/null || true
+}
+
 # Main test execution
 main() {
     echo -e "${BLUE}Starting Spinbox Git Hooks Tests${NC}"
@@ -187,10 +236,12 @@ main() {
     test_hooks_executable
     test_hook_content
     test_no_hooks_flag
+    test_no_git_flag
     test_dryrun_no_hooks
     test_git_init
     test_check_function
     test_hooks_only_python
+    test_git_init_db_only
 
     # Record end time
     end_time=$(date +%s.%N)

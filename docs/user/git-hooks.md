@@ -1,10 +1,22 @@
-# Git Hooks
+# Git Repository & Hooks
 
-Spinbox automatically installs git hooks for Python projects to help maintain code quality and catch issues before they're committed or pushed.
+Spinbox automatically initializes a Git repository for all projects and installs git hooks for Python and Node.js projects to help maintain code quality.
+
+## Git Repository Initialization
+
+By default, every Spinbox project gets a clean Git repository initialized automatically. This happens regardless of which components you select.
+
+### Skipping Git Initialization
+
+If you don't want Git initialized (e.g., the project will be part of a larger monorepo):
+
+```bash
+spinbox create myproject --python --no-git
+```
 
 ## What Are Git Hooks?
 
-Git hooks are scripts that run automatically when certain git events occur (like committing or pushing code). Spinbox installs two hooks for Python projects:
+Git hooks are scripts that run automatically when certain git events occur (like committing or pushing code). Spinbox installs two hooks for Python and Node.js projects:
 
 1. **Pre-commit Hook** - Runs before each commit
 2. **Pre-push Hook** - Runs before pushing to remote
@@ -58,12 +70,20 @@ Or use the `--with-deps` flag when creating your project to automatically includ
 
 ## Skipping Hooks
 
-### Skip for All Projects
+### Skip Hooks Only (Keep Git)
 
 Use the `--no-hooks` flag when creating a project:
 
 ```bash
 spinbox create myproject --python --no-hooks
+```
+
+### Skip Both Git and Hooks
+
+Use the `--no-git` flag (this also skips hooks since there's no Git repository):
+
+```bash
+spinbox create myproject --python --no-git
 ```
 
 ### Skip for a Single Commit

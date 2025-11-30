@@ -1132,8 +1132,16 @@ function create_project() {
     generate_readme "$PROJECT_PATH"
     generate_gitignore "$PROJECT_PATH"
 
-    # Install git hooks unless --no-hooks flag is set
-    if [[ "${NO_HOOKS:-false}" != true ]] && [[ "$DRY_RUN" != true ]]; then
+    # Initialize git repository unless --no-git flag is set
+    if [[ "${NO_GIT:-false}" != true ]] && [[ "$DRY_RUN" != true ]]; then
+        if [[ ! -d "$PROJECT_PATH/.git" ]]; then
+            (cd "$PROJECT_PATH" && git init -q)
+            print_status "Git repository initialized"
+        fi
+    fi
+
+    # Install git hooks unless --no-hooks or --no-git flag is set
+    if [[ "${NO_HOOKS:-false}" != true ]] && [[ "${NO_GIT:-false}" != true ]] && [[ "$DRY_RUN" != true ]]; then
         # Determine language for hooks based on components
         local hook_language=""
         if [[ "$USE_PYTHON" == true ]] || [[ "$USE_FASTAPI" == true ]]; then

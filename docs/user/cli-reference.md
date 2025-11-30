@@ -71,6 +71,12 @@ The `PROJECT_PATH` can be either:
 | `--postgres-version <ver>` | PostgreSQL version (default: 15) |
 | `--redis-version <ver>` | Redis version (default: 7) |
 
+**Git Options:**
+| Option | Description |
+|--------|-------------|
+| `--no-git` | Skip Git repository initialization |
+| `--no-hooks` | Skip Git hooks installation (pre-commit, pre-push) |
+
 **Project Options:**
 | Option | Description |
 |--------|-------------|

@@ -4,14 +4,16 @@ This directory contains release notes for all Spinbox versions.
 
 ## Latest Release
 
+**[v0.1.0-beta.8](v0.1.0-beta.8.md)** - November 2024
+- 🔧 Alpine container compatibility fixes
+- 🎯 Cursor/VS Code server support improvements
+- 📦 Added procps and bash packages for DevContainer compatibility
+
+## Previous Releases
+
 **[v0.1.0-beta.7](v0.1.0-beta.7.md)** - October 1, 2025
 - 🎯 Git hooks integration (pre-commit, pre-push)
 - ✅ Automatic code quality gates for Python projects
-- 🔒 Security audit complete (A- rating)
-- ⚡ Performance analysis (A+ rating, 0.26-0.47s creation)
-- 📊 100% test success rate (106/106 passing)
-
-## Previous Releases
 
 **[v0.1.0-beta.6](v0.1.0-beta.6.md)** - October 1, 2025
 - 🎯 Git hooks feature (15 SP) + quality improvements (13 SP)
@@ -31,7 +33,7 @@ This directory contains release notes for all Spinbox versions.
 
 ## Installation
 
-**Latest release (v0.1.0-beta.7):**
+**Latest release (v0.1.0-beta.8):**
 
 **User installation (no sudo required):**
 ```bash
@@ -50,6 +52,7 @@ spinbox update
 
 ## Release Archive
 
+- [v0.1.0-beta.8](v0.1.0-beta.8.md) - Alpine container compatibility
 - [v0.1.0-beta.7](v0.1.0-beta.7.md) - Git hooks integration
 - [v0.1.0-beta.6](v0.1.0-beta.6.md) - Quality improvements and comprehensive testing
 - [v0.1.0-beta.5](v0.1.0-beta.5.md) - Automatic dependency management

@@ -54,6 +54,7 @@ DRY_RUN=false
 FORCE=false
 WITH_DEPS=false
 NO_HOOKS=false
+NO_GIT=false
 
 # Update-specific variables
 UPDATE_ACTION=""
@@ -143,6 +144,7 @@ OPTIONS:
     --docker-hub          Use optimized Docker Hub images for faster project creation
     
     --no-hooks            Skip git hooks installation (pre-commit, pre-push)
+    --no-git              Skip Git repository initialization
 
     -v, --verbose          Enable verbose output
     -d, --dry-run         Show what would be done without making changes
@@ -635,6 +637,10 @@ function parse_create_args() {
                 NO_HOOKS=true
                 shift
                 ;;
+            --no-git)
+                NO_GIT=true
+                shift
+                ;;
             --docker-hub)
                 set_cli_docker_hub
                 shift
@@ -1026,7 +1032,7 @@ function execute_command() {
             apply_version_overrides
             
             # Export variables needed by project generator
-            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE DRY_RUN VERBOSE FORCE WITH_DEPS NO_HOOKS
+            export PROJECT_NAME PROJECT_DIR COMPONENTS TEMPLATE PROFILE DRY_RUN VERBOSE FORCE WITH_DEPS NO_HOOKS NO_GIT
             
             # Export CLI override variables for version configuration
             export CLI_PYTHON_VERSION CLI_NODE_VERSION CLI_POSTGRES_VERSION CLI_REDIS_VERSION

@@ -16,11 +16,10 @@ function install_git_hooks() {
 
     print_debug "Installing git hooks for $language project in $project_dir"
 
-    # Check if project is a git repository
+    # Check if project is a git repository (should already be initialized by project-generator.sh)
     if [[ ! -d "$project_dir/.git" ]]; then
-        print_debug "Not a git repository, initializing git..."
-        (cd "$project_dir" && git init -q)
-        print_debug "Git repository initialized"
+        print_warning "Not a git repository, skipping hooks installation"
+        return 1
     fi
 
     local hooks_dir="$project_dir/.git/hooks"

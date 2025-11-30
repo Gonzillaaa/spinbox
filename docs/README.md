@@ -7,6 +7,8 @@ Essential guides for Spinbox users - start here for installation, tutorials, and
 - [`user/quick-start.md`](./user/quick-start.md) - 5-minute tutorial to get started
 - [`user/cli-reference.md`](./user/cli-reference.md) - Complete command-line interface reference
 - [`user/dependency-management.md`](./user/dependency-management.md) - Automatic dependency management with --with-deps
+- [`user/git-hooks.md`](./user/git-hooks.md) - Git repository and hooks configuration
+- [`user/docker-hub-configuration.md`](./user/docker-hub-configuration.md) - Docker Hub optimized images
 - [`user/chroma-usage.md`](./user/chroma-usage.md) - Chroma vector database usage guide
 - [`user/troubleshooting.md`](./user/troubleshooting.md) - Common issues and solutions
 
@@ -19,7 +21,9 @@ Technical documentation for contributors, component developers, and advanced use
 - [`dev/adding-components.md`](./dev/adding-components.md) - How to add components to projects
 - [`dev/bare-bones-projects.md`](./dev/bare-bones-projects.md) - Minimal project specifications
 - [`dev/release-process.md`](./dev/release-process.md) - Release and deployment process
-- [`dev/backlog.md`](./dev/backlog.md) - Development backlog and roadmap
+- [`dev/roadmap.md`](./dev/roadmap.md) - Product roadmap and future plans
+- [`dev/backlog.md`](./dev/backlog.md) - Development backlog
+- [`dev/documentation-review-process.md`](./dev/documentation-review-process.md) - Documentation audit process
 
 ## 🎯 Quick Navigation
 
@@ -56,12 +60,12 @@ Technical documentation for contributors, component developers, and advanced use
 |-----------|-------------|------|----------|
 | Python | Python DevContainer | `--python` | Any project |
 | Node.js | Node.js DevContainer | `--node` | Frontend projects |
-| Backend | FastAPI backend | `--backend` | API development |
-| Frontend | Next.js frontend | `--frontend` | Web applications |
-| Database | PostgreSQL + PGVector (primary storage) | `--database` | Relational data |
-| MongoDB | MongoDB (alternative primary storage) | `--mongodb` | Document/NoSQL data |
-| Redis | Redis (caching/queue layer) | `--redis` | Performance/caching |
-| Chroma | Chroma (vector search layer) | `--chroma` | AI/ML embeddings |
+| FastAPI | FastAPI backend | `--fastapi` | API development |
+| Next.js | Next.js frontend | `--nextjs` | Web applications |
+| PostgreSQL | PostgreSQL + PGVector | `--postgresql` | Relational data |
+| MongoDB | MongoDB document database | `--mongodb` | Document/NoSQL data |
+| Redis | Redis caching/queue | `--redis` | Performance/caching |
+| Chroma | Chroma vector database | `--chroma` | AI/ML embeddings |
 
 ---
 
