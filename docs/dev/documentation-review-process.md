@@ -85,34 +85,8 @@ grep -o "\[.*\](.*\.md)" docs/README.md
 | Directory | Content |
 |-----------|---------|
 | `docs/user/` | End-user docs (installation, CLI, troubleshooting) |
-| `docs/dev/` | Developer docs (implementation, release process) |
+| `docs/dev/` | Developer docs (architecture, release process) |
 | `docs/releases/` | Release notes |
-| `docs/dev/audits/` | Audit reports |
-
-## Report Template
-
-Save to: `docs/dev/audits/YYYY-MM-DD-audit.md`
-
-```markdown
-# Documentation Audit - YYYY-MM-DD
-
-## Summary
-- Files reviewed: X
-- Issues found: X
-- Issues fixed: X
-
-## Findings
-
-| Severity | File | Issue | Status |
-|----------|------|-------|--------|
-| Critical | file.md | Description | Fixed/Open |
-
-## Changes Made
-- List of files modified and changes
-
-## Checklist Status
-[Copy checklist with completed items marked]
-```
 
 ## Standards
 

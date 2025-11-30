@@ -13,17 +13,13 @@ Essential guides for Spinbox users - start here for installation, tutorials, and
 - [`user/troubleshooting.md`](./user/troubleshooting.md) - Common issues and solutions
 
 ## 🏗️ Development Documentation
-Technical documentation for contributors, component developers, and advanced users.
+Technical documentation for contributors and component developers.
 
-- [`dev/global-cli-strategy.md`](./dev/global-cli-strategy.md) - High-level vision and approach
-- [`dev/global-cli-implementation.md`](./dev/global-cli-implementation.md) - Detailed technical implementation
-- [`dev/implementation-strategy.md`](./dev/implementation-strategy.md) - Implementation strategy overview
-- [`dev/adding-components.md`](./dev/adding-components.md) - How to add components to projects
-- [`dev/bare-bones-projects.md`](./dev/bare-bones-projects.md) - Minimal project specifications
-- [`dev/release-process.md`](./dev/release-process.md) - Release and deployment process
-- [`dev/roadmap.md`](./dev/roadmap.md) - Product roadmap and future plans
-- [`dev/backlog.md`](./dev/backlog.md) - Development backlog
-- [`dev/documentation-review-process.md`](./dev/documentation-review-process.md) - Documentation audit process
+- [`dev/README.md`](./dev/README.md) - **Developer docs index**
+- [`dev/architecture.md`](./dev/architecture.md) - System design and component system
+- [`dev/bare-bones-projects.md`](./dev/bare-bones-projects.md) - Minimal project structure
+- [`dev/release-process.md`](./dev/release-process.md) - Release process
+- [`dev/roadmap.md`](./dev/roadmap.md) - Roadmap and backlog
 
 ## 🎯 Quick Navigation
 
@@ -34,14 +30,14 @@ Technical documentation for contributors, component developers, and advanced use
 
 ### Common Tasks
 - **Creating Projects**: See [Quick Start Guide](./user/quick-start.md) for examples
-- **Adding Components**: Check [Adding Components Guide](./dev/adding-components.md)
+- **Adding Components**: See [CLI Reference - add](./user/cli-reference.md#spinbox-add)
 - **Troubleshooting**: Visit [Troubleshooting Guide](./user/troubleshooting.md)
 - **Configuration**: Reference [CLI Reference - Config](./user/cli-reference.md#spinbox-config)
 
 ### Advanced Usage
 - **Custom Profiles**: See [CLI Reference - Profiles](./user/cli-reference.md#templates)
-- **Component Development**: Check [Implementation Docs](./dev/global-cli-implementation.md)
-- **Contributing**: Review implementation and strategy documents in [`dev/`](./dev/)
+- **Component Development**: Check [Architecture](./dev/architecture.md)
+- **Contributing**: Start with [Developer Docs](./dev/README.md)
 
 ## 🎯 Profiles Quick Reference
 
