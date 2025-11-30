@@ -322,11 +322,9 @@ spinbox config --set PYTHON_VERSION=3.11
 - [Quick Start Guide](./docs/user/quick-start.md)
 - [CLI Reference](./docs/user/cli-reference.md)
 - [Installation Guide](./docs/user/installation.md)
-- [Dependency Management](./docs/user/dependency-management.md)
-- [Adding Components](./docs/dev/adding-components.md)
 - [Troubleshooting](./docs/user/troubleshooting.md)
 
-See [docs/README.md](./docs/README.md) for complete documentation index.
+See [docs/README.md](./docs/README.md) for complete documentation.
 
 ## 🤝 Contributing
 
