@@ -513,13 +513,15 @@ The `--with-deps` flag automatically manages Python and Node.js dependencies. He
 
 2. **Check project structure:**
    ```bash
-   # Verify package.json exists in nextjs/ directory
-   ls nextjs/package.json
+   # Verify package.json exists in frontend/ directory (for multi-component projects)
+   ls frontend/package.json
+   # Or at root level for Next.js-only projects
+   ls package.json
    ```
 
 3. **Reinstall with dependencies:**
    ```bash
-   cd nextjs/
+   cd frontend/  # or project root for Next.js-only projects
    npm install
    ```
 
@@ -542,7 +544,7 @@ The `--with-deps` flag automatically manages Python and Node.js dependencies. He
    cat requirements.txt | sort | uniq
    
    # Check package.json for conflicts
-   cd nextjs/ && npm list
+   cd frontend/ && npm list  # or project root for Next.js-only projects
    ```
 
 3. **Manual cleanup:**
@@ -574,7 +576,7 @@ The `--with-deps` flag automatically manages Python and Node.js dependencies. He
    echo "missing-package==1.0.0" >> requirements.txt
    
    # Add to package.json
-   cd nextjs/ && npm install missing-package
+   cd frontend/ && npm install missing-package  # or project root for Next.js-only projects
    ```
 
 ### Setup Script Issues

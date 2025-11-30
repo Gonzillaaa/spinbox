@@ -255,17 +255,17 @@ spinbox uninstall --config  # Remove Spinbox and config
 ```
 your-project/
 ├── .devcontainer/         # DevContainer configuration (always created)
-├── fastapi/              # FastAPI backend (if selected)
+├── backend/              # FastAPI backend (if selected)
 │   ├── app/
 │   ├── requirements.txt
 │   └── setup_venv.sh     # Virtual environment setup
-├── nextjs/               # Next.js frontend (if selected)
+├── frontend/             # Next.js frontend (if selected)
 │   ├── src/
 │   └── package.json
-├── postgresql/           # PostgreSQL config (if selected)
+├── database/             # PostgreSQL config (if selected)
 ├── mongodb/              # MongoDB config (if selected)
 ├── redis/                # Redis config (if selected)
-├── chroma_data/          # Chroma persistent storage (if selected)
+├── chroma/               # Chroma persistent storage (if selected)
 ├── docker-compose.yml    # Service orchestration
 ├── .env                  # Environment variables (from .env.example)
 ├── .gitignore           # Version control exclusions

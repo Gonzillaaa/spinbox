@@ -4,7 +4,7 @@ Chroma is a lightweight vector database that's perfect for storing and searching
 
 ## Features
 
-- **Persistent Storage**: Vector data is stored in the `chroma_data/` directory  
+- **Persistent Storage**: Vector data is stored in the `chroma/` directory  
 - **Python Integration**: Direct Python API for adding and searching documents
 - **Similarity Search**: Find documents similar to a query text
 - **Metadata Support**: Store additional information with each document
@@ -128,14 +128,14 @@ import chromadb
 from chromadb.config import Settings
 
 chroma_client = chromadb.Client(Settings(
-    persist_directory="./chroma_data",
+    persist_directory="./chroma",
     anonymized_telemetry=False
 ))
 ```
 
 ## Data Storage
 
-- **Location**: `chroma_data/` directory in your project root
+- **Location**: `chroma/` directory in your project root
 - **Persistence**: Data is automatically saved to disk
 - **Backup**: The directory is excluded from git (in `.gitignore`)
 
@@ -199,7 +199,7 @@ results = collection.query(
 ### Common Issues
 
 1. **Port Conflicts**: Ensure port 8000 is available
-2. **Permissions**: Check write permissions for `chroma_data/` directory
+2. **Permissions**: Check write permissions for `chroma/` directory
 3. **Memory**: Large collections may require more RAM
 
 ### Debugging
@@ -219,7 +219,7 @@ for col in collections:
 
 When you add Chroma to a Spinbox project with `spinbox add --chroma`, the following is automatically configured:
 - Chroma Python dependency in requirements.txt
-- Basic project structure with `chroma_data/` directory
+- Basic project structure with `chroma/` directory
 - `.gitignore` entries for the vector database files
 
 **Remember**: The API endpoints shown above are examples you need to implement yourself. Spinbox provides the foundation (dependency, directory structure, configuration), but you build the actual functionality using these patterns.

@@ -167,7 +167,7 @@ Status: ✅ Secure for local development
 - `redis_data:/data`
 
 **Init scripts:**
-- `./postgresql/init:/docker-entrypoint-initdb.d` (read-only by default)
+- `./database/init:/docker-entrypoint-initdb.d` (read-only by default)
 
 Status: ✅ Appropriate isolation
 

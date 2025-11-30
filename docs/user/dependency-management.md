@@ -92,7 +92,7 @@ cd webapp
 
 This creates:
 - `requirements.txt` with FastAPI and PostgreSQL dependencies
-- `nextjs/package.json` with Next.js dependencies
+- `frontend/package.json` with Next.js dependencies
 
 ### AI/LLM Project
 

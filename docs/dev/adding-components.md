@@ -124,7 +124,7 @@ your-project/
 │   └── init-scripts/
 ├── redis/                # If --redis added
 │   └── redis.conf
-└── chroma_data/          # If --chroma added (directory)
+└── chroma/               # If --chroma added (directory)
 ```
 
 ## Component Integration
