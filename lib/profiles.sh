@@ -177,12 +177,21 @@ function apply_profile() {
     # Apply template configuration
     [[ -n "${PROFILE_PYTHON_REQUIREMENTS:-}" ]] && TEMPLATE="$PROFILE_PYTHON_REQUIREMENTS"
 
-    # Export components and template for use by project generator
-    export COMPONENTS="$components"
-    export TEMPLATE
-    
+    # Merge profile components with any CLI-provided components (CLI adds to profile)
+    local cli_components="${COMPONENTS:-}"
+    local merged_components="$components"
+    if [[ -n "$cli_components" ]]; then
+        merged_components="$components $cli_components"
+    fi
+
     print_debug "Profile components: $components"
+    print_debug "CLI components: ${cli_components:-none}"
+    print_debug "Merged components: $merged_components"
     print_debug "Profile template: ${TEMPLATE:-default}"
+
+    # Export components and template for use by project generator
+    export COMPONENTS="$merged_components"
+    export TEMPLATE
     
     return 0
 }
