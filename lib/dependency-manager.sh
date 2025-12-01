@@ -6,8 +6,13 @@
 function add_python_dependencies() {
     local project_dir="$1"
     local component="$2"
+
+    # For FastAPI projects, use backend/requirements.txt
     local requirements_file="$project_dir/requirements.txt"
-    
+    if [[ -f "$project_dir/backend/requirements.txt" ]]; then
+        requirements_file="$project_dir/backend/requirements.txt"
+    fi
+
     # Ensure requirements.txt exists
     if [[ ! -f "$requirements_file" ]]; then
         touch "$requirements_file"
