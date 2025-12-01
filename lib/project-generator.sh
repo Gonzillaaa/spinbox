@@ -1034,9 +1034,29 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 │   └── init/          # SQL init scripts"
                 services_info+="### PostgreSQL Database
 - Host: localhost:5432
-- Database: app
+- Database: ${PROJECT_NAME}
 - User: postgres
 - Password: postgres
+- Connection URL: postgresql://postgres:postgres@localhost:5432/${PROJECT_NAME}
+
+"
+            fi
+
+            if [[ "$USE_MONGODB" == true ]]; then
+                services_info+="### MongoDB Database
+- Host: localhost:27017
+- Database: ${PROJECT_NAME}
+- User: mongo
+- Password: mongo
+- Connection URL: mongodb://mongo:mongo@localhost:27017/${PROJECT_NAME}
+
+"
+            fi
+
+            if [[ "$USE_REDIS" == true ]]; then
+                services_info+="### Redis Cache
+- Host: localhost:6379
+- Connection URL: redis://localhost:6379
 
 "
             fi
@@ -1044,8 +1064,8 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
             if [[ "$USE_CHROMA" == true ]]; then
                 chroma_structure="├── chroma/            # ChromaDB data"
                 services_info+="### ChromaDB Vector Database
-- URL: http://localhost:8000
-- API docs: http://localhost:8000/docs
+- Host: localhost:8000
+- Connection URL: http://localhost:8000
 
 "
             fi
@@ -1062,6 +1082,54 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
             readme_content="${readme_content//\{\{FRONTEND_COMMANDS\}\}/$frontend_commands}"
             readme_content="${readme_content//\{\{ENV_INFO\}\}/$env_info}"
         fi
+
+        # Build services info for any project with databases (FastAPI, NextJS, etc.)
+        local services_info=""
+
+        if [[ "$USE_POSTGRESQL" == true ]]; then
+            services_info+="### PostgreSQL Database
+- Host: postgres (inside container) / localhost (from host)
+- Port: 5432
+- Database: ${PROJECT_NAME}
+- User: postgres
+- Password: postgres
+- Connection URL: postgresql://postgres:postgres@postgres:5432/${PROJECT_NAME}
+
+"
+        fi
+
+        if [[ "$USE_MONGODB" == true ]]; then
+            services_info+="### MongoDB Database
+- Host: mongodb (inside container) / localhost (from host)
+- Port: 27017
+- Database: ${PROJECT_NAME}
+- User: mongo
+- Password: mongo
+- Connection URL: mongodb://mongo:mongo@mongodb:27017/${PROJECT_NAME}
+
+"
+        fi
+
+        if [[ "$USE_REDIS" == true ]]; then
+            services_info+="### Redis Cache
+- Host: redis (inside container) / localhost (from host)
+- Port: 6379
+- Connection URL: redis://redis:6379
+
+"
+        fi
+
+        if [[ "$USE_CHROMA" == true ]]; then
+            services_info+="### ChromaDB Vector Database
+- Host: chroma (inside container) / localhost (from host)
+- Port: 8000
+- Connection URL: http://chroma:8000
+
+"
+        fi
+
+        # Replace services info placeholder (for all templates that have it)
+        readme_content="${readme_content//\{\{SERVICES_INFO\}\}/$services_info}"
 
         echo "$readme_content" > "$project_dir/README.md"
         print_status "Generated README.md"
@@ -1212,18 +1280,40 @@ function create_project() {
 
     echo ""
     if [[ "$USE_POSTGRESQL" == true ]]; then
-        print_info "Database connection (from inside DevContainer):"
-        echo "  • Host: postgres"
+        print_info "PostgreSQL connection:"
+        echo "  • Host: postgres (inside container) / localhost (from host)"
         echo "  • Port: 5432"
+        echo "  • Database: ${PROJECT_NAME}"
         echo "  • User: postgres"
-        echo "  • Database: app"
+        echo "  • Password: postgres"
+        echo "  • URL: postgresql://postgres:postgres@postgres:5432/${PROJECT_NAME}"
+        echo ""
+    fi
+
+    if [[ "$USE_MONGODB" == true ]]; then
+        print_info "MongoDB connection:"
+        echo "  • Host: mongodb (inside container) / localhost (from host)"
+        echo "  • Port: 27017"
+        echo "  • Database: ${PROJECT_NAME}"
+        echo "  • User: mongo"
+        echo "  • Password: mongo"
+        echo "  • URL: mongodb://mongo:mongo@mongodb:27017/${PROJECT_NAME}"
+        echo ""
+    fi
+
+    if [[ "$USE_REDIS" == true ]]; then
+        print_info "Redis connection:"
+        echo "  • Host: redis (inside container) / localhost (from host)"
+        echo "  • Port: 6379"
+        echo "  • URL: redis://redis:6379"
         echo ""
     fi
 
     if [[ "$USE_CHROMA" == true ]]; then
-        print_info "ChromaDB vector database:"
-        echo "  • URL: http://localhost:8000"
-        echo "  • API docs: http://localhost:8000/docs"
+        print_info "ChromaDB connection:"
+        echo "  • Host: chroma (inside container) / localhost (from host)"
+        echo "  • Port: 8000"
+        echo "  • URL: http://chroma:8000"
         echo "  • Data stored in: ./chroma/"
         echo ""
     fi
