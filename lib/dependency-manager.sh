@@ -88,11 +88,12 @@ function add_python_dependencies() {
             add_to_requirements "$requirements_file" "python-multipart>=0.0.6"
             ;;
         *)
-            print_warning "Unknown component for Python dependencies: $component"
-            return 1
+            # Not a Python component, skip silently
+            print_debug "No Python dependencies for component: $component"
+            return 0
             ;;
     esac
-    
+
     print_info "Added Python dependencies for $component"
 }
 
@@ -132,11 +133,12 @@ function add_nodejs_dependencies() {
             add_to_package_json "$package_json" "devDependencies" "postcss" "^8.4.0"
             ;;
         *)
-            print_warning "Unknown component for Node.js dependencies: $component"
-            return 1
+            # Not a Node.js component, skip silently
+            print_debug "No Node.js dependencies for component: $component"
+            return 0
             ;;
     esac
-    
+
     print_info "Added Node.js dependencies for $component"
 }
 
