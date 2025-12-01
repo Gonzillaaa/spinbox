@@ -226,12 +226,17 @@ ENV SHELL=/bin/zsh
 WORKDIR /workspace
 RUN chown \$USERNAME:\$USERNAME /workspace
 
+# Create Python virtual environment
+RUN python -m venv venv && chown -R \$USERNAME:\$USERNAME venv
+ENV PATH="/workspace/venv/bin:\$PATH"
+
 # Copy and run setup script
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh
 
-# Set default user
+# Set default user and add auto-activate
 USER \$USERNAME
+RUN echo 'if [[ -f /workspace/venv/bin/activate ]]; then source /workspace/venv/bin/activate; fi' >> ~/.zshrc
 EOF
 
     # Generate common setup script for both modes
