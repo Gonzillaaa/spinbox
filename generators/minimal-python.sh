@@ -349,7 +349,7 @@ function generate_minimal_python_files() {
     fi
     
     # Generate requirements.txt
-    local template_name="${TEMPLATE_NAME:-minimal}"
+    local template_name="${TEMPLATE:-${TEMPLATE_NAME:-minimal}}"
     local template_file="$PROJECT_ROOT/templates/requirements/$template_name.txt"
     
     if [[ -f "$template_file" ]]; then

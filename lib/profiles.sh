@@ -176,9 +176,10 @@ function apply_profile() {
     
     # Apply template configuration
     [[ -n "${PROFILE_PYTHON_REQUIREMENTS:-}" ]] && TEMPLATE="$PROFILE_PYTHON_REQUIREMENTS"
-    
-    # Export components for use by project generator
+
+    # Export components and template for use by project generator
     export COMPONENTS="$components"
+    export TEMPLATE
     
     print_debug "Profile components: $components"
     print_debug "Profile template: ${TEMPLATE:-default}"
