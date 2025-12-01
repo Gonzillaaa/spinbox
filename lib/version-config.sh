@@ -266,6 +266,16 @@ function show_version_configuration() {
         fi
         echo "  Redis: $redis_ver$redis_source"
     fi
+
+    # Only show MongoDB version if MongoDB is being used
+    if [[ "${USE_MONGODB:-false}" == "true" ]]; then
+        echo "  MongoDB: 7.0 (default)"
+    fi
+
+    # Only show Chroma version if Chroma is being used
+    if [[ "${USE_CHROMA:-false}" == "true" ]]; then
+        echo "  ChromaDB: latest (default)"
+    fi
 }
 
 # Apply CLI version overrides to global configuration variables
