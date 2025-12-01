@@ -228,6 +228,9 @@ USER root
 WORKDIR /workspace
 RUN chown \$USERNAME:\$USERNAME /workspace
 
+# Create Python virtual environment
+RUN python -m venv venv && chown -R \$USERNAME:\$USERNAME venv
+
 EXPOSE 8000
 
 # Set Zsh as default shell

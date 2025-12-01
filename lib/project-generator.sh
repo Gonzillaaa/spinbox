@@ -305,6 +305,8 @@ ENV SHELL=/bin/zsh
 WORKDIR /workspace
 RUN chown \$USERNAME:\$USERNAME /workspace
 
+$(generate_python_venv_setup)
+
 # Copy setup script
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh
@@ -398,6 +400,17 @@ function generate_vscode_extensions() {
     fi
 }
 
+# Generate Python virtual environment PATH setup (only if Python is used)
+# Note: venv is created in setup.sh after workspace mount, not in Dockerfile
+function generate_python_venv_setup() {
+    if [[ "$USE_PYTHON" == true ]]; then
+        cat << 'VENV_EOF'
+# Set PATH to include venv (venv created by setup.sh after mount)
+ENV PATH="/workspace/venv/bin:$PATH"
+VENV_EOF
+    fi
+}
+
 # Generate Dockerfile content based on components
 function generate_dockerfile_content() {
     local python_image=$(get_python_image_tag)
@@ -477,21 +490,26 @@ fi
 
 EOF
     
-    # Only create root-level venv for single-component Python projects
-    # Multi-component projects (FastAPI, etc.) have their own venv in subdirectories
-    if [[ "$USE_PYTHON" == true ]] && [[ "$USE_FASTAPI" == false ]]; then
+    # Create venv for all Python projects (runs after workspace mount)
+    if [[ "$USE_PYTHON" == true ]]; then
         cat << 'EOF'
 # Set up Python virtual environment
 if [ ! -d "venv" ]; then
     echo "Creating Python virtual environment..."
     python -m venv venv
-    source venv/bin/activate
+fi
 
-    # Install requirements if they exist
-    if [ -f "requirements.txt" ]; then
-        echo "Installing Python dependencies..."
-        uv pip install -r requirements.txt
-    fi
+# Activate venv and install dependencies
+source venv/bin/activate
+
+# Install backend requirements if they exist (FastAPI projects)
+if [ -f "backend/requirements.txt" ]; then
+    echo "Installing backend Python dependencies..."
+    uv pip install -r backend/requirements.txt
+# Install root requirements if they exist (simple Python projects)
+elif [ -f "requirements.txt" ]; then
+    echo "Installing Python dependencies..."
+    uv pip install -r requirements.txt
 fi
 
 EOF

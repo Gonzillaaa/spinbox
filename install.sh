@@ -99,6 +99,9 @@ install_spinbox() {
     print_status "Installing runtime files to $RUNTIME_DIR..."
     print_status "Installing for user: $REAL_USER (home: $REAL_HOME)"
 
+    # Clean up existing directories (may have root-owned files from previous install)
+    rm -rf "$RUNTIME_DIR" "$CACHE_DIR/source"
+
     # Create directories and copy files as the real user
     sudo -u "$REAL_USER" mkdir -p "$RUNTIME_DIR"
     sudo -u "$REAL_USER" mkdir -p "$CACHE_DIR"
