@@ -3,12 +3,29 @@
 
 set -e
 
+# Detect the real user (works even when piped to sudo)
+detect_real_user() {
+    if [[ -n "${SUDO_USER:-}" ]]; then
+        echo "$SUDO_USER"
+    elif command -v logname &>/dev/null && [[ "$(logname 2>/dev/null)" != "root" ]]; then
+        logname
+    elif [[ -n "${USER:-}" && "$USER" != "root" ]]; then
+        echo "$USER"
+    else
+        # Last resort: check who owns the terminal
+        stat -f '%Su' /dev/console 2>/dev/null || whoami
+    fi
+}
+
+REAL_USER=$(detect_real_user)
+REAL_HOME=$(eval echo "~$REAL_USER")
+
 # Configuration
 REPO_URL="https://github.com/Gonzillaaa/spinbox.git"
 INSTALL_DIR="/usr/local/bin"
-CONFIG_DIR="$HOME/.spinbox"
-RUNTIME_DIR="$HOME/.spinbox/runtime"
-CACHE_DIR="$HOME/.spinbox/cache"
+CONFIG_DIR="$REAL_HOME/.spinbox"
+RUNTIME_DIR="$REAL_HOME/.spinbox/runtime"
+CACHE_DIR="$REAL_HOME/.spinbox/cache"
 TEMP_DIR="/tmp/spinbox-install"
 
 # Colors for output
@@ -80,31 +97,19 @@ install_spinbox() {
     
     # Install runtime files to stable location
     print_status "Installing runtime files to $RUNTIME_DIR..."
-    if [[ -n "${SUDO_USER:-}" ]]; then
-        # Running with sudo - create directories as the actual user
-        sudo -u "$SUDO_USER" mkdir -p "$RUNTIME_DIR"
-        sudo -u "$SUDO_USER" mkdir -p "$CACHE_DIR"
-        sudo -u "$SUDO_USER" cp -r lib "$RUNTIME_DIR/"
-        sudo -u "$SUDO_USER" cp -r generators "$RUNTIME_DIR/"
-        if [ -d "templates" ]; then
-            sudo -u "$SUDO_USER" cp -r templates "$RUNTIME_DIR/"
-        fi
-        
-        # Copy source to cache for updates
-        sudo -u "$SUDO_USER" cp -r . "$CACHE_DIR/source"
-    else
-        # Running directly as user
-        mkdir -p "$RUNTIME_DIR"
-        mkdir -p "$CACHE_DIR"
-        cp -r lib "$RUNTIME_DIR/"
-        cp -r generators "$RUNTIME_DIR/"
-        if [ -d "templates" ]; then
-            cp -r templates "$RUNTIME_DIR/"
-        fi
-        
-        # Copy source to cache for updates
-        cp -r . "$CACHE_DIR/source"
+    print_status "Installing for user: $REAL_USER (home: $REAL_HOME)"
+
+    # Create directories and copy files as the real user
+    sudo -u "$REAL_USER" mkdir -p "$RUNTIME_DIR"
+    sudo -u "$REAL_USER" mkdir -p "$CACHE_DIR"
+    sudo -u "$REAL_USER" cp -r lib "$RUNTIME_DIR/"
+    sudo -u "$REAL_USER" cp -r generators "$RUNTIME_DIR/"
+    if [ -d "templates" ]; then
+        sudo -u "$REAL_USER" cp -r templates "$RUNTIME_DIR/"
     fi
+
+    # Copy source to cache for updates
+    sudo -u "$REAL_USER" cp -r . "$CACHE_DIR/source"
     
     # Install binary to system location (uses centralized source via detection)
     print_status "Installing to $INSTALL_DIR..."
@@ -112,13 +117,7 @@ install_spinbox() {
     sudo chmod +x "$INSTALL_DIR/spinbox"
     
     # Create user configuration directory with proper ownership
-    if [[ -n "${SUDO_USER:-}" ]]; then
-        # Running with sudo - create directory as the actual user
-        sudo -u "$SUDO_USER" mkdir -p "$CONFIG_DIR"
-    else
-        # Running directly as user
-        mkdir -p "$CONFIG_DIR"
-    fi
+    sudo -u "$REAL_USER" mkdir -p "$CONFIG_DIR"
     
     # Make sure the binary was installed correctly
     if [ -x "$INSTALL_DIR/spinbox" ]; then
