@@ -604,7 +604,15 @@ htmlcov/
 # Documentation
 docs/_build/
 EOF
-    
+
+    # Copy setup_venv.sh for consistent venv setup
+    local setup_venv_template="$PROJECT_ROOT/templates/security/setup_venv.sh"
+    if [[ -f "$setup_venv_template" ]]; then
+        cp "$setup_venv_template" "$project_dir/setup_venv.sh"
+        chmod +x "$project_dir/setup_venv.sh"
+        print_debug "Copied setup_venv.sh"
+    fi
+
     print_status "Generated minimal Python project files"
 }
 
