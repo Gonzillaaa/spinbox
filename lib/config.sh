@@ -10,11 +10,13 @@ function get_global_config_path() { echo "$CONFIG_DIR/global.conf"; }
 function get_project_config_path() { echo "$CONFIG_DIR/project.conf"; }
 function get_user_config_path() { echo "$CONFIG_DIR/user.conf"; }
 
-# Default configuration values
+# Default configuration values - SINGLE SOURCE OF TRUTH for all versions
 DEFAULT_PYTHON_VERSION="3.11"
 DEFAULT_NODE_VERSION="20"
 DEFAULT_POSTGRES_VERSION="15"
 DEFAULT_REDIS_VERSION="7"
+DEFAULT_MONGODB_VERSION="7.0"
+DEFAULT_CHROMA_VERSION="0.5"
 
 # Docker Hub configuration (configurable via global.conf)
 DEFAULT_DOCKER_HUB_USERNAME="gonzillaaa"
@@ -28,6 +30,8 @@ DEFAULT_SPINBOX_NODE_BASE_IMAGE="${DEFAULT_DOCKER_HUB_USERNAME}/spinbox-node-bas
 : "${NODE_VERSION:=""}"
 : "${POSTGRES_VERSION:=""}"
 : "${REDIS_VERSION:=""}"
+: "${MONGODB_VERSION:=""}"
+: "${CHROMA_VERSION:=""}"
 : "${DOCKER_REGISTRY:=""}"
 : "${PROJECT_AUTHOR:=""}"
 : "${PROJECT_EMAIL:=""}"
@@ -84,6 +88,8 @@ PYTHON_VERSION="$DEFAULT_PYTHON_VERSION"
 NODE_VERSION="$DEFAULT_NODE_VERSION"
 POSTGRES_VERSION="$DEFAULT_POSTGRES_VERSION"
 REDIS_VERSION="$DEFAULT_REDIS_VERSION"
+MONGODB_VERSION="$DEFAULT_MONGODB_VERSION"
+CHROMA_VERSION="$DEFAULT_CHROMA_VERSION"
 
 # Docker configuration
 DOCKER_REGISTRY=""
@@ -113,16 +119,18 @@ function load_global_config() {
 function save_global_config() {
   local vars=(
     "PYTHON_VERSION"
-    "NODE_VERSION" 
+    "NODE_VERSION"
     "POSTGRES_VERSION"
     "REDIS_VERSION"
+    "MONGODB_VERSION"
+    "CHROMA_VERSION"
     "DOCKER_REGISTRY"
     "PROJECT_AUTHOR"
     "PROJECT_EMAIL"
     "PROJECT_LICENSE"
     "DEFAULT_COMPONENTS"
   )
-  
+
   save_config "$(get_global_config_path)" "${vars[@]}"
   print_status "Saved global configuration"
 }
@@ -273,7 +281,7 @@ function set_config_value() {
   # Validate the key exists
   case "$scope" in
     global)
-      if [[ " PYTHON_VERSION NODE_VERSION POSTGRES_VERSION REDIS_VERSION DOCKER_REGISTRY PROJECT_AUTHOR PROJECT_EMAIL PROJECT_LICENSE DEFAULT_COMPONENTS " =~ " $key " ]]; then
+      if [[ " PYTHON_VERSION NODE_VERSION POSTGRES_VERSION REDIS_VERSION MONGODB_VERSION CHROMA_VERSION DOCKER_REGISTRY PROJECT_AUTHOR PROJECT_EMAIL PROJECT_LICENSE DEFAULT_COMPONENTS " =~ " $key " ]]; then
         # Set the variable globally (compatible with older bash versions)
         eval "$key=\"\$value\""
         save_global_config
@@ -322,6 +330,8 @@ function list_config() {
       echo "  NODE_VERSION=$NODE_VERSION" 2>/dev/null || true
       echo "  POSTGRES_VERSION=$POSTGRES_VERSION" 2>/dev/null || true
       echo "  REDIS_VERSION=$REDIS_VERSION" 2>/dev/null || true
+      echo "  MONGODB_VERSION=$MONGODB_VERSION" 2>/dev/null || true
+      echo "  CHROMA_VERSION=$CHROMA_VERSION" 2>/dev/null || true
       echo "  DOCKER_REGISTRY=$DOCKER_REGISTRY" 2>/dev/null || true
       echo "  PROJECT_AUTHOR=$PROJECT_AUTHOR" 2>/dev/null || true
       echo "  PROJECT_EMAIL=$PROJECT_EMAIL" 2>/dev/null || true

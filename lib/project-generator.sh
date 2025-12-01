@@ -571,9 +571,10 @@ function generate_compose_services() {
     fi
     
     if [[ "$USE_MONGODB" == true ]]; then
+        local mongodb_ver=$(get_effective_mongodb_version)
         services+="
   mongodb:
-    image: mongo:7
+    image: mongo:$mongodb_ver
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongo
       MONGO_INITDB_ROOT_PASSWORD: mongo
@@ -601,9 +602,10 @@ function generate_compose_services() {
     fi
     
     if [[ "$USE_CHROMA" == true ]]; then
+        local chroma_ver=$(get_effective_chroma_version)
         services+="
   chroma:
-    image: chromadb/chroma:latest
+    image: chromadb/chroma:$chroma_ver
     ports:
       - \"8000:8000\"
     volumes:

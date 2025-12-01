@@ -70,6 +70,8 @@ The `PROJECT_PATH` can be either:
 | `--node-version <ver>` | Node.js version (default: 20) |
 | `--postgres-version <ver>` | PostgreSQL version (default: 15) |
 | `--redis-version <ver>` | Redis version (default: 7) |
+| `--mongodb-version <ver>` | MongoDB version (default: 7.0) |
+| `--chroma-version <ver>` | ChromaDB version (default: 0.5) |
 
 **Git Options:**
 | Option | Description |
@@ -219,6 +221,8 @@ spinbox add [OPTIONS]
 | `--node-version <ver>` | Node.js version (uses current or default) |
 | `--postgres-version <ver>` | PostgreSQL version (uses current or default) |
 | `--redis-version <ver>` | Redis version (uses current or default) |
+| `--mongodb-version <ver>` | MongoDB version (uses current or default) |
+| `--chroma-version <ver>` | ChromaDB version (uses current or default) |
 
 #### Examples
 
@@ -452,6 +456,8 @@ spinbox config [OPTIONS]
 | `NODE_VERSION` | Default Node.js version | `20` |
 | `POSTGRES_VERSION` | Default PostgreSQL version | `15` |
 | `REDIS_VERSION` | Default Redis version | `7` |
+| `MONGODB_VERSION` | Default MongoDB version | `7.0` |
+| `CHROMA_VERSION` | Default ChromaDB version | `0.5` |
 | `PROJECT_AUTHOR` | Default project author | `""` |
 | `PROJECT_EMAIL` | Default project email | `""` |
 | `PROJECT_LICENSE` | Default project license | `MIT` |
@@ -668,6 +674,8 @@ PYTHON_VERSION="3.11"
 NODE_VERSION="20"
 POSTGRES_VERSION="15"
 REDIS_VERSION="7"
+MONGODB_VERSION="7.0"
+CHROMA_VERSION="0.5"
 
 # Project defaults
 PROJECT_AUTHOR="Your Name"
@@ -833,9 +841,11 @@ After project creation:
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `PYTHON_VERSION` | Override Python version | `3.11` |
-| `NODE_VERSION` | Override Node.js version | `18` |
-| `POSTGRES_VERSION` | Override PostgreSQL version | `14` |
-| `REDIS_VERSION` | Override Redis version | `6` |
+| `NODE_VERSION` | Override Node.js version | `20` |
+| `POSTGRES_VERSION` | Override PostgreSQL version | `15` |
+| `REDIS_VERSION` | Override Redis version | `7` |
+| `MONGODB_VERSION` | Override MongoDB version | `7.0` |
+| `CHROMA_VERSION` | Override ChromaDB version | `0.5` |
 
 ## Exit Codes
 

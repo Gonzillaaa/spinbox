@@ -44,10 +44,30 @@ spinbox/
 
 ## Configuration System
 
+Configuration is centralized in `lib/config.sh` (defaults) and `lib/version-config.sh` (override logic).
+
 ### Hierarchy (highest to lowest priority)
-1. **CLI flags**: `spinbox create myproject --python-version 3.11`
-2. **Global config**: `~/.spinbox/global.conf`
-3. **Built-in defaults**: Hardcoded in `lib/config.sh`
+1. **CLI flags**: `--python-version 3.10`, `--mongodb-version 6.0`, etc.
+2. **Profile TOML**: `templates/profiles/*.toml` settings
+3. **User config**: `~/.spinbox/config/global.conf`
+4. **Built-in defaults**: `lib/config.sh`
+
+### Configurable Versions
+
+| Component | Default | CLI Flag | Config Key |
+|-----------|---------|----------|------------|
+| Python | 3.11 | `--python-version` | `PYTHON_VERSION` |
+| Node.js | 20 | `--node-version` | `NODE_VERSION` |
+| PostgreSQL | 15 | `--postgres-version` | `POSTGRES_VERSION` |
+| Redis | 7 | `--redis-version` | `REDIS_VERSION` |
+| MongoDB | 7.0 | `--mongodb-version` | `MONGODB_VERSION` |
+| ChromaDB | 0.5 | `--chroma-version` | `CHROMA_VERSION` |
+
+### Key Files
+- `lib/config.sh` - Single source of truth for all defaults
+- `lib/version-config.sh` - Getter/setter functions and override logic
+- `~/.spinbox/config/global.conf` - User configuration
+- `.config/global.conf` - Repository defaults (for development)
 
 ### Key Directories
 - `~/.spinbox/` - User configuration and cache

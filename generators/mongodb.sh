@@ -178,7 +178,7 @@ version: '3.8'
 
 services:
   mongodb:
-    image: mongo:7.0
+    image: mongo:$(get_effective_mongodb_version)
     container_name: ${PROJECT_NAME:-app}_mongodb
     restart: unless-stopped
     environment:

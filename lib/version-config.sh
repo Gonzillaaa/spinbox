@@ -12,6 +12,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/config.sh"
 : "${CLI_NODE_VERSION:=""}"
 : "${CLI_POSTGRES_VERSION:=""}"
 : "${CLI_REDIS_VERSION:=""}"
+: "${CLI_MONGODB_VERSION:=""}"
+: "${CLI_CHROMA_VERSION:=""}"
 : "${CLI_USE_DOCKER_HUB:=""}"
 
 # Configuration override hierarchy: CLI flags > config file > defaults
@@ -52,6 +54,26 @@ function get_effective_redis_version() {
         echo "$REDIS_VERSION"
     else
         echo "$DEFAULT_REDIS_VERSION"
+    fi
+}
+
+function get_effective_mongodb_version() {
+    if [[ -n "$CLI_MONGODB_VERSION" ]]; then
+        echo "$CLI_MONGODB_VERSION"
+    elif [[ -n "$MONGODB_VERSION" ]]; then
+        echo "$MONGODB_VERSION"
+    else
+        echo "$DEFAULT_MONGODB_VERSION"
+    fi
+}
+
+function get_effective_chroma_version() {
+    if [[ -n "$CLI_CHROMA_VERSION" ]]; then
+        echo "$CLI_CHROMA_VERSION"
+    elif [[ -n "$CHROMA_VERSION" ]]; then
+        echo "$CHROMA_VERSION"
+    else
+        echo "$DEFAULT_CHROMA_VERSION"
     fi
 }
 
@@ -107,6 +129,16 @@ function set_cli_postgres_version() {
 function set_cli_redis_version() {
     CLI_REDIS_VERSION="$1"
     validate_redis_version "$CLI_REDIS_VERSION"
+}
+
+function set_cli_mongodb_version() {
+    CLI_MONGODB_VERSION="$1"
+    validate_mongodb_version "$CLI_MONGODB_VERSION"
+}
+
+function set_cli_chroma_version() {
+    CLI_CHROMA_VERSION="$1"
+    validate_chroma_version "$CLI_CHROMA_VERSION"
 }
 
 # Set Docker Hub flag from CLI
@@ -197,6 +229,34 @@ function validate_redis_version() {
     return 0
 }
 
+function validate_mongodb_version() {
+    local version="$1"
+    if [[ ! "$version" =~ ^[0-9]+$ ]] && [[ ! "$version" =~ ^[0-9]+\.[0-9]+$ ]]; then
+        print_error "Invalid MongoDB version format: $version (expected: x or x.y)"
+        return 1
+    fi
+
+    # Check if version is reasonable (5+)
+    local major="${version%%.*}"
+    if [[ $major -lt 5 ]]; then
+        print_warning "MongoDB version $version is quite old. Consider using 7.0 or later."
+    fi
+
+    print_debug "MongoDB version $version validated"
+    return 0
+}
+
+function validate_chroma_version() {
+    local version="$1"
+    if [[ ! "$version" =~ ^[0-9]+\.[0-9]+$ ]] && [[ "$version" != "latest" ]]; then
+        print_error "Invalid ChromaDB version format: $version (expected: x.y or 'latest')"
+        return 1
+    fi
+
+    print_debug "ChromaDB version $version validated"
+    return 0
+}
+
 # Get all effective versions for configuration display
 function get_all_effective_versions() {
     local python_ver=$(get_effective_python_version)
@@ -269,12 +329,30 @@ function show_version_configuration() {
 
     # Only show MongoDB version if MongoDB is being used
     if [[ "${USE_MONGODB:-false}" == "true" ]]; then
-        echo "  MongoDB: 7.0 (default)"
+        local mongodb_ver=$(get_effective_mongodb_version)
+        local mongodb_source=""
+        if [[ -n "$CLI_MONGODB_VERSION" ]]; then
+            mongodb_source=" (from CLI flag)"
+        elif [[ -n "$MONGODB_VERSION" ]]; then
+            mongodb_source=" (from config file)"
+        else
+            mongodb_source=" (default)"
+        fi
+        echo "  MongoDB: $mongodb_ver$mongodb_source"
     fi
 
     # Only show Chroma version if Chroma is being used
     if [[ "${USE_CHROMA:-false}" == "true" ]]; then
-        echo "  ChromaDB: latest (default)"
+        local chroma_ver=$(get_effective_chroma_version)
+        local chroma_source=""
+        if [[ -n "$CLI_CHROMA_VERSION" ]]; then
+            chroma_source=" (from CLI flag)"
+        elif [[ -n "$CHROMA_VERSION" ]]; then
+            chroma_source=" (from config file)"
+        else
+            chroma_source=" (default)"
+        fi
+        echo "  ChromaDB: $chroma_ver$chroma_source"
     fi
 }
 
@@ -397,6 +475,8 @@ function reset_cli_overrides() {
     CLI_NODE_VERSION=""
     CLI_POSTGRES_VERSION=""
     CLI_REDIS_VERSION=""
+    CLI_MONGODB_VERSION=""
+    CLI_CHROMA_VERSION=""
     CLI_USE_DOCKER_HUB=""
     USE_DOCKER_HUB="false"
     print_debug "Reset all CLI version overrides"
@@ -405,13 +485,16 @@ function reset_cli_overrides() {
 # Export functions for use in other scripts
 export -f get_effective_python_version get_effective_node_version
 export -f get_effective_postgres_version get_effective_redis_version
+export -f get_effective_mongodb_version get_effective_chroma_version
 export -f get_effective_docker_hub_username get_effective_docker_hub_registry
 export -f get_effective_python_base_image get_effective_node_base_image
 export -f set_cli_python_version set_cli_node_version
 export -f set_cli_postgres_version set_cli_redis_version
+export -f set_cli_mongodb_version set_cli_chroma_version
 export -f set_cli_docker_hub get_effective_docker_hub
 export -f validate_python_version validate_node_version
 export -f validate_postgres_version validate_redis_version
+export -f validate_mongodb_version validate_chroma_version
 export -f get_all_effective_versions show_version_configuration
 export -f apply_version_overrides parse_version_overrides
 export -f get_python_image_tag get_node_image_tag

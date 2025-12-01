@@ -102,7 +102,7 @@ version: '3.8'
 
 services:
   chroma:
-    image: chromadb/chroma:latest
+    image: chromadb/chroma:$(get_effective_chroma_version)
     container_name: ${PROJECT_NAME:-app}_chroma
     restart: unless-stopped
     ports:
