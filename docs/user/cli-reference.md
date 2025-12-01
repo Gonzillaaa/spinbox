@@ -735,7 +735,7 @@ mongodb = false
 chroma = false
 
 [configuration]
-python_version = "3.12"
+python_version = "3.11"
 node_version = "20"
 postgres_version = "15"
 

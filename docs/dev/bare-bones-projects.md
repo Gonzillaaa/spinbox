@@ -58,7 +58,7 @@ spinbox add --nextjs        # Add frontend
 
 Global defaults in `~/.spinbox/global.conf`:
 ```bash
-PYTHON_VERSION=3.12
+PYTHON_VERSION=3.11
 NODE_VERSION=20
 ```
 

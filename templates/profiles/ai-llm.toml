@@ -11,7 +11,7 @@ mongodb = false
 chroma = true
 
 [configuration]
-python_version = "3.12"
+python_version = "3.11"
 postgres_version = "15"
 
 [templates]

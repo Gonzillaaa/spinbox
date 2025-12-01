@@ -81,7 +81,7 @@ docker-compose down
 spinbox status
 
 # Configure defaults
-spinbox config --set PYTHON_VERSION=3.12
+spinbox config --set PYTHON_VERSION=3.11
 ```
 
 ## Next Steps

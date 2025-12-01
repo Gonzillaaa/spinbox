@@ -326,7 +326,7 @@ EOF
     fi
     
     # Set default versions (can be overridden by config)
-    PYTHON_VERSION="${PYTHON_VERSION:-3.12}"
+    PYTHON_VERSION="${PYTHON_VERSION:-3.11}"
     NODE_VERSION="${NODE_VERSION:-20}"
     POSTGRES_VERSION="${POSTGRES_VERSION:-15}"
     REDIS_VERSION="${REDIS_VERSION:-7}"
@@ -496,7 +496,7 @@ test_version_defaults() {
         TEST_PYTHON_VERSION="$PYTHON_VERSION"
         TEST_NODE_VERSION="$NODE_VERSION"
     fi
-    TEST_PYTHON_VERSION="${TEST_PYTHON_VERSION:-3.12}"
+    TEST_PYTHON_VERSION="${TEST_PYTHON_VERSION:-3.11}"
     TEST_NODE_VERSION="${TEST_NODE_VERSION:-20}"
     
     test_assert '[[ -n "$TEST_PYTHON_VERSION" ]]' "Python version default set"

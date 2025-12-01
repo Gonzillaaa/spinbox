@@ -77,7 +77,7 @@ code .  # or cursor .
 
 ### Configure (Optional)
 ```bash
-spinbox config --set PYTHON_VERSION=3.12
+spinbox config --set PYTHON_VERSION=3.11
 spinbox config --set NODE_VERSION=20
 spinbox config --set PROJECT_AUTHOR="Your Name"
 ```
