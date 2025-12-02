@@ -28,10 +28,26 @@ Checks staged Python files for:
 
 Runs `pytest tests/` before allowing push.
 
+### Pre-commit Hook (Node.js)
+
+Checks staged JavaScript/TypeScript files for:
+1. **prettier** - Code formatting
+2. **eslint** - Linting
+
+### Pre-push Hook (Node.js)
+
+Runs `npm test` before allowing push.
+
 ## Install Tools
 
+### Python
 ```bash
 pip install black isort flake8 pytest
+```
+
+### Node.js
+```bash
+npm install -D prettier eslint
 ```
 
 Or use `--with-deps` when creating projects.

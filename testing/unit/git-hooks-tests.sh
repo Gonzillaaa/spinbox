@@ -1,6 +1,6 @@
 #!/bin/bash
 # Git Hooks Tests - Test git hooks installation and configuration
-# Tests the git hooks functionality for Python projects
+# Tests the git hooks functionality for Python and Node.js projects
 
 # Note: Not using set -e so tests can continue after failures
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
@@ -25,6 +25,8 @@ cleanup_test_env() {
     rm -rf "/tmp/test-no-git" 2>/dev/null || true
     rm -rf "/tmp/test-dryrun-hooks" 2>/dev/null || true
     rm -rf "/tmp/test-db-only" 2>/dev/null || true
+    rm -rf "/tmp/test-node-hooks" 2>/dev/null || true
+    rm -rf "/tmp/test-node-content" 2>/dev/null || true
 }
 
 # Ensure cleanup runs on exit
@@ -182,21 +184,50 @@ test_check_function() {
         "check_git_hooks shows pre-push installed"
 }
 
-# Test 8: Hooks not installed for non-Python projects
-test_hooks_only_python() {
-    echo -e "\n${YELLOW}=== Test: Hooks Only Installed for Python Projects ===${NC}"
+# Test 8: Hooks installed for Node.js projects
+test_hooks_installed_node() {
+    echo -e "\n${YELLOW}=== Test: Hooks Installed for Node.js Projects ===${NC}"
 
     # Create a Node.js project
     "$CLI_PATH" create "/tmp/test-node-hooks" --node > /dev/null 2>&1
 
-    # Node projects currently don't get hooks (feature not implemented yet)
-    # This test verifies current behavior
     assert_true \
-        "[[ ! -f \"/tmp/test-node-hooks/.git/hooks/pre-commit\" ]]" \
-        "Hooks not installed for Node.js projects (expected behavior)"
+        "[[ -f \"/tmp/test-node-hooks/.git/hooks/pre-commit\" ]]" \
+        "Pre-commit hook installed for Node.js project"
+
+    assert_true \
+        "[[ -f \"/tmp/test-node-hooks/.git/hooks/pre-push\" ]]" \
+        "Pre-push hook installed for Node.js project"
 
     # Cleanup
     rm -rf "/tmp/test-node-hooks" 2>/dev/null || true
+}
+
+# Test 8b: Node.js hook content is correct
+test_node_hook_content() {
+    echo -e "\n${YELLOW}=== Test: Node.js Hook Content Correct ===${NC}"
+
+    # Create a Node.js project
+    "$CLI_PATH" create "/tmp/test-node-content" --node > /dev/null 2>&1
+
+    assert_true \
+        "grep -q 'Pre-commit hook for Node.js projects' \"/tmp/test-node-content/.git/hooks/pre-commit\"" \
+        "Node pre-commit hook has correct header"
+
+    assert_true \
+        "grep -q 'prettier' \"/tmp/test-node-content/.git/hooks/pre-commit\"" \
+        "Node pre-commit hook includes prettier"
+
+    assert_true \
+        "grep -q 'eslint' \"/tmp/test-node-content/.git/hooks/pre-commit\"" \
+        "Node pre-commit hook includes eslint"
+
+    assert_true \
+        "grep -q 'npm test' \"/tmp/test-node-content/.git/hooks/pre-push\"" \
+        "Node pre-push hook runs npm test"
+
+    # Cleanup
+    rm -rf "/tmp/test-node-content" 2>/dev/null || true
 }
 
 # Test 9: Git initialized for database-only projects
@@ -240,7 +271,8 @@ main() {
     test_dryrun_no_hooks
     test_git_init
     test_check_function
-    test_hooks_only_python
+    test_hooks_installed_node
+    test_node_hook_content
     test_git_init_db_only
 
     # Record end time
