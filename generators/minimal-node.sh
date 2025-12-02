@@ -95,8 +95,11 @@ COPY --chown=\$USERNAME:\$USERNAME p10k.zsh /home/\$USERNAME/.p10k.zsh
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\\/powerlevel10k"/g' ~/.zshrc \\
     && echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> ~/.zshrc
 
-# Create workspace directory with correct ownership
+# Install global Node.js tools (as root, before switching to developer)
 USER root
+RUN npm install -g pnpm typescript ts-node nodemon
+
+# Create workspace directory with correct ownership
 WORKDIR /workspace
 RUN chown \$USERNAME:\$USERNAME /workspace
 
