@@ -115,12 +115,6 @@ EOF
 
 echo "Setting up minimal Node.js development environment..."
 
-# Update npm to latest version
-npm install -g npm@latest
-
-# Install global development tools
-npm install -g typescript ts-node nodemon
-
 # Install project dependencies if package.json exists
 if [ -f "package.json" ]; then
     echo "Installing Node.js dependencies..."
@@ -128,7 +122,7 @@ if [ -f "package.json" ]; then
 else
     echo "No package.json found, initializing basic Node.js project..."
     npm init -y
-    
+
     # Install basic development dependencies
     npm install --save-dev typescript @types/node nodemon ts-node
     npm install express
