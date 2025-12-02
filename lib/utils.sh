@@ -45,10 +45,18 @@ fi
 LOG_FILE=""
 ROLLBACK_ACTIONS=()
 
+# Clean up logs older than 7 days
+function cleanup_old_logs() {
+    if [[ -d "$LOG_DIR" ]]; then
+        find "$LOG_DIR" -name "*.log" -type f -mtime +7 -delete 2>/dev/null || true
+    fi
+}
+
 # Initialize logging
 function init_logging() {
   local script_name="${1:-unknown}"
   mkdir -p "$LOG_DIR"
+  cleanup_old_logs
   LOG_FILE="$LOG_DIR/${script_name}_$(date +%Y%m%d_%H%M%S).log"
   touch "$LOG_FILE"
 }
