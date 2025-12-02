@@ -84,6 +84,7 @@ COMMANDS:
     create      Create a new project
     add         Add components to an existing project
     start       Start project services (Docker containers)
+    services    Show service connection details
     config      Manage global configuration
     status      Show project and configuration status
     profiles    List and show available project profiles
@@ -102,6 +103,7 @@ EXAMPLES:
     spinbox create webapp --python --node     Create full-stack project
     spinbox add --postgresql                   Add PostgreSQL to existing project
     spinbox start                              Start project services
+    spinbox services                           Show service connection details
     spinbox config --list                     Show current configuration
     spinbox status                             Show project status
     spinbox profiles                           List available profiles
@@ -356,6 +358,30 @@ NOTES:
 EOF
 }
 
+# Display help for services command
+function show_services_help() {
+    cat << 'EOF'
+spinbox services - Show connection details for project services
+
+USAGE:
+    spinbox services [OPTIONS]
+
+OPTIONS:
+    -h, --help     Show this help message
+
+DESCRIPTION:
+    Displays connection information for all configured services
+    (PostgreSQL, MongoDB, Redis, ChromaDB). Shows whether each
+    service is currently running.
+
+    Must be run from inside a Spinbox project directory.
+
+EXAMPLES:
+    spinbox services          Show all service connection details
+
+EOF
+}
+
 # Display help for uninstall command
 function show_uninstall_help() {
     cat << EOF
@@ -511,7 +537,7 @@ function parse_args() {
     
     # Validate command
     case "$COMMAND" in
-        create|add|start|config|status|profiles|update|uninstall|version|help)
+        create|add|start|services|config|status|profiles|update|uninstall|version|help)
             ;;
         "")
             show_main_help
@@ -534,6 +560,9 @@ function parse_args() {
             ;;
         start)
             parse_start_args "$@"
+            ;;
+        services)
+            parse_services_args "$@"
             ;;
         config)
             parse_config_args "$@"
@@ -563,6 +592,7 @@ function parse_args() {
                     create) show_create_help ;;
                     add) show_add_help ;;
                     start) show_start_help ;;
+                    services) show_services_help ;;
                     config) show_config_help ;;
                     status) show_status_help ;;
                     profiles) show_profiles_help ;;
@@ -873,6 +903,23 @@ function parse_start_args() {
     START_FORCE_RECREATE="${START_FORCE_RECREATE:-false}"
 }
 
+# Parse services command arguments
+function parse_services_args() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_services_help
+                exit 0
+                ;;
+            *)
+                print_error "Unknown option: $1"
+                show_services_help
+                exit 1
+                ;;
+        esac
+    done
+}
+
 # Parse status command arguments
 function parse_status_args() {
     local status_type="all"
@@ -1074,6 +1121,9 @@ function execute_command() {
         start)
             execute_start_command
             ;;
+        services)
+            execute_services_command
+            ;;
         config)
             execute_config_command
             ;;
@@ -1169,6 +1219,111 @@ function execute_start_command() {
             print_info "Check 'docker-compose logs' for error details"
             exit 1
         fi
+    fi
+}
+
+# Execute services command
+function execute_services_command() {
+    # Check if we're in a Spinbox project
+    if [[ ! -f "docker-compose.yml" ]]; then
+        print_error "Not a Spinbox project (no docker-compose.yml found)"
+        echo "  Run this command from inside a project directory."
+        exit 1
+    fi
+
+    # Load project configuration
+    if [[ -f ".config/project.conf" ]]; then
+        source ".config/project.conf"
+    else
+        print_error "Project configuration not found (.config/project.conf)"
+        exit 1
+    fi
+
+    # Get running services
+    local running_services=""
+    if command -v docker &> /dev/null; then
+        running_services=$(docker compose ps --services --filter "status=running" 2>/dev/null || true)
+    fi
+
+    # Check if a service is running
+    is_service_running() {
+        local service_name="$1"
+        echo "$running_services" | grep -q "^${service_name}$"
+    }
+
+    # Show services header
+    print_info "Service Connection Details"
+    echo ""
+
+    local has_services=false
+
+    # PostgreSQL
+    if [[ "${USE_POSTGRESQL:-false}" == "true" ]]; then
+        has_services=true
+        if is_service_running "postgres"; then
+            echo -e "  ${GREEN}●${NC} PostgreSQL (running)"
+        else
+            echo -e "  ${RED}○${NC} PostgreSQL (not running)"
+        fi
+        echo "      Host:     localhost (from host) / postgres (inside container)"
+        echo "      Port:     5432"
+        echo "      Database: ${PROJECT_NAME:-myproject}_db"
+        echo "      User:     postgres"
+        echo "      Password: postgres"
+        echo "      URL:      postgresql://postgres:postgres@localhost:5432/${PROJECT_NAME:-myproject}_db"
+        echo ""
+    fi
+
+    # MongoDB
+    if [[ "${USE_MONGODB:-false}" == "true" ]]; then
+        has_services=true
+        if is_service_running "mongodb"; then
+            echo -e "  ${GREEN}●${NC} MongoDB (running)"
+        else
+            echo -e "  ${RED}○${NC} MongoDB (not running)"
+        fi
+        echo "      Host:     localhost (from host) / mongodb (inside container)"
+        echo "      Port:     27017"
+        echo "      URL:      mongodb://localhost:27017/${PROJECT_NAME:-myproject}"
+        echo ""
+    fi
+
+    # Redis
+    if [[ "${USE_REDIS:-false}" == "true" ]]; then
+        has_services=true
+        if is_service_running "redis"; then
+            echo -e "  ${GREEN}●${NC} Redis (running)"
+        else
+            echo -e "  ${RED}○${NC} Redis (not running)"
+        fi
+        echo "      Host:     localhost (from host) / redis (inside container)"
+        echo "      Port:     6379"
+        echo "      URL:      redis://localhost:6379"
+        echo ""
+    fi
+
+    # ChromaDB
+    if [[ "${USE_CHROMA:-false}" == "true" ]]; then
+        has_services=true
+        if is_service_running "chroma"; then
+            echo -e "  ${GREEN}●${NC} ChromaDB (running)"
+        else
+            echo -e "  ${RED}○${NC} ChromaDB (not running)"
+        fi
+        echo "      Host:     localhost (from host) / chroma (inside container)"
+        echo "      Port:     8000"
+        echo "      URL:      http://localhost:8000"
+        echo ""
+    fi
+
+    if [[ "$has_services" == false ]]; then
+        echo "  No services configured for this project."
+        echo ""
+    fi
+
+    # Show tip if no services running
+    if [[ -z "$running_services" ]] && [[ "$has_services" == true ]]; then
+        echo "  Tip: Run 'docker compose up -d' to start services"
     fi
 }
 
