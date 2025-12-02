@@ -74,69 +74,7 @@ function generate_fastapi_dockerhub_config() {
 
     print_debug "Generating FastAPI configuration with Docker Hub image: $image_name"
 
-    # Create minimal Dockerfile.dev that uses the pre-built base image
-    cat > "$fastapi_dir/Dockerfile.dev" << EOF
-# FastAPI Development Container (Docker Hub optimized)
-# Uses pre-built base image: ${image_name}:latest
-FROM ${image_name}:latest
-
-# Create non-root user for development
-ARG USERNAME=developer
-ARG USER_UID=1000
-ARG USER_GID=\$USER_UID
-
-RUN groupadd --gid \$USER_GID \$USERNAME \\
-    && useradd --uid \$USER_UID --gid \$USER_GID -m \$USERNAME -s /bin/zsh \\
-    && apt-get update && apt-get install -y sudo vim procps \\
-    && echo \$USERNAME ALL=\\(root\\) NOPASSWD:ALL > /etc/sudoers.d/\$USERNAME \\
-    && chmod 0440 /etc/sudoers.d/\$USERNAME \\
-    && rm -rf /var/lib/apt/lists/*
-
-# Set up Oh My Zsh and shell config for non-root user
-RUN cp -r /root/.oh-my-zsh /home/\$USERNAME/.oh-my-zsh \\
-    && cp /root/.zshrc /home/\$USERNAME/.zshrc \\
-    && chown -R \$USERNAME:\$USERNAME /home/\$USERNAME/.oh-my-zsh \\
-    && chown \$USERNAME:\$USERNAME /home/\$USERNAME/.zshrc \\
-    && sed -i "s|/root|/home/\$USERNAME|g" /home/\$USERNAME/.zshrc
-
-# Copy Powerlevel10k configuration
-COPY --chown=\$USERNAME:\$USERNAME p10k.zsh /home/\$USERNAME/.p10k.zsh
-RUN echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> /home/\$USERNAME/.zshrc
-
-WORKDIR /workspace
-
-# The base image contains:
-# - Python 3.11 with UV package manager
-# - Development tools (git, zsh, oh-my-zsh, powerlevel10k, nano, tree, jq, htop)
-# - Development aliases and environment setup
-# Application dependencies will be installed via requirements.txt
-
-# Create virtual environment with correct ownership
-RUN python -m venv venv && chown -R \$USERNAME:\$USERNAME venv
-ENV PATH="/workspace/venv/bin:\$PATH"
-
-# Copy requirements and install dependencies using UV
-COPY requirements.txt ./
-RUN uv pip install -r requirements.txt
-
-# Add FastAPI development aliases for non-root user
-USER \$USERNAME
-RUN echo '# FastAPI Development aliases' >> ~/.zshrc \\
-    && echo 'alias rs="uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"' >> ~/.zshrc \\
-    && echo 'alias test="pytest"' >> ~/.zshrc \\
-    && echo 'alias uvinstall="uv pip install -r requirements.txt"' >> ~/.zshrc \\
-    && echo 'alias migrate="alembic upgrade head"' >> ~/.zshrc
-
-# Activate virtual environment on shell start
-RUN echo 'if [[ -f /workspace/venv/bin/activate ]]; then source /workspace/venv/bin/activate; fi' >> ~/.zshrc
-
-EXPOSE 8000
-
-# Keep container running for development
-CMD ["zsh", "-c", "while sleep 1000; do :; done"]
-EOF
-
-    # Production Dockerfile (still uses local build for production)
+    # Production Dockerfile
     local python_version=$(get_effective_python_version)
     cat > "$fastapi_dir/Dockerfile" << EOF
 FROM python:${python_version}-slim
@@ -171,77 +109,6 @@ function generate_fastapi_local_dockerfiles() {
     local python_version=$(get_effective_python_version)
 
     print_debug "Generating FastAPI configuration with local builds"
-
-    # Development Dockerfile (original implementation)
-    cat > "$fastapi_dir/Dockerfile.dev" << EOF
-FROM python:${python_version}-slim
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \\
-    git \\
-    curl \\
-    build-essential \\
-    zsh \\
-    sudo \\
-    vim \\
-    && rm -rf /var/lib/apt/lists/*
-
-# Create non-root user for development
-ARG USERNAME=developer
-ARG USER_UID=1000
-ARG USER_GID=\$USER_UID
-
-RUN groupadd --gid \$USER_GID \$USERNAME \\
-    && useradd --uid \$USER_UID --gid \$USER_GID -m \$USERNAME -s /bin/zsh \\
-    && echo \$USERNAME ALL=\\(root\\) NOPASSWD:ALL > /etc/sudoers.d/\$USERNAME \\
-    && chmod 0440 /etc/sudoers.d/\$USERNAME
-
-# Install UV for fast Python package management
-RUN pip install --no-cache-dir uv
-
-# Install Oh My Zsh and Powerlevel10k for non-root user
-USER \$USERNAME
-RUN sh -c "\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \\
-    && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
-
-# Configure Zsh with Powerlevel10k theme and config
-COPY --chown=\$USERNAME:\$USERNAME p10k.zsh /home/\$USERNAME/.p10k.zsh
-RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\\/powerlevel10k"/g' ~/.zshrc \\
-    && sed -i 's/plugins=(git)/plugins=(git docker docker-compose python pip)/g' ~/.zshrc \\
-    && echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> ~/.zshrc
-
-# Set up virtual environment path
-ENV PATH="/workspace/venv/bin:\$PATH"
-
-# Add development aliases
-RUN echo '# Development aliases' >> ~/.zshrc \\
-    && echo 'alias rs="uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"' >> ~/.zshrc \\
-    && echo 'alias test="pytest"' >> ~/.zshrc \\
-    && echo 'alias uvinstall="uv pip install -r requirements.txt"' >> ~/.zshrc \\
-    && echo 'alias migrate="alembic upgrade head"' >> ~/.zshrc
-
-# Activate virtual environment on shell start
-RUN echo 'if [[ -f /workspace/venv/bin/activate ]]; then source /workspace/venv/bin/activate; fi' >> ~/.zshrc
-
-# Create workspace directory with correct ownership
-USER root
-WORKDIR /workspace
-RUN chown \$USERNAME:\$USERNAME /workspace
-
-# Create Python virtual environment
-RUN python -m venv venv && chown -R \$USERNAME:\$USERNAME venv
-
-EXPOSE 8000
-
-# Set Zsh as default shell
-SHELL ["/bin/zsh", "-c"]
-
-# Set default user
-USER \$USERNAME
-
-# Keep container running for development
-CMD ["zsh", "-c", "while sleep 1000; do :; done"]
-EOF
 
     # Production Dockerfile
     cat > "$fastapi_dir/Dockerfile" << EOF
