@@ -61,7 +61,7 @@ Configuration is centralized in `lib/config.sh` (defaults) and `lib/version-conf
 | PostgreSQL | 15 | `--postgres-version` | `POSTGRES_VERSION` |
 | Redis | 7 | `--redis-version` | `REDIS_VERSION` |
 | MongoDB | 7.0 | `--mongodb-version` | `MONGODB_VERSION` |
-| ChromaDB | 0.5 | `--chroma-version` | `CHROMA_VERSION` |
+| ChromaDB | latest | `--chroma-version` | `CHROMA_VERSION` |
 
 ### Key Files
 - `lib/config.sh` - Single source of truth for all defaults

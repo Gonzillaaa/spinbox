@@ -137,7 +137,7 @@ OPTIONS:
     --postgres-version VER PostgreSQL version (default: 15)
     --redis-version VER    Redis version (default: 7)
     --mongodb-version VER  MongoDB version (default: 7.0)
-    --chroma-version VER   ChromaDB version (default: 0.5)
+    --chroma-version VER   ChromaDB version (default: latest)
     
     --template NAME        Use requirements.txt template (minimal, data-science, ai-llm, etc.)
     
@@ -204,7 +204,7 @@ OPTIONS:
     --postgres-version VER PostgreSQL version (default: current or 15)
     --redis-version VER    Redis version (default: current or 7)
     --mongodb-version VER  MongoDB version (default: current or 7.0)
-    --chroma-version VER   ChromaDB version (default: current or 0.5)
+    --chroma-version VER   ChromaDB version (default: current or latest)
     
     --with-deps           Automatically add packages to requirements.txt/package.json
     

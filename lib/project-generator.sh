@@ -1298,6 +1298,11 @@ function create_project() {
         fi
     fi
 
+    show_connection_details
+}
+
+# Show connection details for services
+function show_connection_details() {
     echo ""
     if [[ "$USE_POSTGRESQL" == true ]]; then
         print_info "PostgreSQL connection:"
@@ -1352,19 +1357,19 @@ function add_components() {
         print_info "Run this command from the root of a Spinbox project"
         return 1
     fi
-    
-    # Parse component flags
-    if [[ -n "${COMPONENTS:-}" ]]; then
-        parse_component_flags $COMPONENTS
-    fi
-    
-    # Apply version overrides
-    apply_version_overrides
-    
-    # Load existing project configuration
+
+    # Load existing project configuration FIRST
     if [[ -f ".config/project.conf" ]]; then
         load_project_config "."
     fi
+
+    # Parse component flags AFTER loading config (new flags override/add to existing)
+    if [[ -n "${COMPONENTS:-}" ]]; then
+        parse_component_flags $COMPONENTS
+    fi
+
+    # Apply version overrides
+    apply_version_overrides
     
     PROJECT_PATH="."
     PROJECT_NAME="${PROJECT_NAME:-$(basename "$PWD")}"
@@ -1387,6 +1392,8 @@ function add_components() {
     
     print_status "Components added successfully!"
     print_info "Restart your DevContainer to apply changes"
+
+    show_connection_details
 }
 
 # Export functions for use in other scripts

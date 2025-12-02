@@ -71,7 +71,7 @@ The `PROJECT_PATH` can be either:
 | `--postgres-version <ver>` | PostgreSQL version (default: 15) |
 | `--redis-version <ver>` | Redis version (default: 7) |
 | `--mongodb-version <ver>` | MongoDB version (default: 7.0) |
-| `--chroma-version <ver>` | ChromaDB version (default: 0.5) |
+| `--chroma-version <ver>` | ChromaDB version (default: latest) |
 
 **Git Options:**
 | Option | Description |
@@ -457,7 +457,7 @@ spinbox config [OPTIONS]
 | `POSTGRES_VERSION` | Default PostgreSQL version | `15` |
 | `REDIS_VERSION` | Default Redis version | `7` |
 | `MONGODB_VERSION` | Default MongoDB version | `7.0` |
-| `CHROMA_VERSION` | Default ChromaDB version | `0.5` |
+| `CHROMA_VERSION` | Default ChromaDB version | `latest` |
 | `PROJECT_AUTHOR` | Default project author | `""` |
 | `PROJECT_EMAIL` | Default project email | `""` |
 | `PROJECT_LICENSE` | Default project license | `MIT` |
@@ -675,7 +675,7 @@ NODE_VERSION="20"
 POSTGRES_VERSION="15"
 REDIS_VERSION="7"
 MONGODB_VERSION="7.0"
-CHROMA_VERSION="0.5"
+CHROMA_VERSION="latest"
 
 # Project defaults
 PROJECT_AUTHOR="Your Name"
@@ -845,7 +845,7 @@ After project creation:
 | `POSTGRES_VERSION` | Override PostgreSQL version | `15` |
 | `REDIS_VERSION` | Override Redis version | `7` |
 | `MONGODB_VERSION` | Override MongoDB version | `7.0` |
-| `CHROMA_VERSION` | Override ChromaDB version | `0.5` |
+| `CHROMA_VERSION` | Override ChromaDB version | `latest` |
 
 ## Exit Codes
 
